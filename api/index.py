@@ -293,7 +293,13 @@ def fill_seats():
     for n in nearby:
         try:
             from pywebpush import webpush
-            payload = json.dumps({"title":title,"body":body,"fillId":fid,"code":code})
+            payload = json.dumps({"title":title,"body":body,"fillId":fid,"code":code,
+                "item":analysis["item"]["name"],"discount_price":analysis["discount_price"],
+                "original_price":analysis["item"]["price"],"discount_pct":analysis["discount_pct"],
+                "cashback":analysis["cashback"],"merchant_name":m["name"],
+                "merchant_lat":m["lat"],"merchant_lng":m["lng"],
+                "weather":weather.get("desc",""),"temp":weather.get("temp",0),
+                "reasoning":analysis["reasoning"]})
             webpush(n["info"]["sub"], data=payload,
                 vapid_private_key=VAPID_PRIVATE, vapid_claims={"sub":VAPID_EMAIL})
             sent += 1

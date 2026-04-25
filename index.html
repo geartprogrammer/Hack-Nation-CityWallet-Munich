@@ -172,7 +172,38 @@ async function boot(){
       }catch(e){console.log('Push:',e)}
     }
     navigator.serviceWorker.addEventListener('message',e=>{
-      if(e.data?.type==='OPEN_OFFER'){loadOffer()}
+      if(e.data?.type==='FILL_DATA' && e.data.data){
+        // Merchant fill arrived via push or notification tap — show it NOW
+        const d=e.data.data;
+        if(d.fillId || d.code){
+          // Build offer object from push data and cache it
+          const fillOffer={
+            id: d.fillId||d.code||'push',
+            code: d.code||'',
+            merchant_name: (d.title||'').split('·')[0]?.replace('☕','').trim()||'Cafe',
+            item: d.item||((d.title||'').includes('off ')?(d.title||'').split('off ')[1]:'Special'),
+            notification_text: d.body||d.title||'New offer nearby',
+            discount_price: d.discount_price||0,
+            original_price: d.original_price||0,
+            discount_pct: d.discount_pct||0,
+            cashback: d.cashback||0,
+            distance_m: d.distance_m||0,
+            walk_min: d.walk_min||0,
+            weather: d.weather||'',
+            temp: d.temp||0,
+            reasoning: d.reasoning||'Merchant just filled their quiet hour — this offer is live now.',
+            merchant_lat: d.merchant_lat||0,
+            merchant_lng: d.merchant_lng||0,
+            arrivals: [],
+            status: 'merchant_fill',
+            maps_url: d.merchant_lat?`https://www.google.com/maps/dir/?api=1&destination=${d.merchant_lat},${d.merchant_lng}&travelmode=walking`:'',
+          };
+          offer=fillOffer;
+          cacheFill(fillOffer);
+          renderOffer();
+          showToast(fillOffer);
+        }
+      }
     });
   }
 
@@ -187,36 +218,61 @@ async function boot(){
 const GRADS=['linear-gradient(135deg,#3a2010 0%,#7a4020 50%,#a05530 100%)','linear-gradient(135deg,#1a2a3a,#2a5070,#3a7090)','linear-gradient(135deg,#2a1a2e,#5a3060,#804080)','linear-gradient(135deg,#1a2a1a,#2a5030,#3a7040)'];
 
 let lastOfferId='';
+
+// Check if we have a cached merchant fill (survives Vercel cold starts)
+function getCachedFill(){
+  try{const raw=localStorage.getItem('cw_fill');if(!raw)return null;
+    const f=JSON.parse(raw);
+    // Expire after 30 minutes
+    if(f._cached && Date.now()-f._cached > 30*60*1000){localStorage.removeItem('cw_fill');return null}
+    return f;
+  }catch(e){return null}
+}
+function cacheFill(f){
+  try{localStorage.setItem('cw_fill',JSON.stringify({...f,_cached:Date.now()}))}catch(e){}
+}
+
 async function loadOffer(){
   try{
-    // Check for direct fill link in hash
     let url=`${API}/api/offer?lat=${lat}&lng=${lng}`;
-    if(location.hash.startsWith('#fill=')){
-      url+=`&fill=${location.hash.slice(6)}`;
-    }
+    if(location.hash.startsWith('#fill='))url+=`&fill=${location.hash.slice(6)}`;
     const r=await fetch(url);const d=await r.json();
-    if(d.has_offer){
-      const newId=d.offer?.id||'';
-      const isNew=newId && newId!==lastOfferId;
-      offer=d.offer;
-      lastOfferId=newId;
+
+    if(d.has_offer && d.source && d.source.includes('fill')){
+      // Merchant fill from server — cache it and show it
+      offer=d.offer; cacheFill(offer);
+      const isNew=offer.id && offer.id!==lastOfferId;
+      lastOfferId=offer.id;
       renderOffer();
-      // If this is a NEW offer (merchant just filled), notify immediately
-      if(isNew && d.source==='active_fill'){
-        showToast(offer);
-        // Also fire a real local notification
-        if('Notification' in window && Notification.permission==='granted'){
-          const n=new Notification(offer.notification_text||'New offer nearby',{
-            body:`${offer.merchant_name} · ${offer.item} · €${offer.discount_price}`,
-            icon:'/icon-192.png', vibrate:[80,40,80], tag:'cw-fill-'+newId
-          });
-          n.onclick=()=>{window.focus();n.close()};
-        }
+      if(isNew){showToast(offer);localNotify(offer)}
+    } else {
+      // Server returned a generated offer OR no fill found
+      // Check if we have a cached merchant fill
+      const cached=getCachedFill();
+      if(cached){
+        offer=cached;renderOffer();
+      } else if(d.has_offer){
+        offer=d.offer;renderOffer();
+      } else {
+        renderEmpty();
       }
-    }else{renderEmpty()}
+    }
     document.getElementById('topR').textContent=`${offer?.temp||'--'}° · ${offer?.weather||''}`;
     renderCtx();
-  }catch(e){renderEmpty()}
+  }catch(e){
+    // Offline or error — try cached fill
+    const cached=getCachedFill();
+    if(cached){offer=cached;renderOffer()}
+    else renderEmpty();
+  }
+}
+
+function localNotify(o){
+  if(!o||!('Notification' in window)||Notification.permission!=='granted')return;
+  new Notification(o.notification_text||o.merchant_name||'New offer',{
+    body:`${o.merchant_name||'Cafe'} · ${o.item||'?'} · €${o.discount_price||'?'}`,
+    icon:'/icon-192.png',vibrate:[80,40,80],tag:'cw-'+o.id
+  });
 }
 
 function renderCtx(){
