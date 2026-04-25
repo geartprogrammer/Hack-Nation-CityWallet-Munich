@@ -32,6 +32,30 @@ def _h(a,b,c,d):
     R=6371000;dl=math.radians(c-a);dn=math.radians(d-b)
     x=math.sin(dl/2)**2+math.cos(math.radians(a))*math.cos(math.radians(c))*math.sin(dn/2)**2
     return R*2*math.atan2(math.sqrt(x),math.sqrt(1-x))
+def _is_open(hrs):
+    if not hrs:return True
+    h=datetime.now().hour;da=["Mo","Tu","We","Th","Fr","Sa","Su"][datetime.now().weekday()]
+    try:
+        for p in hrs.split(";"):
+            p=p.strip()
+            if "off" in p.lower() and da in p:return False
+            if any(d in p for d in [da,"Mo-Su","Mo-Fr" if datetime.now().weekday()<5 else "XX"]):
+                for t in p.split(","):
+                    if "-" in t and ":" in t:
+                        ts2=t.strip()
+                        if " " in ts2:ts2=ts2.split(" ")[-1]
+                        pts=ts2.split("-")
+                        if len(pts)==2:
+                            try:
+                                if int(pts[0].split(":")[0])<=h<int(pts[1].split(":")[0]):return True
+                            except:pass
+    except:pass
+    return True
+
+def _sim_tx(hour):
+    base={8:12,9:12,10:11,11:15,12:16,13:14,14:8,15:5,16:4,17:5,18:8,19:7}.get(hour,3)
+    return max(1,base+random.randint(-2,3))
+
 def _pin(p):return hmac.new(SECRET.encode(),p.encode(),hashlib.sha256).hexdigest()[:16]
 def _tok(mid):return hmac.new(SECRET.encode(),mid.encode(),hashlib.sha256).hexdigest()[:24]
 def _auth():
@@ -235,12 +259,11 @@ def fill_seats():
     weather = _weather(m["lat"], m["lng"])
     hour = datetime.now().hour
 
-    # Count nearby subscribers
+    # Count all subscribers (send to everyone — real-world would filter by distance)
     nearby = []
     for ep, info in PUSH_SUBS.items():
-        if info.get("lat"):
-            d = _h(m["lat"],m["lng"],info["lat"],info["lng"])
-            if d < 2000: nearby.append({"ep":ep,"info":info,"dist":int(d)})
+        d = _h(m["lat"],m["lng"],info.get("lat",0),info.get("lng",0)) if info.get("lat") else 999
+        nearby.append({"ep":ep,"info":info,"dist":int(d)})
 
     # AI analysis
     analysis = _ai_fill_analysis(m, weather, len(nearby), hour)
@@ -339,26 +362,54 @@ def get_offer():
             return jsonify({"has_offer":True,"offer":{**f,
                 "distance_m":int(d),"walk_min":max(1,int(d/80)),
                 "maps_url":f"https://www.google.com/maps/dir/?api=1&destination={f['merchant_lat']},{f['merchant_lng']}&travelmode=walking"}})
-    # No active fill — generate from nearby cafes
+    # No active fill — find the closest open cafe and generate an offer
     w = _weather(lat, lng); hr = datetime.now().hour
+    # Sort ALL cafes by distance, pick the closest open one
+    scored = []
     for c in RAW_CAFES:
-        d = _h(lat,lng,c["lat"],c["lng"])
-        if d > 500: continue
-        disc = random.randint(12, 25)
-        item = random.choice(["Cappuccino","Latte","Espresso","Croissant"])
-        price = {"Cappuccino":3.50,"Latte":4.00,"Espresso":2.20,"Croissant":2.80}.get(item, 3.50)
+        d = _h(lat, lng, c["lat"], c["lng"])
+        if _is_open(c.get("hours","")): scored.append((c, d))
+    scored.sort(key=lambda x: x[1])
+    if scored:
+        c, d = scored[0]
+        tx = _sim_tx(hr)
+        disc = 12
+        if w.get("is_rainy"): disc += 6
+        if w.get("is_cold"): disc += 4
+        if tx < 6: disc += 5
+        if 14 <= hr <= 17: disc += 3
+        disc = min(disc, 30)
+        items_weather = (["Cappuccino","Hot Chocolate","Latte"] if w.get("is_cold") or w.get("is_rainy")
+            else ["Iced Coffee","Iced Latte","Cold Brew"] if w.get("is_hot")
+            else ["Cappuccino","Latte","Espresso","Croissant"])
+        item = random.choice(items_weather)
+        price = {"Cappuccino":3.50,"Latte":4.00,"Espresso":2.20,"Croissant":2.80,
+                 "Hot Chocolate":3.80,"Iced Coffee":4.50,"Iced Latte":4.80,"Cold Brew":4.20}.get(item, 3.50)
         dp = round(price*(1-disc/100), 2)
         cb = round(price - dp, 2)
         fid = hashlib.md5(f"{c['id']}{hr}".encode()).hexdigest()[:8]
+        # Generate copy from weather
+        if w.get("is_rainy"):
+            notif = f"Rain outside? {c['name']} is warm and dry. {item} for €{dp}."
+            reason = f"It's raining and {c['name']} is quiet ({tx} tx/hr). AI picked {item} (hot drink for cold rain) and set {disc}% off to get you inside."
+        elif w.get("is_cold"):
+            notif = f"It's {w['temp']}°. Warm {item} for €{dp} at {c['name']}."
+            reason = f"Cold weather ({w['temp']}°) + quiet period ({tx} tx/hr). AI picked {item} and set {disc}% off."
+        elif w.get("is_hot"):
+            notif = f"{w['temp']}° today. {item} for €{dp} at {c['name']}. Cool down."
+            reason = f"Hot weather ({w['temp']}°). AI picked {item} (cold drink) and set {disc}% off."
+        else:
+            notif = f"{c['name']} — {item} for €{dp}. Just for you, just for now."
+            reason = f"AI picked {item} based on time ({hr}:00) and demand ({tx} tx/hr). {disc}% off."
         return jsonify({"has_offer":True,"offer":{
             "id":fid,"code":f"CW-{fid.upper()}","merchant_name":c["name"],
             "merchant_lat":c["lat"],"merchant_lng":c["lng"],
             "item":item,"original_price":price,"discount_pct":disc,
             "discount_price":dp,"cashback":cb,
-            "notification_text":f"{c['name']} — {item} for €{dp} right now",
-            "weather":w["desc"],"temp":w["temp"],"status":"generated",
+            "notification_text":notif,
+            "weather":w.get("desc",""),"temp":w.get("temp",15),"status":"generated",
             "distance_m":int(d),"walk_min":max(1,int(d/80)),
-            "arrivals":[],"reasoning":"Auto-generated from nearby quiet cafe + current weather.",
+            "arrivals":[],"reasoning":reason,
             "maps_url":f"https://www.google.com/maps/dir/?api=1&destination={c['lat']},{c['lng']}&travelmode=walking"}})
     return jsonify({"has_offer":False})
 
