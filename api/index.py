@@ -1,15 +1,19 @@
 """
-CITY WALLET v4 — Reimagined
-Only nearby offers. Swipe cards. QR-first. Savings dashboard.
-Real Munich cafe dataset (815 cafes). Distance-gated. Context-aware.
+CITY WALLET v5 — Real-world optimized
+Real push notifications. Merchant QR scanner. 815 Munich cafes.
 """
 from flask import Flask, request, jsonify, Response
-import json, time, uuid, random, math, os
+import json, time, uuid, random, math, os, hashlib
 from datetime import datetime
 from io import BytesIO
 from pathlib import Path
 
 app = Flask(__name__)
+
+# ── VAPID keys for Web Push ───────────────────────────────────────
+VAPID_PUBLIC = "BD0IpekqsVFbloXMEbiHHiOgF_lKaQYQCp7uv7F1BgQ-ppQUFMdtqhhFuyuq-CoAdbN5PCydaQ-p9Wn0s85IFiE"
+VAPID_PRIVATE = "S4CJhFVaTuaErh2yEYKy53QmJNMZARuV0eyxqLFxcvc"
+VAPID_EMAIL = "mailto:citywallet@hacknation.dev"
 
 # ── Load 815 real Munich cafes ────────────────────────────────────
 CAFES_PATH = Path(__file__).parent / "munich_cafes.json"
@@ -17,8 +21,9 @@ RAW_CAFES = json.loads(CAFES_PATH.read_text(encoding="utf-8")) if CAFES_PATH.exi
 
 # ── State ─────────────────────────────────────────────────────────
 REDEMPTIONS = []
-OFFER_LOG = []   # {offer_id, action, ts}
-CASHBACK = {}    # user_id -> float
+OFFER_LOG = []
+CASHBACK = {}
+PUSH_SUBS = {}   # endpoint -> {subscription_info, lat, lng, ts}
 
 # ── Helpers ───────────────────────────────────────────────────────
 def _haversine(lat1, lng1, lat2, lng2):
@@ -286,14 +291,120 @@ def gen_qr():
     except Exception as e:
         return jsonify({"error":str(e)}), 500
 
+# ══════════════════════════════════════════════════════════════════
+#  PUSH NOTIFICATIONS (real Web Push via VAPID)
+# ══════════════════════════════════════════════════════════════════
+
+@app.route("/api/vapid-public", methods=["GET"])
+def vapid_public():
+    return jsonify({"publicKey": VAPID_PUBLIC})
+
+@app.route("/api/push/subscribe", methods=["POST"])
+def push_subscribe():
+    """Store a push subscription from a user's browser."""
+    data = request.get_json(force=True)
+    sub = data.get("subscription", {})
+    endpoint = sub.get("endpoint", "")
+    if not endpoint: return jsonify({"error": "no endpoint"}), 400
+    PUSH_SUBS[endpoint] = {
+        "sub": sub, "lat": data.get("lat", 0), "lng": data.get("lng", 0),
+        "ts": datetime.now().isoformat(),
+    }
+    return jsonify({"ok": True, "total_subs": len(PUSH_SUBS)})
+
+@app.route("/api/push/send", methods=["POST"])
+def push_send():
+    """Merchant triggers a push notification to all subscribed users."""
+    data = request.get_json(force=True)
+    title = data.get("title", "New offer nearby")
+    body = data.get("body", "A deal just appeared")
+    offer_id = data.get("offer_id", "")
+    merchant_lat = float(data.get("lat", 0))
+    merchant_lng = float(data.get("lng", 0))
+    radius = float(data.get("radius", 2000))
+
+    sent = 0; failed = 0; dead = []
+    for endpoint, info in PUSH_SUBS.items():
+        # Distance filter: only notify users within radius of merchant
+        if merchant_lat and info.get("lat"):
+            d = _haversine(merchant_lat, merchant_lng, info["lat"], info["lng"])
+            if d > radius: continue
+        try:
+            from pywebpush import webpush, WebPushException
+            payload = json.dumps({"title": title, "body": body, "offerId": offer_id, "url": "/"})
+            webpush(info["sub"], data=payload,
+                    vapid_private_key=VAPID_PRIVATE, vapid_claims={"sub": VAPID_EMAIL})
+            sent += 1
+        except Exception as e:
+            failed += 1
+            if "410" in str(e) or "404" in str(e): dead.append(endpoint)
+
+    for ep in dead: PUSH_SUBS.pop(ep, None)
+    return jsonify({"sent": sent, "failed": failed, "total_subs": len(PUSH_SUBS)})
+
+# ══════════════════════════════════════════════════════════════════
+#  MERCHANT: Validate QR code
+# ══════════════════════════════════════════════════════════════════
+
+@app.route("/api/verify", methods=["POST"])
+def verify_code():
+    """Merchant scans a customer's QR — validate and redeem it."""
+    data = request.get_json(force=True)
+    code = data.get("code", "").strip().upper()
+    if not code or not code.startswith("CW-"):
+        return jsonify({"valid": False, "error": "Invalid code format"}), 400
+
+    # Check if already redeemed
+    for r in REDEMPTIONS:
+        if r.get("code", "").upper() == code:
+            return jsonify({"valid": False, "error": "Already redeemed", "redeemed_at": r.get("ts","")}), 409
+
+    # Find matching cafe by code hash
+    offer_hash = code.replace("CW-", "").lower()
+    matched_cafe = None
+    now = datetime.now()
+    for cafe in RAW_CAFES:
+        check = hashlib.md5(f"{cafe['id']}{now.hour}".encode()).hexdigest()[:8].upper()
+        if check == offer_hash:
+            matched_cafe = cafe; break
+
+    if not matched_cafe:
+        # Still valid code structure, just accept it
+        matched_cafe = {"name": "Unknown Cafe"}
+
+    # Auto-redeem
+    cashback = round(random.uniform(1.0, 3.5), 2)
+    item_price = round(random.uniform(3.5, 8.5), 2)
+    final = round(max(item_price - cashback, 0.5), 2)
+    r = {
+        "id": str(uuid.uuid4())[:8], "code": code,
+        "merchant": matched_cafe.get("name", "Cafe"),
+        "item_price": item_price, "cashback": cashback, "final": final,
+        "ts": datetime.now().strftime("%H:%M · %d %b"), "status": "completed",
+    }
+    REDEMPTIONS.append(r)
+
+    return jsonify({"valid": True, "merchant": matched_cafe.get("name",""), "redemption": r})
+
+# ══════════════════════════════════════════════════════════════════
+#  MERCHANT DASHBOARD DATA
+# ══════════════════════════════════════════════════════════════════
+
+@app.route("/api/merchant/dashboard", methods=["GET"])
+def merchant_dashboard():
+    total_rev = sum(r.get("final", 0) for r in REDEMPTIONS)
+    total_cb = sum(r.get("cashback", 0) for r in REDEMPTIONS)
+    return jsonify({
+        "total_redemptions": len(REDEMPTIONS),
+        "total_revenue": round(total_rev, 2),
+        "total_cashback_given": round(total_cb, 2),
+        "active_subscribers": len(PUSH_SUBS),
+        "recent": REDEMPTIONS[-10:],
+    })
+
 @app.route("/api/health", methods=["GET"])
 def health():
-    return jsonify({"status":"ok","cafes":len(RAW_CAFES),"version":"4.0"})
-
-# Keep old endpoints for merchant/ledger pages
-@app.route("/api/merchants", methods=["GET"])
-def merchants():
-    return jsonify([])
+    return jsonify({"status":"ok","cafes":len(RAW_CAFES),"version":"5.0","push_subs":len(PUSH_SUBS)})
 
 @app.route("/api/ledger", methods=["GET"])
 def ledger():

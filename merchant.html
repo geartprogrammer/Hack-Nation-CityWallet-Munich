@@ -2,293 +2,223 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0a0a0a">
-<title>Merchant Console — City Wallet</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#f5f0e8">
+<title>City Wallet · Merchant</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0a0a0a;--card:#141414;--ink:#f5f5f5;--dim:rgba(255,255,255,.45);
-  --accent:#ff6b35;--green:#00c853;--rule:rgba(255,255,255,.08)}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);
-  min-height:100vh;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#f5f0e8;--bg2:#ece5d8;--bg3:#e3dbd0;--card:#fffcf6;--ink:#1a1714;--ink2:#4a4540;--dim:#8a847a;--dim2:#b8b0a4;
+  --accent:#d4622a;--accent-soft:rgba(212,98,42,.1);--green:#2d8a4e;--green-soft:rgba(45,138,78,.1);
+  --red:#c0392b;--red-soft:rgba(192,57,43,.1);
+  --r:22px;--r2:16px;--safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px)}
+html,body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-.header{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;
-  border-bottom:1px solid var(--rule)}
-.header .brand{font-size:14px;font-weight:700}.header .brand em{color:var(--accent);font-style:normal}
-.header select{background:var(--card);color:var(--ink);border:1px solid var(--rule);
-  border-radius:8px;padding:8px 12px;font-size:13px}
+.hdr{padding:14px 20px;padding-top:calc(14px + var(--safe-t));display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bg2)}
+.hdr h1{font-size:16px;font-weight:700}.hdr h1 em{color:var(--accent);font-style:normal}
+.hdr span{font-size:11px;color:var(--dim)}
 
-.container{max-width:640px;margin:0 auto;padding:20px}
-.tabs{display:flex;gap:0;border:1px solid var(--rule);border-radius:12px;overflow:hidden;margin-bottom:20px}
-.tab{flex:1;padding:12px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;
-  background:var(--card);border-right:1px solid var(--rule);transition:all .2s}
-.tab:last-child{border-right:none}
-.tab.active{background:var(--accent);color:#fff}
-.panel{display:none}.panel.active{display:block}
+.tabs{display:flex;padding:8px 20px;gap:6px}
+.tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:700;border-radius:12px;cursor:pointer;background:var(--card);border:1px solid var(--bg2);color:var(--dim)}
+.tab.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.panel{display:none;padding:16px 20px;padding-bottom:calc(20px + var(--safe-b))}.panel.on{display:block}
 
-/* Stats */
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
-.stat{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:18px}
-.stat .label{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-.stat .value{font-size:28px;font-weight:800}
-.stat .value.orange{color:var(--accent)}.stat .value.green{color:var(--green)}
+/* SCAN */
+.scan-area{position:relative;width:100%;aspect-ratio:1;max-width:360px;margin:0 auto 16px;border-radius:var(--r);overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center}
+.scan-area video{width:100%;height:100%;object-fit:cover}
+.scan-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.scan-frame{width:200px;height:200px;border:3px solid var(--accent);border-radius:16px;box-shadow:0 0 0 9999px rgba(0,0,0,.4)}
+.scan-hint{text-align:center;font-size:14px;color:var(--dim);margin-bottom:16px}
+.scan-manual{margin-top:12px}
+.scan-manual input{width:100%;padding:14px;font-size:18px;font-family:monospace;font-weight:700;text-align:center;letter-spacing:.06em;text-transform:uppercase;border:2px dashed var(--bg2);border-radius:var(--r2);background:var(--card)}
+.scan-manual input:focus{border-color:var(--accent);outline:none}
+.result-card{background:var(--card);border-radius:var(--r);padding:20px;margin-top:16px;text-align:center;border:1px solid var(--bg2);animation:fadeUp .3s ease both;display:none}
+.result-card.show{display:block}
+.result-card.ok{border-color:var(--green)}.result-card.err{border-color:var(--red)}
+.result-card .r-icon{font-size:40px;margin-bottom:8px}
+.result-card .r-title{font-size:18px;font-weight:800}
+.result-card .r-sub{font-size:13px;color:var(--dim);margin-top:4px}
+.result-card .r-detail{margin-top:12px;font-size:13px;color:var(--ink2)}
+.btn-scan{width:100%;padding:14px;border-radius:var(--r2);font-size:15px;font-weight:700;border:none;cursor:pointer;background:var(--ink);color:var(--bg);margin-top:12px}
+.btn-scan:active{opacity:.85}
 
-/* Rules */
-.form-section{margin-bottom:20px}
-.form-section h3{font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;
-  margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--rule)}
-.field{margin-bottom:14px}
-.field label{display:block;font-size:12px;color:var(--dim);margin-bottom:4px;font-weight:600}
-.field input,.field select,.field textarea{width:100%;padding:12px;background:var(--card);
-  color:var(--ink);border:1px solid var(--rule);border-radius:10px;font-size:14px}
-.field textarea{resize:vertical;min-height:60px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.btn{padding:14px;border-radius:12px;font-size:15px;font-weight:700;border:none;cursor:pointer;width:100%}
-.btn-save{background:var(--accent);color:#fff;margin-top:8px}
-.btn-green{background:var(--green);color:#fff}
-.msg{padding:12px;border-radius:8px;margin-top:12px;font-size:14px;font-weight:600;display:none}
-.msg.ok{display:block;background:rgba(0,200,83,.15);color:var(--green)}
+/* DASHBOARD */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat{background:var(--card);border-radius:var(--r2);padding:18px;border:1px solid var(--bg2);text-align:center}
+.stat .sv{font-size:28px;font-weight:800}.stat .sv.green{color:var(--green)}.stat .sv.accent{color:var(--accent)}
+.stat .sl{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.recent-list h3{font-size:13px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.r-item{background:var(--card);border-radius:var(--r2);padding:14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--bg2)}
+.r-item .ri-left{display:flex;flex-direction:column;gap:2px}
+.r-item .ri-name{font-size:14px;font-weight:600}.r-item .ri-time{font-size:11px;color:var(--dim)}
+.r-item .ri-right{text-align:right}
+.r-item .ri-amount{font-size:14px;font-weight:700;color:var(--green)}.r-item .ri-code{font-size:10px;color:var(--dim);font-family:monospace}
 
-/* Redeem */
-.redeem-input{font-family:monospace;font-size:24px;font-weight:800;text-align:center;
-  letter-spacing:.08em;text-transform:uppercase}
-.quick-btn{width:100%;padding:14px;margin-top:12px;background:rgba(255,255,255,.06);
-  border:1px solid var(--rule);border-radius:12px;font-size:14px;font-weight:600;
-  color:var(--ink);cursor:pointer;text-align:left;display:flex;justify-content:space-between}
-.quick-btn:active{background:rgba(255,107,53,.1)}
-
-/* Activity */
-.activity{max-height:300px;overflow-y:auto}
-.act-item{padding:12px;background:var(--card);border:1px solid var(--rule);border-radius:8px;
-  margin-bottom:6px;display:flex;justify-content:space-between;font-size:13px}
-.act-item .time{font-family:monospace;color:var(--dim);font-size:11px}
-
-/* Payone sim */
-.payone-bar{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:16px;margin-bottom:16px}
-.payone-bar h4{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
-.payone-meter{height:8px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;margin-bottom:4px}
-.payone-meter .fill{height:100%;border-radius:99px;transition:width .5s}
-.payone-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--dim)}
+/* BOOST */
+.boost-card{background:var(--card);border-radius:var(--r);padding:24px;border:1px solid var(--bg2);text-align:center;margin-bottom:16px}
+.boost-card h2{font-size:20px;font-weight:800;margin-bottom:6px}
+.boost-card p{font-size:13px;color:var(--dim);line-height:1.5;margin-bottom:16px}
+.boost-card .big-num{font-size:48px;font-weight:900;color:var(--accent);margin-bottom:4px}
+.boost-card .big-label{font-size:12px;color:var(--dim)}
+.btn-boost{width:100%;padding:16px;border-radius:var(--r2);font-size:16px;font-weight:800;border:none;cursor:pointer;background:var(--accent);color:#fff;box-shadow:0 4px 16px rgba(212,98,42,.2)}
+.btn-boost:active{transform:scale(.97);opacity:.9}
+.boost-result{margin-top:12px;font-size:14px;font-weight:600;color:var(--green);display:none}
+.boost-result.show{display:block}
+.info-box{margin-top:20px;padding:16px;background:var(--card);border-radius:var(--r2);border:1px solid var(--bg2)}
+.info-box h3{font-size:13px;font-weight:700;margin-bottom:8px}
+.info-box p{font-size:12px;color:var(--dim);line-height:1.6}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="brand"><em>City</em> Wallet · Merchant</div>
-  <select id="merchantSelect" onchange="switchMerchant(this.value)"></select>
+<div class="hdr">
+  <h1>City <em>Wallet</em> · Merchant</h1>
+  <span id="mSubs">Loading...</span>
+</div>
+<div class="tabs">
+  <div class="tab on" onclick="showPanel('scan',this)">📷 Scan</div>
+  <div class="tab" onclick="showPanel('dash',this)">📊 Stats</div>
+  <div class="tab" onclick="showPanel('boost',this)">🔔 Boost</div>
 </div>
 
-<div class="container">
-  <div class="tabs">
-    <div class="tab active" onclick="showTab('stats')">Dashboard</div>
-    <div class="tab" onclick="showTab('rules')">Rules</div>
-    <div class="tab" onclick="showTab('redeem')">Redeem</div>
+<!-- SCAN -->
+<div class="panel on" id="panel-scan">
+  <div class="scan-area"><video id="camVideo" autoplay playsinline muted></video><div class="scan-overlay"><div class="scan-frame"></div></div></div>
+  <div class="scan-hint">Point camera at customer's QR code</div>
+  <div class="scan-manual">
+    <input id="manualCode" placeholder="Or type code: CW-XXXXXXXX" oninput="this.value=this.value.toUpperCase()">
+    <button class="btn-scan" onclick="verifyCode()">Verify & Redeem</button>
   </div>
-
-  <!-- DASHBOARD -->
-  <div class="panel active" id="panel-stats">
-    <div class="payone-bar">
-      <h4>Payone Transaction Density</h4>
-      <div class="payone-meter"><div class="fill" id="payoneFill" style="width:25%;background:var(--accent)"></div></div>
-      <div class="payone-meta">
-        <span>Current: <strong id="payoneCurrent">3</strong> tx/hr</span>
-        <span>Average: <strong id="payoneAvg">12</strong> tx/hr</span>
-        <span>Status: <strong id="payoneStatus" style="color:var(--accent)">LOW</strong></span>
-      </div>
-    </div>
-    <div class="stats-grid">
-      <div class="stat"><div class="label">Walk-ins</div><div class="value green" id="sWalkins">0</div></div>
-      <div class="stat"><div class="label">Revenue</div><div class="value orange" id="sRevenue">€0.00</div></div>
-      <div class="stat"><div class="label">Offers generated</div><div class="value" id="sOffers">0</div></div>
-      <div class="stat"><div class="label">Total opt-ins</div><div class="value" id="sOptins">0</div></div>
-    </div>
-    <h3 style="font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Recent Activity</h3>
-    <div class="activity" id="activityFeed"><div class="act-item" style="color:var(--dim)">No activity yet</div></div>
+  <div class="result-card" id="scanResult">
+    <div class="r-icon" id="resIcon"></div>
+    <div class="r-title" id="resTitle"></div>
+    <div class="r-sub" id="resSub"></div>
+    <div class="r-detail" id="resDetail"></div>
   </div>
+</div>
 
-  <!-- RULES (Merchant rule interface — required by challenge) -->
-  <div class="panel" id="panel-rules">
-    <div class="form-section">
-      <h3>Offer Generation Rules</h3>
-      <p style="font-size:13px;color:var(--dim);margin-bottom:16px">
-        Set your rules and goals. The AI generates the actual offers automatically — content, discount, visual design, and timing.
-      </p>
-      <div class="row">
-        <div class="field">
-          <label>Max discount (%)</label>
-          <input id="rMaxPct" type="number" value="20" min="5" max="50">
-        </div>
-        <div class="field">
-          <label>Max discount (EUR)</label>
-          <input id="rMaxEur" type="number" step="0.50" value="3.00" min="0.50">
-        </div>
-      </div>
-      <div class="row">
-        <div class="field">
-          <label>Quiet hours start</label>
-          <input id="rQStart" type="time" value="14:00">
-        </div>
-        <div class="field">
-          <label>Quiet hours end</label>
-          <input id="rQEnd" type="time" value="16:00">
-        </div>
-      </div>
-      <div class="field">
-        <label>Goal</label>
-        <select id="rGoal">
-          <option value="fill_quiet_hours">Fill quiet hours</option>
-          <option value="reduce_waste">Reduce food waste</option>
-          <option value="boost_afternoon">Boost afternoon traffic</option>
-          <option value="new_customers">Attract new customers</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Tone</label>
-        <select id="rTone">
-          <option value="warm">Warm & inviting</option>
-          <option value="playful">Playful & fun</option>
-          <option value="friendly">Friendly & casual</option>
-          <option value="factual">Factual & direct</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Auto-generate offers?</label>
-        <select id="rAuto">
-          <option value="true">Yes — AI creates offers from my rules</option>
-          <option value="false">No — I'll create offers manually</option>
-        </select>
-      </div>
-      <button class="btn btn-save" onclick="saveRules()">Save Rules</button>
-      <div class="msg" id="rulesMsg"></div>
-    </div>
+<!-- DASHBOARD -->
+<div class="panel" id="panel-dash">
+  <div class="stat-grid">
+    <div class="stat"><div class="sv green" id="dR">0</div><div class="sl">Redemptions</div></div>
+    <div class="stat"><div class="sv accent" id="dRev">€0</div><div class="sl">Revenue</div></div>
+    <div class="stat"><div class="sv" id="dCB">€0</div><div class="sl">Cashback given</div></div>
+    <div class="stat"><div class="sv" id="dS">0</div><div class="sl">Subscribers</div></div>
   </div>
+  <div class="recent-list"><h3>Recent</h3><div id="recentList"><div style="text-align:center;padding:20px;color:var(--dim)">No redemptions yet</div></div></div>
+</div>
 
-  <!-- REDEEM -->
-  <div class="panel" id="panel-redeem">
-    <div style="text-align:center;margin-bottom:20px">
-      <h2 style="font-size:18px;margin-bottom:6px">Scan or type the code</h2>
-      <p style="font-size:13px;color:var(--dim)">Customer shows a QR code on their phone. Type the code below.</p>
-    </div>
-    <div class="field">
-      <input class="redeem-input" id="redeemCode" placeholder="XXXXX-XXXXXXXX"
-             oninput="this.value=this.value.toUpperCase()">
-    </div>
-    <button class="btn btn-green" onclick="redeemCode()">Redeem</button>
-    <button class="quick-btn" onclick="quickRedeem()">
-      <span>Quick redeem (demo)</span><span style="color:var(--accent)">TAP</span>
-    </button>
-    <div class="msg" id="redeemMsg"></div>
+<!-- BOOST -->
+<div class="panel" id="panel-boost">
+  <div class="boost-card">
+    <h2>Notify nearby users</h2>
+    <p>Send a real push notification to all City Wallet users near you — even if their app is closed.</p>
+    <div class="big-num" id="boostN">0</div>
+    <div class="big-label">users will receive it</div>
+  </div>
+  <button class="btn-boost" onclick="sendBoost()">🔔 Boost now</button>
+  <div class="boost-result" id="boostRes"></div>
+  <div class="info-box">
+    <h3>How this works in the real world</h3>
+    <p>
+      1. Your cafe is quiet → you tap Boost<br>
+      2. Every City Wallet user within 2km gets a real notification on their phone<br>
+      3. They tap it → see your offer with a discount and QR code<br>
+      4. They walk in → you scan the QR with this camera<br>
+      5. Cashback is credited, you get a customer, they get a deal<br><br>
+      No marketing budget needed. No flyers. Just tap Boost when it's quiet.
+    </p>
   </div>
 </div>
 
 <script>
 const API=window.location.origin;
-let currentMid='';
-let activities=[];
 
-async function loadMerchants(){
-  const resp=await fetch(API+'/api/merchants');
-  const merchants=await resp.json();
-  const sel=document.getElementById('merchantSelect');
-  sel.innerHTML=merchants.map(m=>`<option value="${m.id}">${m.name}</option>`).join('');
-  if(merchants.length>0){sel.value=merchants[0].id;switchMerchant(merchants[0].id);}
+function showPanel(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('panel-'+id).classList.add('on');btn.classList.add('on');
+  if(id==='dash')loadDash();if(id==='boost')loadBoost();if(id==='scan')startCam();
 }
 
-function switchMerchant(id){
-  currentMid=id;
-  updateDashboard();
-}
-
-async function updateDashboard(){
-  const resp=await fetch(API+'/api/ledger');
-  const data=await resp.json();
-  const m=data.merchants.find(x=>x.id===currentMid);
-  if(m){
-    document.getElementById('sWalkins').textContent=m.walk_ins;
-    document.getElementById('sRevenue').textContent='€'+m.revenue.toFixed(2);
-    // Payone
-    const ratio=m.payone.current_tx/Math.max(m.payone.avg_hourly_tx,1);
-    document.getElementById('payoneFill').style.width=Math.round(ratio*100)+'%';
-    document.getElementById('payoneFill').style.background=ratio<.4?'var(--accent)':ratio<.8?'var(--accent2)':'var(--green)';
-    document.getElementById('payoneCurrent').textContent=m.payone.current_tx;
-    document.getElementById('payoneAvg').textContent=m.payone.avg_hourly_tx;
-    document.getElementById('payoneStatus').textContent=ratio<.4?'LOW':ratio<.8?'NORMAL':'HIGH';
-    // Rules
-    if(m.rules){
-      document.getElementById('rMaxPct').value=m.rules.max_discount_pct||20;
-      document.getElementById('rMaxEur').value=m.rules.max_discount_eur||3;
-      document.getElementById('rGoal').value=m.rules.goal||'fill_quiet_hours';
-      document.getElementById('rTone').value=m.rules.tone||'warm';
-      if(m.rules.quiet_hours&&m.rules.quiet_hours[0]){
-        document.getElementById('rQStart').value=m.rules.quiet_hours[0].start;
-        document.getElementById('rQEnd').value=m.rules.quiet_hours[0].end;
-      }
+// ═══ CAMERA SCANNER ═══
+let scanning=false;
+async function startCam(){
+  if(scanning)return;
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    document.getElementById('camVideo').srcObject=stream;scanning=true;
+    if('BarcodeDetector' in window){
+      const det=new BarcodeDetector({formats:['qr_code']});
+      const video=document.getElementById('camVideo');
+      const loop=async()=>{
+        if(!scanning)return;
+        try{const codes=await det.detect(video);
+          if(codes.length&&codes[0].rawValue.startsWith('CW-')){
+            document.getElementById('manualCode').value=codes[0].rawValue;verifyCode();return;
+          }
+        }catch(e){}
+        requestAnimationFrame(loop);
+      };
+      video.addEventListener('playing',()=>setTimeout(loop,500),{once:true});
     }
-  }
-  document.getElementById('sOffers').textContent=data.generated_offers_count;
-  document.getElementById('sOptins').textContent=data.total_optins;
+  }catch(e){}
 }
 
-function showTab(name){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById('panel-'+name).classList.add('active');
+async function verifyCode(){
+  const code=document.getElementById('manualCode').value.trim();if(!code)return;
+  const el=document.getElementById('scanResult');
+  try{
+    const r=await fetch(API+'/api/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});
+    const d=await r.json();
+    if(d.valid){
+      el.className='result-card show ok';
+      document.getElementById('resIcon').textContent='✅';
+      document.getElementById('resTitle').textContent='Redeemed!';
+      document.getElementById('resSub').textContent=d.merchant||'Valid';
+      document.getElementById('resDetail').innerHTML=`Item: €${d.redemption?.item_price} · Cashback: €${d.redemption?.cashback} · Final: €${d.redemption?.final}`;
+      navigator.vibrate?.([50,30,50,30,50]);
+    }else{
+      el.className='result-card show err';
+      document.getElementById('resIcon').textContent='❌';
+      document.getElementById('resTitle').textContent=d.error||'Invalid';
+      document.getElementById('resSub').textContent='Could not verify';
+      document.getElementById('resDetail').textContent=d.redeemed_at?'Used at '+d.redeemed_at:'';
+      navigator.vibrate?.(200);
+    }
+  }catch(e){el.className='result-card show err';document.getElementById('resIcon').textContent='⚠️';document.getElementById('resTitle').textContent='Network error'}
+  document.getElementById('manualCode').value='';
 }
 
-async function saveRules(){
-  const rules={
-    max_discount_pct:parseInt(document.getElementById('rMaxPct').value),
-    max_discount_eur:parseFloat(document.getElementById('rMaxEur').value),
-    quiet_hours:[{start:document.getElementById('rQStart').value,end:document.getElementById('rQEnd').value}],
-    goal:document.getElementById('rGoal').value,
-    tone:document.getElementById('rTone').value,
-    auto_generate:document.getElementById('rAuto').value==='true'
-  };
-  await fetch(API+'/api/merchants/rules',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({merchant_id:currentMid,rules})});
-  const msg=document.getElementById('rulesMsg');
-  msg.className='msg ok';msg.textContent='Rules saved. AI will generate offers based on these rules.';
-  msg.style.display='block';
+// ═══ DASHBOARD ═══
+async function loadDash(){
+  try{const r=await fetch(API+'/api/merchant/dashboard');const d=await r.json();
+    document.getElementById('dR').textContent=d.total_redemptions;
+    document.getElementById('dRev').textContent='€'+d.total_revenue.toFixed(2);
+    document.getElementById('dCB').textContent='€'+d.total_cashback_given.toFixed(2);
+    document.getElementById('dS').textContent=d.active_subscribers;
+    document.getElementById('mSubs').textContent=d.active_subscribers+' subscribers';
+    const list=document.getElementById('recentList');
+    if(d.recent.length)list.innerHTML=d.recent.reverse().map(r=>`<div class="r-item"><div class="ri-left"><div class="ri-name">${r.merchant}</div><div class="ri-time">${r.ts}</div></div><div class="ri-right"><div class="ri-amount">€${r.final}</div><div class="ri-code">${r.code}</div></div></div>`).join('');
+  }catch(e){}
 }
 
-async function redeemCode(){
-  const code=document.getElementById('redeemCode').value.trim();
-  if(!code||!currentMid)return;
-  const resp=await fetch(API+'/api/redeem',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({merchant_id:currentMid,code})});
-  const r=await resp.json();
-  const msg=document.getElementById('redeemMsg');
-  msg.className='msg ok';msg.textContent=`Redeemed! ${r.merchant_name} · €${r.value.toFixed(2)} · ${r.ts_human}`;
-  msg.style.display='block';
-  document.getElementById('redeemCode').value='';
-  addActivity('Redeemed: '+code,r.ts_human);
-  updateDashboard();
+// ═══ BOOST ═══
+async function loadBoost(){try{const r=await fetch(API+'/api/merchant/dashboard');const d=await r.json();document.getElementById('boostN').textContent=d.active_subscribers}catch(e){}}
+
+async function sendBoost(){
+  let mlat=48.1351,mlng=11.582;
+  try{const p=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{timeout:5000}));mlat=p.coords.latitude;mlng=p.coords.longitude}catch(e){}
+  const r=await fetch(API+'/api/push/send',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({title:'☕ Deal nearby',body:'A cafe near you just boosted. Tap to see the offer.',lat:mlat,lng:mlng,radius:2000})});
+  const d=await r.json();
+  const el=document.getElementById('boostRes');
+  el.textContent=`✓ Sent to ${d.sent} user${d.sent!==1?'s':''}`;el.classList.add('show');
+  navigator.vibrate?.([50,30,50]);
 }
 
-async function quickRedeem(){
-  if(!currentMid)return;
-  const code='DEMO-'+Math.random().toString(36).slice(2,6).toUpperCase();
-  const resp=await fetch(API+'/api/redeem',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({merchant_id:currentMid,code})});
-  const r=await resp.json();
-  const msg=document.getElementById('redeemMsg');
-  msg.className='msg ok';msg.textContent=`Quick redeemed! ${r.merchant_name} · €${r.value.toFixed(2)}`;
-  msg.style.display='block';
-  addActivity('Walk-in: '+code,r.ts_human);
-  updateDashboard();
-}
-
-function addActivity(text,time){
-  activities.unshift({text,time});
-  if(activities.length>20)activities.pop();
-  document.getElementById('activityFeed').innerHTML=activities.map(a=>
-    `<div class="act-item"><span>${a.text}</span><span class="time">${a.time}</span></div>`).join('');
-}
-
-loadMerchants();
-setInterval(updateDashboard,10000);
+loadDash();
 </script>
 </body>
 </html>

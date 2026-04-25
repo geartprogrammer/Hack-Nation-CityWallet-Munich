@@ -307,7 +307,21 @@ async function grantPerms(){
 
 async function boot(){
   showScreen('app');
-  if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  if('serviceWorker' in navigator){
+    const reg=await navigator.serviceWorker.register('/sw.js').catch(()=>null);
+    // Subscribe to real push notifications
+    if(reg && Notification.permission==='granted'){
+      try{
+        const vapidResp=await fetch(API+'/api/vapid-public');
+        const{publicKey}=await vapidResp.json();
+        const rawKey=Uint8Array.from(atob(publicKey.replace(/-/g,'+').replace(/_/g,'/')+'=='),c=>c.charCodeAt(0));
+        const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:rawKey});
+        // Send subscription + location to server
+        fetch(API+'/api/push/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({subscription:sub.toJSON(),lat,lng})}).catch(()=>{});
+      }catch(e){console.log('Push sub failed:',e)}
+    }
+  }
 
   // Get real location
   try{
@@ -317,9 +331,9 @@ async function boot(){
 
   await loadOffers();
 
-  // Staggered notifications
+  // Staggered local notifications as preview
   if(offers.length>=1)setTimeout(()=>notify(offers[0]),4000);
-  if(offers.length>=2)setTimeout(()=>notify(offers[1]),18000);
+  if(offers.length>=2)setTimeout(()=>notify(offers[1]),20000);
 
   // Listen for SW notification clicks
   navigator.serviceWorker?.addEventListener('message',e=>{
