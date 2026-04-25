@@ -335,9 +335,19 @@ async function boot(){
   if(offers.length>=1)setTimeout(()=>notify(offers[0]),4000);
   if(offers.length>=2)setTimeout(()=>notify(offers[1]),20000);
 
-  // Listen for SW notification clicks
+  // Listen for SW notification clicks (boost or regular offer)
   navigator.serviceWorker?.addEventListener('message',e=>{
-    if(e.data?.type==='OPEN_OFFER'){const o=offers.find(x=>x.id===e.data.offerId);if(o)openQR(o)}
+    if(e.data?.type==='OPEN_OFFER'){
+      const oid=e.data.offerId;
+      // First check loaded offers, then try to fetch boost details
+      let o=offers.find(x=>x.id===oid);
+      if(o){openQR(o)}
+      else{fetch(API+'/api/boost/'+oid).then(r=>r.json()).then(b=>{
+        if(b&&b.code)openQR({id:b.id,code:b.code,name:b.merchant_name,headline:b.item_name+' · '+b.discount_pct+'% off',
+          subline:'Boosted by '+b.merchant_name,label:b.discount_pct+'% off',cashback:b.cashback,
+          distance_m:0,walk_min:0,expiry_min:30,maps_url:`https://www.google.com/maps/dir/?api=1&destination=${b.merchant_lat},${b.merchant_lng}&travelmode=walking`})
+      }).catch(()=>{})}
+    }
   });
 
   // Deep link from notification
@@ -347,14 +357,30 @@ async function boot(){
   }
 }
 
+let boosts=[];
 async function loadOffers(){
   const resp=await fetch(`${API}/api/nearby?lat=${lat}&lng=${lng}&radius=2000&limit=15`);
   const data=await resp.json();
   offers=data.offers||[];
+  boosts=data.active_boosts||[];
   weather=data.weather||{};
-  document.getElementById('hdrSub').textContent=`${weather.temp||'--'}° · ${weather.desc||''} · ${offers.length} nearby`;
+
+  // Merge boosts as priority cards at the top
+  const boostCards=boosts.map(b=>({
+    id:b.id,code:b.code,name:b.merchant,headline:`🔔 ${b.merchant} · ${b.discount}% off ${b.item}`,
+    subline:`€${b.cashback} cashback · Boosted by merchant`,frame:'boost',
+    label:`${b.discount}% off`,discount_pct:b.discount,cashback:b.cashback,
+    distance_m:Math.round(_hClient(lat,lng,b.lat,b.lng)),walk_min:Math.max(1,Math.round(_hClient(lat,lng,b.lat,b.lng)/80)),
+    demand:'boosted',score:999,is_boost:true,
+    maps_url:`https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}&travelmode=walking`,
+    street:'',wifi:false,outdoor:false,expiry_min:30,payone_tx:0
+  }));
+  offers=[...boostCards,...offers];
+
+  document.getElementById('hdrSub').textContent=`${weather.temp||'--'}° · ${weather.desc||''} · ${offers.length} offers`;
   renderCtx();renderCards();
 }
+function _hClient(a,b,c,d){const R=6371000,dl=((c-a)*Math.PI/180),dn=((d-b)*Math.PI/180);const x=Math.sin(dl/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dn/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
 const refresh=()=>loadOffers();
 
 // ── CONTEXT CHIPS ─────────────────────────────────────
@@ -384,7 +410,8 @@ function renderCards(){
   if(!offers.length){el.innerHTML='<div class="loading"><p>No cafes within range. Try walking closer or increase radius.</p></div>';return}
   el.innerHTML=offers.map((o,i)=>{
     const g=GRADS[i%GRADS.length];
-    const emoji=o.frame==='shelter'?'☔':o.frame==='warmth'?'🔥':o.frame==='refresh'?'🧊':o.frame==='hunger'?'🍽':o.frame==='quiet'?'🤫':'✨';
+    const emoji=o.frame==='boost'?'🔔':o.frame==='shelter'?'☔':o.frame==='warmth'?'🔥':o.frame==='refresh'?'🧊':o.frame==='hunger'?'🍽':o.frame==='quiet'?'🤫':'✨';
+    if(o.is_boost)g='linear-gradient(135deg,#4a1500,#d4622a)';
     return`
     <div class="card" onclick="openQR(offers[${i}])">
       <div class="card-top" style="background:${g}">
