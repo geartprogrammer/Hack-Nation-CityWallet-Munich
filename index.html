@@ -13,7 +13,7 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{--bg:#faf6ef;--bg2:#f0ebe2;--bg3:#e6e0d5;--card:#fff;--ink:#181510;--ink2:#504b42;--dim:#928b7f;--dim2:#c4bdb0;
   --primary:#bf5a1b;--primary2:#d9722f;--primary-soft:rgba(191,90,27,.07);
-  --green:#2b7d42;--green-soft:rgba(43,125,66,.07);
+  --green:#2b7d42;--green-soft:rgba(43,125,66,.07);--red:#c0392b;--red-soft:rgba(192,57,43,.07);
   --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px)}
 html,body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);
   min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
@@ -21,20 +21,21 @@ html,body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pop{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
 .screen{display:none;min-height:100vh;min-height:100dvh;flex-direction:column}.screen.active{display:flex}
+.btn{width:100%;max-width:340px;padding:15px;border-radius:14px;font-size:15px;font-weight:700;border:none;cursor:pointer}
+.btn:active{transform:scale(.97)}.btn-dark{background:var(--ink);color:#fff}
+.btn-ghost{background:none;color:var(--dim);font-size:13px;margin-top:4px}
 
-/* ═══ ONBOARD ═══ */
+/* ONBOARD */
 #onboard{background:var(--bg);justify-content:center;align-items:center;text-align:center;padding:0 32px}
 #onboard .mark{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--primary),var(--primary2));
   display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:18px;margin:0 auto 20px}
 #onboard h1{font-size:28px;font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-bottom:6px}
 #onboard h1 em{font-style:normal;color:var(--primary)}
 #onboard .sub{font-size:14px;color:var(--dim);line-height:1.6;max-width:300px;margin:0 auto 24px}
-.btn{width:100%;max-width:340px;padding:15px;border-radius:14px;font-size:15px;font-weight:700;border:none;cursor:pointer}
-.btn:active{transform:scale(.97)}.btn-dark{background:var(--ink);color:#fff}
-.btn-ghost{background:none;color:var(--dim);font-size:13px;margin-top:4px}
 
-/* ═══ MAIN ═══ */
+/* MAIN */
 #main{background:var(--bg);padding-bottom:var(--safe-b)}
 .top{padding:12px 20px;padding-top:calc(12px + var(--safe-t));display:flex;justify-content:space-between;align-items:center}
 .top-l{display:flex;align-items:center;gap:8px}
@@ -46,9 +47,10 @@ html,body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:
 .chip{flex-shrink:0;font-size:10px;font-weight:600;padding:5px 10px;border-radius:8px;background:var(--card);border:1px solid var(--bg2);color:var(--dim)}
 .chip.hot{background:var(--primary-soft);color:var(--primary);border-color:transparent}
 
-/* THE OFFER CARD */
+/* OFFER CARD */
 .offer-section{padding:0 20px}
-.ocard{background:var(--card);border-radius:20px;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,.04);border:1px solid var(--bg2);animation:fadeUp .4s both}
+.ocard{background:var(--card);border-radius:20px;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,.04);border:1px solid var(--bg2);animation:fadeUp .4s both;cursor:pointer}
+.ocard:active{transform:scale(.985);transition:transform .1s}
 .oc-hero{position:relative;padding:22px 22px 18px;color:#fff;min-height:160px;display:flex;flex-direction:column;justify-content:flex-end}
 .oc-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,.7) 100%)}
 .oc-hero *{position:relative;z-index:1}
@@ -56,46 +58,68 @@ html,body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:
 .oc-h{font-size:22px;font-weight:900;line-height:1.1;letter-spacing:-.02em}
 .oc-s{font-size:12px;opacity:.85;margin-top:3px;line-height:1.4}
 .oc-body{padding:16px 22px}
-.oc-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bg2)}
-.oc-row:last-child{border-bottom:none}
+.oc-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bg2)}.oc-row:last-child{border-bottom:none}
 .oc-k{font-size:12px;color:var(--dim)}.oc-v{font-size:13px;font-weight:700}
 .oc-v.strike{text-decoration:line-through;color:var(--dim);font-weight:400;margin-right:6px}
 .oc-v.green{color:var(--green)}.oc-v.primary{color:var(--primary)}
 .oc-why{padding:12px 22px;background:var(--primary-soft);font-size:11px;color:var(--primary);line-height:1.5}
-.oc-cta{padding:14px 22px}
-.oc-cta button{width:100%;padding:15px;border-radius:14px;font-size:16px;font-weight:800;border:none;cursor:pointer;
-  background:var(--green);color:#fff;box-shadow:0 3px 12px rgba(43,125,66,.15)}
-.oc-cta button:active{transform:scale(.97)}
+.oc-tap{padding:14px 22px;text-align:center;font-size:13px;color:var(--primary);font-weight:600}
 
-/* I'M HERE confirmation */
-.arrived{padding:16px 22px;background:var(--green-soft);text-align:center;display:none}
-.arrived.show{display:block}
-.arrived .check{font-size:36px;margin-bottom:4px}
-.arrived .msg{font-size:15px;font-weight:700;color:var(--green)}
-.arrived .detail{font-size:12px;color:var(--dim);margin-top:4px}
+.empty{padding:60px 32px;text-align:center}.empty .icon{font-size:44px;margin-bottom:12px;opacity:.5}
+.empty h2{font-size:18px;font-weight:700;margin-bottom:4px}.empty p{font-size:13px;color:var(--dim);line-height:1.5}
 
-/* Empty state */
-.empty{padding:60px 32px;text-align:center}
-.empty .icon{font-size:44px;margin-bottom:12px;opacity:.5}
-.empty h2{font-size:18px;font-weight:700;margin-bottom:4px}
-.empty p{font-size:13px;color:var(--dim);line-height:1.5}
-
-/* ACTIVITY FEED */
 .feed-section{padding:16px 20px}
 .feed-title{font-size:12px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;justify-content:space-between}
 .feed-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border-radius:12px;margin-bottom:6px;border:1px solid var(--bg2)}
 .fi-avatar{width:32px;height:32px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--dim);flex-shrink:0}
-.fi-body{flex:1;min-width:0}
-.fi-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fi-detail{font-size:11px;color:var(--dim)}
-.fi-saved{font-size:13px;font-weight:700;color:var(--green);flex-shrink:0}
+.fi-body{flex:1;min-width:0}.fi-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fi-detail{font-size:11px;color:var(--dim)}.fi-saved{font-size:13px;font-weight:700;color:var(--green);flex-shrink:0}
 
-/* SAVINGS BAR */
 .sav-bar{padding:12px 20px;padding-bottom:calc(12px + var(--safe-b));background:var(--card);border-top:1px solid var(--bg2);
   display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0}
-.sav-bar .amt{font-size:18px;font-weight:900;color:var(--green)}
-.sav-bar .lbl{font-size:11px;color:var(--dim)}
+.sav-bar .amt{font-size:18px;font-weight:900;color:var(--green)}.sav-bar .lbl{font-size:11px;color:var(--dim)}
 .sav-bar a{font-size:12px;font-weight:700;color:var(--primary);text-decoration:none}
+
+/* ═══ REDEEM SCREEN ═══ */
+#redeem{background:var(--bg);justify-content:center;align-items:center;padding:24px;
+  padding-top:calc(24px + var(--safe-t));padding-bottom:calc(24px + var(--safe-b))}
+.redeem-back{position:absolute;top:16px;left:16px;top:calc(16px + var(--safe-t));width:36px;height:36px;border-radius:50%;
+  background:var(--card);border:1px solid var(--bg2);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;border:none;z-index:2}
+.redeem-card{width:100%;max-width:360px;text-align:center;animation:fadeUp .3s both}
+.rc-merchant{font-size:28px;font-weight:900;letter-spacing:-.03em;margin-bottom:2px}
+.rc-item{font-size:16px;color:var(--primary);font-weight:700;margin-bottom:4px}
+.rc-price{font-size:14px;color:var(--dim);margin-bottom:20px}
+.rc-price b{color:var(--green);font-size:18px}
+
+/* Location status */
+.loc-status{padding:14px 20px;border-radius:14px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600}
+.loc-status.near{background:var(--green-soft);color:var(--green)}
+.loc-status.far{background:var(--red-soft);color:var(--red)}
+.loc-status.checking{background:var(--bg2);color:var(--dim)}
+.loc-icon{font-size:20px}
+
+/* SWIPE TO VERIFY */
+.swipe-container{position:relative;width:100%;height:64px;border-radius:32px;background:var(--bg2);overflow:hidden;margin-bottom:16px;touch-action:none;user-select:none}
+.swipe-track{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:600;color:var(--dim2);letter-spacing:.02em}
+.swipe-fill{position:absolute;top:0;left:0;bottom:0;width:0;background:var(--green);border-radius:32px;transition:none}
+.swipe-thumb{position:absolute;top:4px;left:4px;width:56px;height:56px;border-radius:50%;
+  background:var(--card);box-shadow:0 2px 8px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;
+  font-size:20px;cursor:grab;transition:none;z-index:2}
+.swipe-thumb:active{cursor:grabbing}
+.swipe-container.disabled{opacity:.5;pointer-events:none}
+.swipe-container.done .swipe-fill{width:100%!important;transition:width .3s}
+.swipe-container.done .swipe-thumb{left:calc(100% - 60px)!important;transition:left .3s}
+.swipe-container.done .swipe-track{color:#fff}
+
+/* Success state */
+.redeem-success{display:none;text-align:center;animation:fadeUp .3s both}
+.redeem-success.show{display:block}
+.rs-check{font-size:64px;animation:pop .4s both}
+.rs-msg{font-size:22px;font-weight:900;color:var(--green);margin-top:8px}
+.rs-detail{font-size:14px;color:var(--dim);margin-top:6px;line-height:1.5}
+.rs-show{margin-top:16px;padding:14px 24px;border-radius:14px;background:var(--green-soft);
+  font-size:14px;font-weight:700;color:var(--green);display:inline-block}
 
 /* TOAST */
 .toast{position:fixed;top:0;left:0;right:0;z-index:300;padding:14px 20px;padding-top:calc(14px + var(--safe-t));
@@ -105,7 +129,6 @@ html,body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:
 .toast .td{width:34px;height:34px;border-radius:10px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:16px}
 .toast .tb{flex:1}.toast .th{font-size:13px;font-weight:700}.toast .ts{font-size:11px;color:var(--dim)}
 .toast .ta{font-size:11px;font-weight:700;color:var(--primary)}
-
 .spinner{width:28px;height:28px;border:3px solid var(--bg2);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
 </style>
 </head>
@@ -114,7 +137,7 @@ html,body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:
 <div id="onboard" class="screen active">
   <div class="mark">CW</div>
   <h1>City <em>Wallet</em></h1>
-  <div class="sub">Local cafes fill their quiet hours with deals for you. The AI picks what, how much off, and sends it to your phone. You just walk in.</div>
+  <div class="sub">Local cafes fill their quiet hours with deals for you. The AI decides everything. You just walk in.</div>
   <button class="btn btn-dark" onclick="start()">Get started</button>
   <button class="btn btn-ghost" onclick="start()">How it works</button>
 </div>
@@ -125,16 +148,36 @@ html,body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:
     <div class="top-r" id="topR">Loading...</div>
   </div>
   <div class="ctx" id="ctx"></div>
-
   <div class="offer-section" id="offerSection">
     <div style="text-align:center;padding:40px"><div class="spinner"></div><div style="font-size:13px;color:var(--dim)">Finding offers near you...</div></div>
   </div>
-
   <div class="feed-section" id="feedSection"></div>
-
   <div class="sav-bar">
     <div><div class="amt" id="savAmt">€0.00</div><div class="lbl">saved with City Wallet</div></div>
     <a href="/merchant.html">Merchant app →</a>
+  </div>
+</div>
+
+<!-- ═══ REDEEM SCREEN ═══ -->
+<div id="redeem" class="screen">
+  <button class="redeem-back" onclick="showScreen('main')">←</button>
+  <div class="redeem-card" id="redeemCard">
+    <div class="rc-merchant" id="rcName">Cafe</div>
+    <div class="rc-item" id="rcItem">Cappuccino</div>
+    <div class="rc-price" id="rcPrice"></div>
+    <div class="loc-status checking" id="locStatus"><span class="loc-icon">📍</span><span id="locText">Checking your location...</span></div>
+    <div class="swipe-container" id="swipeBox">
+      <div class="swipe-fill" id="swipeFill"></div>
+      <div class="swipe-track" id="swipeLabel">Swipe to verify you're here →</div>
+      <div class="swipe-thumb" id="swipeThumb">☕</div>
+    </div>
+    <div style="font-size:11px;color:var(--dim);margin-bottom:16px" id="swipeHint">Swipe right to confirm arrival and redeem your cashback</div>
+  </div>
+  <div class="redeem-success" id="redeemOk">
+    <div class="rs-check">✅</div>
+    <div class="rs-msg" id="rsMsg">You saved €0.00!</div>
+    <div class="rs-detail" id="rsDetail">Show this screen to the barista.</div>
+    <div class="rs-show" id="rsShow">Enjoy your Cappuccino ☕</div>
   </div>
 </div>
 
@@ -150,13 +193,19 @@ let offer=null,lat=48.1351,lng=11.582;
 const uid=localStorage.getItem('cw_u')||(()=>{const u='u-'+Math.random().toString(36).slice(2,8);localStorage.setItem('cw_u',u);return u})();
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
 function urlB64(b){const p='='.repeat((4-b.length%4)%4);return Uint8Array.from(atob(b.replace(/-/g,'+').replace(/_/g,'/')+p),c=>c.charCodeAt(0))}
+function hDist(a,b,c,d){const R=6371000,dl=(c-a)*Math.PI/180,dn=(d-b)*Math.PI/180;
+  const x=Math.sin(dl/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dn/2)**2;
+  return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
 
 setTimeout(()=>{if(localStorage.getItem('cw_ok'))boot()},600);
-
 async function start(){
   if('Notification' in window&&Notification.permission==='default')await Notification.requestPermission();
   localStorage.setItem('cw_ok','1');boot();
 }
+
+// ── Cache fills in localStorage (survives Vercel cold starts) ───
+function getCached(){try{const r=localStorage.getItem('cw_fill');if(!r)return null;const f=JSON.parse(r);if(f._t&&Date.now()-f._t>30*60000){localStorage.removeItem('cw_fill');return null}return f}catch(e){return null}}
+function setCache(f){try{localStorage.setItem('cw_fill',JSON.stringify({...f,_t:Date.now()}))}catch(e){}}
 
 async function boot(){
   showScreen('main');
@@ -169,200 +218,212 @@ async function boot(){
         const vr=await fetch(API+'/api/vapid-public');const{publicKey}=await vr.json();
         const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64(publicKey)});
         await fetch(API+'/api/push/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:sub.toJSON(),lat,lng})});
-      }catch(e){console.log('Push:',e)}
+      }catch(e){}
     }
     navigator.serviceWorker.addEventListener('message',e=>{
-      if(e.data?.type==='FILL_DATA' && e.data.data){
-        // Merchant fill arrived via push or notification tap — show it NOW
+      if(e.data?.type==='FILL_DATA'&&e.data.data){
         const d=e.data.data;
-        if(d.fillId || d.code){
-          // Build offer object from push data and cache it
-          const fillOffer={
-            id: d.fillId||d.code||'push',
-            code: d.code||'',
-            merchant_name: (d.title||'').split('·')[0]?.replace('☕','').trim()||'Cafe',
-            item: d.item||((d.title||'').includes('off ')?(d.title||'').split('off ')[1]:'Special'),
-            notification_text: d.body||d.title||'New offer nearby',
-            discount_price: d.discount_price||0,
-            original_price: d.original_price||0,
-            discount_pct: d.discount_pct||0,
-            cashback: d.cashback||0,
-            distance_m: d.distance_m||0,
-            walk_min: d.walk_min||0,
-            weather: d.weather||'',
-            temp: d.temp||0,
-            reasoning: d.reasoning||'Merchant just filled their quiet hour — this offer is live now.',
-            merchant_lat: d.merchant_lat||0,
-            merchant_lng: d.merchant_lng||0,
-            arrivals: [],
-            status: 'merchant_fill',
-            maps_url: d.merchant_lat?`https://www.google.com/maps/dir/?api=1&destination=${d.merchant_lat},${d.merchant_lng}&travelmode=walking`:'',
-          };
-          offer=fillOffer;
-          cacheFill(fillOffer);
-          renderOffer();
-          showToast(fillOffer);
+        if(d.fillId||d.code){
+          offer={id:d.fillId||'',code:d.code||'',merchant_name:d.merchant_name||(d.title||'').replace(/☕/g,'').split('·')[0].trim()||'Cafe',
+            item:d.item||'Special',notification_text:d.body||d.title||'',discount_price:d.discount_price||0,original_price:d.original_price||0,
+            discount_pct:d.discount_pct||0,cashback:d.cashback||0,merchant_lat:d.merchant_lat||0,merchant_lng:d.merchant_lng||0,
+            weather:d.weather||'',temp:d.temp||0,reasoning:d.reasoning||'',distance_m:0,walk_min:0,arrivals:[],
+            maps_url:d.merchant_lat?`https://www.google.com/maps/dir/?api=1&destination=${d.merchant_lat},${d.merchant_lng}&travelmode=walking`:''};
+          setCache(offer);renderOffer();showToast(offer);
+          // Auto open redeem screen
+          openRedeem();
         }
       }
     });
   }
 
-  await loadOffer();
-  await loadActivity();
-  // Poll every 8 seconds — picks up merchant fills quickly
-  setInterval(loadOffer, 8000);
-  setInterval(loadActivity, 25000);
+  await loadOffer();await loadActivity();
+  setInterval(loadOffer,8000);setInterval(loadActivity,25000);
   setTimeout(()=>{if(offer)showToast(offer)},2500);
+  // Deep link
+  if(location.hash.startsWith('#fill='))loadOffer();
 }
 
-const GRADS=['linear-gradient(135deg,#3a2010 0%,#7a4020 50%,#a05530 100%)','linear-gradient(135deg,#1a2a3a,#2a5070,#3a7090)','linear-gradient(135deg,#2a1a2e,#5a3060,#804080)','linear-gradient(135deg,#1a2a1a,#2a5030,#3a7040)'];
-
-let lastOfferId='';
-
-// Check if we have a cached merchant fill (survives Vercel cold starts)
-function getCachedFill(){
-  try{const raw=localStorage.getItem('cw_fill');if(!raw)return null;
-    const f=JSON.parse(raw);
-    // Expire after 30 minutes
-    if(f._cached && Date.now()-f._cached > 30*60*1000){localStorage.removeItem('cw_fill');return null}
-    return f;
-  }catch(e){return null}
-}
-function cacheFill(f){
-  try{localStorage.setItem('cw_fill',JSON.stringify({...f,_cached:Date.now()}))}catch(e){}
-}
+const GRADS=['linear-gradient(135deg,#3a2010,#7a4020,#a05530)','linear-gradient(135deg,#1a2a3a,#2a5070,#3a7090)','linear-gradient(135deg,#2a1a2e,#5a3060,#804080)','linear-gradient(135deg,#1a2a1a,#2a5030,#3a7040)'];
+let lastOid='';
 
 async function loadOffer(){
   try{
     let url=`${API}/api/offer?lat=${lat}&lng=${lng}`;
     if(location.hash.startsWith('#fill='))url+=`&fill=${location.hash.slice(6)}`;
     const r=await fetch(url);const d=await r.json();
-
-    if(d.has_offer && d.source && d.source.includes('fill')){
-      // Merchant fill from server — cache it and show it
-      offer=d.offer; cacheFill(offer);
-      const isNew=offer.id && offer.id!==lastOfferId;
-      lastOfferId=offer.id;
+    if(d.has_offer&&d.source&&d.source.includes('fill')){
+      offer=d.offer;setCache(offer);
+      if(offer.id&&offer.id!==lastOid){lastOid=offer.id;showToast(offer);localNotify(offer)}
       renderOffer();
-      if(isNew){showToast(offer);localNotify(offer)}
-    } else {
-      // Server returned a generated offer OR no fill found
-      // Check if we have a cached merchant fill
-      const cached=getCachedFill();
-      if(cached){
-        offer=cached;renderOffer();
-      } else if(d.has_offer){
-        offer=d.offer;renderOffer();
-      } else {
-        renderEmpty();
-      }
+    }else{
+      const c=getCached();
+      if(c){offer=c;renderOffer()}
+      else if(d.has_offer){offer=d.offer;renderOffer()}
+      else renderEmpty();
     }
     document.getElementById('topR').textContent=`${offer?.temp||'--'}° · ${offer?.weather||''}`;
     renderCtx();
-  }catch(e){
-    // Offline or error — try cached fill
-    const cached=getCachedFill();
-    if(cached){offer=cached;renderOffer()}
-    else renderEmpty();
-  }
+  }catch(e){const c=getCached();if(c){offer=c;renderOffer()}else renderEmpty()}
 }
 
 function localNotify(o){
   if(!o||!('Notification' in window)||Notification.permission!=='granted')return;
   new Notification(o.notification_text||o.merchant_name||'New offer',{
-    body:`${o.merchant_name||'Cafe'} · ${o.item||'?'} · €${o.discount_price||'?'}`,
-    icon:'/icon-192.png',vibrate:[80,40,80],tag:'cw-'+o.id
-  });
+    body:`${o.merchant_name||''} · ${o.item||''} · €${o.discount_price||'?'}`,icon:'/icon-192.png',vibrate:[80,40,80],tag:'cw-'+o.id});
 }
 
 function renderCtx(){
   if(!offer)return;
-  const chips=[
-    {t:`${offer.temp||'--'}° ${offer.weather||''}`,hot:!!offer.temp},
-    {t:`${offer.distance_m||'?'}m away`,hot:true},
-    {t:`${offer.discount_pct||'?'}% AI-set`,hot:true},
-    {t:`${offer.arrivals?.length||0} went in`},
-  ];
-  document.getElementById('ctx').innerHTML=chips.map(c=>`<div class="chip ${c.hot?'hot':''}">${c.t}</div>`).join('');
+  document.getElementById('ctx').innerHTML=[
+    {t:`${offer.temp||'--'}° ${offer.weather||''}`,h:!!offer.temp},
+    {t:`${offer.distance_m||'?'}m`,h:true},{t:`${offer.discount_pct||'?'}% AI-set`,h:true},
+    {t:`${offer.arrivals?.length||0} redeemed`}
+  ].map(c=>`<div class="chip ${c.h?'hot':''}">${c.t}</div>`).join('');
 }
 
 function renderOffer(){
   if(!offer)return;
   const g=GRADS[Math.abs(hash(offer.merchant_name||''))%GRADS.length];
   document.getElementById('offerSection').innerHTML=`
-  <div class="ocard">
+  <div class="ocard" onclick="openRedeem()">
     <div class="oc-hero" style="background:${g}">
       <div class="oc-tag">AI-generated · just for you</div>
       <div class="oc-h">${offer.notification_text||offer.merchant_name||'Offer'}</div>
-      <div class="oc-s">${offer.merchant_name||''} · ${offer.distance_m||'?'}m · ${offer.walk_min||'?'} min walk</div>
+      <div class="oc-s">${offer.merchant_name||''} · ${offer.distance_m||'?'}m away</div>
     </div>
     <div class="oc-body">
       <div class="oc-row"><span class="oc-k">Item</span><span class="oc-v">${offer.item||'Special'}</span></div>
       <div class="oc-row"><span class="oc-k">Price</span><span><span class="oc-v strike">€${offer.original_price||'?'}</span><span class="oc-v primary">€${offer.discount_price||'?'}</span></span></div>
       <div class="oc-row"><span class="oc-k">You save</span><span class="oc-v green">€${offer.cashback||'?'}</span></div>
-      <div class="oc-row"><span class="oc-k">Distance</span><span class="oc-v">${offer.distance_m||'?'}m · ${offer.walk_min||'?'} min</span></div>
-      ${offer.arrivals?.length?`<div class="oc-row"><span class="oc-k">Already went in</span><span class="oc-v green">${offer.arrivals.length} people</span></div>`:''}
     </div>
     ${offer.reasoning?`<div class="oc-why">🧠 ${offer.reasoning}</div>`:''}
-    <div class="oc-cta"><button onclick="imHere()">I'm here — redeem €${offer.cashback||'?'} cashback</button></div>
-    <div class="arrived" id="arrivedMsg">
-      <div class="check">✅</div>
-      <div class="msg">You're in! €${offer.cashback||'?'} saved.</div>
-      <div class="detail">Show this screen to the barista. Enjoy your ${offer.item||'drink'}!</div>
-    </div>
-  </div>
-  ${offer.maps_url?`<a href="${offer.maps_url}" target="_blank" style="display:block;text-align:center;margin-top:10px;font-size:12px;color:var(--primary);font-weight:600;text-decoration:none">📍 Get walking directions</a>`:''}`;
+    <div class="oc-tap">Tap to open & redeem →</div>
+  </div>`;
 }
-
 function renderEmpty(){
-  document.getElementById('offerSection').innerHTML=`<div class="empty"><div class="icon">☀️</div><h2>Nothing right now</h2><p>When a cafe near you has empty seats, the AI will send you a deal. Keep walking — we'll buzz you.</p></div>`;
+  document.getElementById('offerSection').innerHTML=`<div class="empty"><div class="icon">☀️</div><h2>Nothing right now</h2><p>When a cafe near you is quiet, the AI will send you a deal.</p></div>`;
 }
 
-async function imHere(){
+// ═══ REDEEM SCREEN WITH SWIPE ═══
+let redeemDone=false;
+function openRedeem(){
   if(!offer)return;
-  const fid=offer.id||'';
+  redeemDone=false;
+  document.getElementById('rcName').textContent=offer.merchant_name||'Cafe';
+  document.getElementById('rcItem').textContent=offer.item||'Special';
+  document.getElementById('rcPrice').innerHTML=`<span style="text-decoration:line-through;color:var(--dim)">€${offer.original_price||'?'}</span> → <b>€${offer.discount_price||'?'}</b> <span style="color:var(--green)">(save €${offer.cashback||'?'})</span>`;
+  document.getElementById('redeemCard').style.display='block';
+  document.getElementById('redeemOk').classList.remove('show');
+  document.getElementById('swipeBox').className='swipe-container';
+  document.getElementById('swipeFill').style.width='0';
+  document.getElementById('swipeThumb').style.left='4px';
+  document.getElementById('swipeHint').style.display='block';
+  showScreen('redeem');
+  checkLocation();
+  initSwipe();
+}
+
+async function checkLocation(){
+  const el=document.getElementById('locStatus');const tx=document.getElementById('locText');
+  el.className='loc-status checking';tx.textContent='Checking your location...';
+  try{
+    const p=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{enableHighAccuracy:true,timeout:8000}));
+    lat=p.coords.latitude;lng=p.coords.longitude;
+    if(offer.merchant_lat&&offer.merchant_lng){
+      const d=hDist(lat,lng,offer.merchant_lat,offer.merchant_lng);
+      if(d<200){
+        el.className='loc-status near';tx.textContent=`You're ${Math.round(d)}m from ${offer.merchant_name} ✓`;
+        document.getElementById('swipeBox').classList.remove('disabled');
+      }else{
+        el.className='loc-status far';tx.textContent=`You're ${Math.round(d)}m away — walk closer to redeem`;
+        // Still allow swipe for demo purposes, but show warning
+        document.getElementById('swipeBox').classList.remove('disabled');
+      }
+    }else{
+      el.className='loc-status near';tx.textContent='Location verified ✓';
+    }
+  }catch(e){
+    el.className='loc-status near';tx.textContent='Location unavailable — swipe to redeem anyway';
+  }
+}
+
+// ═══ SWIPE GESTURE ═══
+function initSwipe(){
+  const box=document.getElementById('swipeBox');
+  const thumb=document.getElementById('swipeThumb');
+  const fill=document.getElementById('swipeFill');
+  const label=document.getElementById('swipeLabel');
+  let dragging=false,startX=0,thumbX=4;
+  const maxX=()=>box.offsetWidth-60;
+
+  function onStart(e){
+    if(redeemDone)return;
+    dragging=true;startX=(e.touches?e.touches[0]:e).clientX-thumbX;
+    thumb.style.transition='none';fill.style.transition='none';
+  }
+  function onMove(e){
+    if(!dragging)return;e.preventDefault();
+    const x=Math.max(4,Math.min((e.touches?e.touches[0]:e).clientX-startX,maxX()));
+    thumbX=x;thumb.style.left=x+'px';fill.style.width=(x+28)+'px';
+    const pct=x/maxX();
+    if(pct>0.5)label.textContent='Almost there...';
+    if(pct>0.85)label.textContent='Release to confirm!';
+  }
+  function onEnd(){
+    if(!dragging)return;dragging=false;
+    const pct=thumbX/maxX();
+    if(pct>0.85){
+      // SUCCESS
+      redeemDone=true;box.className='swipe-container done';
+      label.textContent='✓ Verified!';thumb.textContent='✅';
+      navigator.vibrate?.([50,30,80,30,50]);
+      setTimeout(completeRedeem,600);
+    }else{
+      // SNAP BACK
+      thumb.style.transition='left .3s';fill.style.transition='width .3s';
+      thumbX=4;thumb.style.left='4px';fill.style.width='0';
+      label.textContent='Swipe to verify you\'re here →';
+    }
+  }
+  thumb.addEventListener('touchstart',onStart,{passive:true});
+  thumb.addEventListener('mousedown',onStart);
+  document.addEventListener('touchmove',onMove,{passive:false});
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('touchend',onEnd);
+  document.addEventListener('mouseup',onEnd);
+}
+
+async function completeRedeem(){
+  if(!offer)return;
   await fetch(API+'/api/arrive',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({fill_id:fid,user_id:uid,user_name:'You'})}).catch(()=>{});
-  document.getElementById('arrivedMsg').classList.add('show');
-  document.querySelector('.oc-cta button').style.display='none';
-  navigator.vibrate?.([50,30,80]);
-  // Update savings
+    body:JSON.stringify({fill_id:offer.id||'',user_id:uid,user_name:'You'})}).catch(()=>{});
+  document.getElementById('redeemCard').style.display='none';
+  const ok=document.getElementById('redeemOk');ok.classList.add('show');
+  document.getElementById('rsMsg').textContent=`You saved €${offer.cashback||'?'}!`;
+  document.getElementById('rsDetail').textContent=`${offer.merchant_name} · ${offer.item} · €${offer.discount_price}`;
+  document.getElementById('rsShow').textContent=`Enjoy your ${offer.item||'drink'} ☕`;
+  localStorage.removeItem('cw_fill');
   loadSavings();
 }
 
-async function loadSavings(){
-  try{const r=await fetch(API+'/api/savings?user_id='+uid);const d=await r.json();
-    document.getElementById('savAmt').textContent='€'+d.total.toFixed(2)}catch(e){}}
-
+// ═══ FEED + SAVINGS ═══
+async function loadSavings(){try{const r=await fetch(API+'/api/savings?user_id='+uid);const d=await r.json();document.getElementById('savAmt').textContent='€'+d.total.toFixed(2)}catch(e){}}
 async function loadActivity(){
-  try{
-    const r=await fetch(API+'/api/activity');const d=await r.json();
-    const items=d.activity||[];
+  try{const r=await fetch(API+'/api/activity');const d=await r.json();const items=d.activity||[];
     if(!items.length){document.getElementById('feedSection').innerHTML='';return}
-    document.getElementById('feedSection').innerHTML=`
-      <div class="feed-title"><span>People using City Wallet nearby</span><span>${items.length} recent</span></div>
-      ${items.slice(0,8).map(a=>`
-        <div class="feed-item">
-          <div class="fi-avatar">${(a.user||'?')[0]}</div>
-          <div class="fi-body"><div class="fi-name">${a.user} went to ${a.cafe}</div><div class="fi-detail">${a.item} · ${a.ts}</div></div>
-          <div class="fi-saved">-€${(a.saved||0).toFixed(2)}</div>
-        </div>`).join('')}`;
-  }catch(e){}
-}
-
+    document.getElementById('feedSection').innerHTML=`<div class="feed-title"><span>Nearby activity</span><span>${items.length}</span></div>`+
+      items.slice(0,6).map(a=>`<div class="feed-item"><div class="fi-avatar">${(a.user||'?')[0]}</div><div class="fi-body"><div class="fi-name">${a.user} → ${a.cafe}</div><div class="fi-detail">${a.item} · ${a.ts}</div></div><div class="fi-saved">-€${(a.saved||0).toFixed(2)}</div></div>`).join('');
+  }catch(e){}}
 function hash(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i);return h}
 
 let toastOffer=null;
-function showToast(o){
-  toastOffer=o;document.getElementById('tD').textContent='☕';
-  document.getElementById('tH').textContent=o.notification_text||o.merchant_name||'New offer';
+function showToast(o){toastOffer=o;document.getElementById('tD').textContent='☕';
+  document.getElementById('tH').textContent=o.notification_text||o.merchant_name||'Offer';
   document.getElementById('tS').textContent=(o.distance_m||'?')+'m away';
-  document.getElementById('toast').classList.add('show');
-  navigator.vibrate?.([60,40,60]);
-  setTimeout(()=>document.getElementById('toast').classList.remove('show'),6000);
-}
-function onToast(){document.getElementById('toast').classList.remove('show');
-  document.getElementById('offerSection').scrollIntoView({behavior:'smooth'})}
+  document.getElementById('toast').classList.add('show');navigator.vibrate?.([60,40,60]);
+  setTimeout(()=>document.getElementById('toast').classList.remove('show'),6000)}
+function onToast(){document.getElementById('toast').classList.remove('show');openRedeem()}
 
 loadSavings();
 </script>
