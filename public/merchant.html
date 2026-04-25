@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0a0a">
+<title>Merchant Console — City Wallet</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--card:#141414;--ink:#f5f5f5;--dim:rgba(255,255,255,.45);
+  --accent:#ff6b35;--green:#00c853;--rule:rgba(255,255,255,.08)}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);
+  min-height:100vh;-webkit-font-smoothing:antialiased}
+
+.header{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid var(--rule)}
+.header .brand{font-size:14px;font-weight:700}.header .brand em{color:var(--accent);font-style:normal}
+.header select{background:var(--card);color:var(--ink);border:1px solid var(--rule);
+  border-radius:8px;padding:8px 12px;font-size:13px}
+
+.container{max-width:640px;margin:0 auto;padding:20px}
+.tabs{display:flex;gap:0;border:1px solid var(--rule);border-radius:12px;overflow:hidden;margin-bottom:20px}
+.tab{flex:1;padding:12px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;
+  background:var(--card);border-right:1px solid var(--rule);transition:all .2s}
+.tab:last-child{border-right:none}
+.tab.active{background:var(--accent);color:#fff}
+.panel{display:none}.panel.active{display:block}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:18px}
+.stat .label{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.stat .value{font-size:28px;font-weight:800}
+.stat .value.orange{color:var(--accent)}.stat .value.green{color:var(--green)}
+
+/* Rules */
+.form-section{margin-bottom:20px}
+.form-section h3{font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;
+  margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--rule)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:var(--dim);margin-bottom:4px;font-weight:600}
+.field input,.field select,.field textarea{width:100%;padding:12px;background:var(--card);
+  color:var(--ink);border:1px solid var(--rule);border-radius:10px;font-size:14px}
+.field textarea{resize:vertical;min-height:60px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{padding:14px;border-radius:12px;font-size:15px;font-weight:700;border:none;cursor:pointer;width:100%}
+.btn-save{background:var(--accent);color:#fff;margin-top:8px}
+.btn-green{background:var(--green);color:#fff}
+.msg{padding:12px;border-radius:8px;margin-top:12px;font-size:14px;font-weight:600;display:none}
+.msg.ok{display:block;background:rgba(0,200,83,.15);color:var(--green)}
+
+/* Redeem */
+.redeem-input{font-family:monospace;font-size:24px;font-weight:800;text-align:center;
+  letter-spacing:.08em;text-transform:uppercase}
+.quick-btn{width:100%;padding:14px;margin-top:12px;background:rgba(255,255,255,.06);
+  border:1px solid var(--rule);border-radius:12px;font-size:14px;font-weight:600;
+  color:var(--ink);cursor:pointer;text-align:left;display:flex;justify-content:space-between}
+.quick-btn:active{background:rgba(255,107,53,.1)}
+
+/* Activity */
+.activity{max-height:300px;overflow-y:auto}
+.act-item{padding:12px;background:var(--card);border:1px solid var(--rule);border-radius:8px;
+  margin-bottom:6px;display:flex;justify-content:space-between;font-size:13px}
+.act-item .time{font-family:monospace;color:var(--dim);font-size:11px}
+
+/* Payone sim */
+.payone-bar{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:16px;margin-bottom:16px}
+.payone-bar h4{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.payone-meter{height:8px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;margin-bottom:4px}
+.payone-meter .fill{height:100%;border-radius:99px;transition:width .5s}
+.payone-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand"><em>City</em> Wallet · Merchant</div>
+  <select id="merchantSelect" onchange="switchMerchant(this.value)"></select>
+</div>
+
+<div class="container">
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('stats')">Dashboard</div>
+    <div class="tab" onclick="showTab('rules')">Rules</div>
+    <div class="tab" onclick="showTab('redeem')">Redeem</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="panel active" id="panel-stats">
+    <div class="payone-bar">
+      <h4>Payone Transaction Density</h4>
+      <div class="payone-meter"><div class="fill" id="payoneFill" style="width:25%;background:var(--accent)"></div></div>
+      <div class="payone-meta">
+        <span>Current: <strong id="payoneCurrent">3</strong> tx/hr</span>
+        <span>Average: <strong id="payoneAvg">12</strong> tx/hr</span>
+        <span>Status: <strong id="payoneStatus" style="color:var(--accent)">LOW</strong></span>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat"><div class="label">Walk-ins</div><div class="value green" id="sWalkins">0</div></div>
+      <div class="stat"><div class="label">Revenue</div><div class="value orange" id="sRevenue">€0.00</div></div>
+      <div class="stat"><div class="label">Offers generated</div><div class="value" id="sOffers">0</div></div>
+      <div class="stat"><div class="label">Total opt-ins</div><div class="value" id="sOptins">0</div></div>
+    </div>
+    <h3 style="font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Recent Activity</h3>
+    <div class="activity" id="activityFeed"><div class="act-item" style="color:var(--dim)">No activity yet</div></div>
+  </div>
+
+  <!-- RULES (Merchant rule interface — required by challenge) -->
+  <div class="panel" id="panel-rules">
+    <div class="form-section">
+      <h3>Offer Generation Rules</h3>
+      <p style="font-size:13px;color:var(--dim);margin-bottom:16px">
+        Set your rules and goals. The AI generates the actual offers automatically — content, discount, visual design, and timing.
+      </p>
+      <div class="row">
+        <div class="field">
+          <label>Max discount (%)</label>
+          <input id="rMaxPct" type="number" value="20" min="5" max="50">
+        </div>
+        <div class="field">
+          <label>Max discount (EUR)</label>
+          <input id="rMaxEur" type="number" step="0.50" value="3.00" min="0.50">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Quiet hours start</label>
+          <input id="rQStart" type="time" value="14:00">
+        </div>
+        <div class="field">
+          <label>Quiet hours end</label>
+          <input id="rQEnd" type="time" value="16:00">
+        </div>
+      </div>
+      <div class="field">
+        <label>Goal</label>
+        <select id="rGoal">
+          <option value="fill_quiet_hours">Fill quiet hours</option>
+          <option value="reduce_waste">Reduce food waste</option>
+          <option value="boost_afternoon">Boost afternoon traffic</option>
+          <option value="new_customers">Attract new customers</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tone</label>
+        <select id="rTone">
+          <option value="warm">Warm & inviting</option>
+          <option value="playful">Playful & fun</option>
+          <option value="friendly">Friendly & casual</option>
+          <option value="factual">Factual & direct</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Auto-generate offers?</label>
+        <select id="rAuto">
+          <option value="true">Yes — AI creates offers from my rules</option>
+          <option value="false">No — I'll create offers manually</option>
+        </select>
+      </div>
+      <button class="btn btn-save" onclick="saveRules()">Save Rules</button>
+      <div class="msg" id="rulesMsg"></div>
+    </div>
+  </div>
+
+  <!-- REDEEM -->
+  <div class="panel" id="panel-redeem">
+    <div style="text-align:center;margin-bottom:20px">
+      <h2 style="font-size:18px;margin-bottom:6px">Scan or type the code</h2>
+      <p style="font-size:13px;color:var(--dim)">Customer shows a QR code on their phone. Type the code below.</p>
+    </div>
+    <div class="field">
+      <input class="redeem-input" id="redeemCode" placeholder="XXXXX-XXXXXXXX"
+             oninput="this.value=this.value.toUpperCase()">
+    </div>
+    <button class="btn btn-green" onclick="redeemCode()">Redeem</button>
+    <button class="quick-btn" onclick="quickRedeem()">
+      <span>Quick redeem (demo)</span><span style="color:var(--accent)">TAP</span>
+    </button>
+    <div class="msg" id="redeemMsg"></div>
+  </div>
+</div>
+
+<script>
+const API=window.location.origin;
+let currentMid='';
+let activities=[];
+
+async function loadMerchants(){
+  const resp=await fetch(API+'/api/merchants');
+  const merchants=await resp.json();
+  const sel=document.getElementById('merchantSelect');
+  sel.innerHTML=merchants.map(m=>`<option value="${m.id}">${m.name}</option>`).join('');
+  if(merchants.length>0){sel.value=merchants[0].id;switchMerchant(merchants[0].id);}
+}
+
+function switchMerchant(id){
+  currentMid=id;
+  updateDashboard();
+}
+
+async function updateDashboard(){
+  const resp=await fetch(API+'/api/ledger');
+  const data=await resp.json();
+  const m=data.merchants.find(x=>x.id===currentMid);
+  if(m){
+    document.getElementById('sWalkins').textContent=m.walk_ins;
+    document.getElementById('sRevenue').textContent='€'+m.revenue.toFixed(2);
+    // Payone
+    const ratio=m.payone.current_tx/Math.max(m.payone.avg_hourly_tx,1);
+    document.getElementById('payoneFill').style.width=Math.round(ratio*100)+'%';
+    document.getElementById('payoneFill').style.background=ratio<.4?'var(--accent)':ratio<.8?'var(--accent2)':'var(--green)';
+    document.getElementById('payoneCurrent').textContent=m.payone.current_tx;
+    document.getElementById('payoneAvg').textContent=m.payone.avg_hourly_tx;
+    document.getElementById('payoneStatus').textContent=ratio<.4?'LOW':ratio<.8?'NORMAL':'HIGH';
+    // Rules
+    if(m.rules){
+      document.getElementById('rMaxPct').value=m.rules.max_discount_pct||20;
+      document.getElementById('rMaxEur').value=m.rules.max_discount_eur||3;
+      document.getElementById('rGoal').value=m.rules.goal||'fill_quiet_hours';
+      document.getElementById('rTone').value=m.rules.tone||'warm';
+      if(m.rules.quiet_hours&&m.rules.quiet_hours[0]){
+        document.getElementById('rQStart').value=m.rules.quiet_hours[0].start;
+        document.getElementById('rQEnd').value=m.rules.quiet_hours[0].end;
+      }
+    }
+  }
+  document.getElementById('sOffers').textContent=data.generated_offers_count;
+  document.getElementById('sOptins').textContent=data.total_optins;
+}
+
+function showTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+}
+
+async function saveRules(){
+  const rules={
+    max_discount_pct:parseInt(document.getElementById('rMaxPct').value),
+    max_discount_eur:parseFloat(document.getElementById('rMaxEur').value),
+    quiet_hours:[{start:document.getElementById('rQStart').value,end:document.getElementById('rQEnd').value}],
+    goal:document.getElementById('rGoal').value,
+    tone:document.getElementById('rTone').value,
+    auto_generate:document.getElementById('rAuto').value==='true'
+  };
+  await fetch(API+'/api/merchants/rules',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({merchant_id:currentMid,rules})});
+  const msg=document.getElementById('rulesMsg');
+  msg.className='msg ok';msg.textContent='Rules saved. AI will generate offers based on these rules.';
+  msg.style.display='block';
+}
+
+async function redeemCode(){
+  const code=document.getElementById('redeemCode').value.trim();
+  if(!code||!currentMid)return;
+  const resp=await fetch(API+'/api/redeem',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({merchant_id:currentMid,code})});
+  const r=await resp.json();
+  const msg=document.getElementById('redeemMsg');
+  msg.className='msg ok';msg.textContent=`Redeemed! ${r.merchant_name} · €${r.value.toFixed(2)} · ${r.ts_human}`;
+  msg.style.display='block';
+  document.getElementById('redeemCode').value='';
+  addActivity('Redeemed: '+code,r.ts_human);
+  updateDashboard();
+}
+
+async function quickRedeem(){
+  if(!currentMid)return;
+  const code='DEMO-'+Math.random().toString(36).slice(2,6).toUpperCase();
+  const resp=await fetch(API+'/api/redeem',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({merchant_id:currentMid,code})});
+  const r=await resp.json();
+  const msg=document.getElementById('redeemMsg');
+  msg.className='msg ok';msg.textContent=`Quick redeemed! ${r.merchant_name} · €${r.value.toFixed(2)}`;
+  msg.style.display='block';
+  addActivity('Walk-in: '+code,r.ts_human);
+  updateDashboard();
+}
+
+function addActivity(text,time){
+  activities.unshift({text,time});
+  if(activities.length>20)activities.pop();
+  document.getElementById('activityFeed').innerHTML=activities.map(a=>
+    `<div class="act-item"><span>${a.text}</span><span class="time">${a.time}</span></div>`).join('');
+}
+
+loadMerchants();
+setInterval(updateDashboard,10000);
+</script>
+</body>
+</html>
