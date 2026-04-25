@@ -137,32 +137,73 @@ def get_context():
 
 
 def fetch_weather(lat, lng):
-    """Fetch real weather from Open-Meteo (free, no API key)."""
+    """Fetch rich weather from Open-Meteo: current + UV + air quality + sunrise/sunset."""
     try:
         import requests
+        # Main weather
         url = (
             f"https://api.open-meteo.com/v1/forecast"
             f"?latitude={lat}&longitude={lng}"
-            f"&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,apparent_temperature"
-            f"&timezone=auto"
+            f"&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,"
+            f"apparent_temperature,is_day,cloud_cover,precipitation"
+            f"&daily=sunrise,sunset,uv_index_max"
+            f"&timezone=auto&forecast_days=1"
         )
         resp = requests.get(url, timeout=5)
         data = resp.json()
         current = data.get("current", {})
+        daily = data.get("daily", {})
         temp = current.get("temperature_2m", 15)
+        feels = current.get("apparent_temperature", temp)
         code = current.get("weather_code", 0)
+        precip = current.get("precipitation", 0)
+
+        # Air quality (separate endpoint)
+        aqi_data = {}
+        try:
+            aqi_url = (
+                f"https://air-quality-api.open-meteo.com/v1/air-quality"
+                f"?latitude={lat}&longitude={lng}"
+                f"&current=european_aqi,pm2_5,pm10"
+            )
+            aqi_resp = requests.get(aqi_url, timeout=3)
+            aqi_raw = aqi_resp.json().get("current", {})
+            aqi_val = aqi_raw.get("european_aqi", 0)
+            aqi_data = {
+                "european_aqi": aqi_val,
+                "pm2_5": aqi_raw.get("pm2_5", 0),
+                "pm10": aqi_raw.get("pm10", 0),
+                "aqi_label": "Good" if aqi_val < 20 else "Fair" if aqi_val < 40 else "Moderate" if aqi_val < 60 else "Poor",
+            }
+        except Exception:
+            aqi_data = {"european_aqi": 15, "aqi_label": "Good"}
+
+        sunrise = daily.get("sunrise", [""])[0] if daily.get("sunrise") else ""
+        sunset = daily.get("sunset", [""])[0] if daily.get("sunset") else ""
+        uv_max = daily.get("uv_index_max", [0])[0] if daily.get("uv_index_max") else 0
 
         return {
             "temperature_c": temp,
-            "apparent_temp_c": current.get("apparent_temperature", temp),
+            "apparent_temp_c": feels,
             "humidity_pct": current.get("relative_humidity_2m", 50),
             "wind_kmh": current.get("wind_speed_10m", 10),
+            "cloud_cover_pct": current.get("cloud_cover", 50),
+            "precipitation_mm": precip,
+            "is_day": current.get("is_day", 1) == 1,
             "weather_code": code,
             "description": weather_code_to_text(code),
             "is_cold": temp < 12,
             "is_hot": temp > 28,
-            "is_rainy": code in [51, 53, 55, 61, 63, 65, 71, 73, 75, 80, 81, 82, 95, 96, 99],
+            "is_mild": 12 <= temp <= 22,
+            "is_rainy": code in [51, 53, 55, 61, 63, 65, 71, 73, 75, 80, 81, 82, 95, 96, 99] or precip > 0,
             "is_sunny": code in [0, 1],
+            "is_cloudy": code in [2, 3],
+            "feels_like_label": f"Feels like {feels}°" if abs(feels - temp) > 2 else "",
+            "uv_index": uv_max,
+            "uv_label": "Low" if uv_max < 3 else "Moderate" if uv_max < 6 else "High" if uv_max < 8 else "Very high",
+            "sunrise": sunrise.split("T")[1] if "T" in sunrise else "",
+            "sunset": sunset.split("T")[1] if "T" in sunset else "",
+            "air_quality": aqi_data,
             "source": "open-meteo"
         }
     except Exception as e:
@@ -170,8 +211,10 @@ def fetch_weather(lat, lng):
             "temperature_c": 11, "apparent_temp_c": 9,
             "humidity_pct": 65, "wind_kmh": 12,
             "weather_code": 3, "description": "Overcast",
-            "is_cold": True, "is_hot": False,
-            "is_rainy": False, "is_sunny": False,
+            "is_cold": True, "is_hot": False, "is_mild": False,
+            "is_rainy": False, "is_sunny": False, "is_cloudy": True,
+            "uv_index": 2, "uv_label": "Low",
+            "air_quality": {"european_aqi": 15, "aqi_label": "Good"},
             "source": "fallback", "error": str(e)
         }
 
@@ -320,6 +363,13 @@ def generate_single_offer(merchant, context, user_signals):
     else:
         expiry_minutes = 60
 
+    # ── Distance from user ────────────────────────────────
+    user_lat = user_signals.get("lat", 48.1351)
+    user_lng = user_signals.get("lng", 11.582)
+    dist_km = _haversine(user_lat, user_lng, merchant["lat"], merchant["lng"])
+    dist_m = int(dist_km * 1000)
+    walk_min = max(1, int(dist_m / 80))  # ~80m/min walking
+
     return {
         "id": offer_id,
         "code": code,
@@ -329,6 +379,10 @@ def generate_single_offer(merchant, context, user_signals):
         "merchant_lat": merchant["lat"],
         "merchant_lng": merchant["lng"],
         "merchant_category": merchant.get("category", "shop"),
+        "distance_m": dist_m,
+        "walk_min": walk_min,
+        "distance_label": f"{dist_m}m" if dist_m < 1000 else f"{dist_km:.1f}km",
+        "maps_url": f"https://www.google.com/maps/dir/?api=1&destination={merchant['lat']},{merchant['lng']}&travelmode=walking",
         # Generative content
         "headline": copy["headline"],
         "subline": copy["subline"],
@@ -473,6 +527,13 @@ def generate_visuals(merchant, weather, time_ctx):
 
     return {"gradient": gradient, "accent": accent, "icon": icon, "mood": mood}
 
+
+def _haversine(lat1, lng1, lat2, lng2):
+    R = 6371
+    dlat = math.radians(lat2 - lat1)
+    dlng = math.radians(lng2 - lng1)
+    a = math.sin(dlat/2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlng/2)**2
+    return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
 def _in_quiet_hours(merchant, time_ctx):
     hour = time_ctx.get("hour", 12)

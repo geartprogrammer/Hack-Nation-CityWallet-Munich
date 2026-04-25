@@ -12,37 +12,29 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{
-  --bg:#070707;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;
-  --ink:#fff;--ink2:#ccc;--dim:#666;--dim2:#333;
+:root{--bg:#070707;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;--ink:#fff;--ink2:#ccc;--dim:#666;--dim2:#333;
   --accent:#ff5722;--accent-g:linear-gradient(135deg,#ff5722,#ff9800);
   --blue:#2196f3;--blue-g:linear-gradient(135deg,#2196f3,#00bcd4);
   --purple:#9c27b0;--purple-g:linear-gradient(135deg,#9c27b0,#e91e63);
   --green:#4caf50;--green-g:linear-gradient(135deg,#4caf50,#8bc34a);
-  --r:20px;--r2:14px;
-  --safe-b:env(safe-area-inset-bottom,0px);
-}
+  --r:20px;--r2:14px;--safe-b:env(safe-area-inset-bottom,0px)}
 html,body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);
-  min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased;overflow-x:hidden;
-  overscroll-behavior-y:contain}
-
+  min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased;overflow-x:hidden;overscroll-behavior-y:contain}
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes glow{0%,100%{box-shadow:0 0 20px rgba(255,87,34,.2)}50%{box-shadow:0 0 40px rgba(255,87,34,.4)}}
-
-.screen{display:none;min-height:100vh;min-height:100dvh;flex-direction:column;position:relative}
-.screen.active{display:flex}
+@keyframes countup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.screen{display:none;min-height:100vh;min-height:100dvh;flex-direction:column}.screen.active{display:flex}
+.btn{padding:16px 32px;border-radius:var(--r2);font-size:16px;font-weight:700;border:none;cursor:pointer;transition:all .15s;width:100%}
+.btn:active{transform:scale(.97)}
+.btn-accent{background:var(--accent-g);color:#fff;box-shadow:0 4px 20px rgba(255,87,34,.3)}
+.btn-ghost{background:transparent;color:var(--dim);margin-top:8px}
 
 /* ═══ SPLASH ═══ */
-#splash{justify-content:center;align-items:center;
-  background:radial-gradient(ellipse at 50% 40%,#1a0a00 0%,#070707 70%)}
-.logo-ring{width:100px;height:100px;border-radius:50%;background:var(--accent-g);
-  display:flex;align-items:center;justify-content:center;animation:glow 2s ease infinite;margin-bottom:40px}
-.logo-inner{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#1a1a1a,#070707);
-  display:flex;align-items:center;justify-content:center}
+#splash{justify-content:center;align-items:center;background:radial-gradient(ellipse at 50% 40%,#1a0a00 0%,#070707 70%)}
+.logo-ring{width:100px;height:100px;border-radius:50%;background:var(--accent-g);display:flex;align-items:center;justify-content:center;animation:glow 2s ease infinite;margin-bottom:40px}
+.logo-inner{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#1a1a1a,#070707);display:flex;align-items:center;justify-content:center}
 .logo-inner span{background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:32px;font-weight:900}
 #splash h1{font-size:28px;font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
 #splash h1 em{font-style:normal;background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -50,8 +42,7 @@ html,body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:va
 .loader{width:48px;height:48px;border:3px solid var(--dim2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 
 /* ═══ PERMISSIONS ═══ */
-#perms{padding:0 24px;justify-content:center;align-items:center;text-align:center;
-  background:radial-gradient(ellipse at 50% 30%,#0d0d1a 0%,#070707 70%)}
+#perms{padding:0 24px;justify-content:center;align-items:center;text-align:center;background:radial-gradient(ellipse at 50% 30%,#0d0d1a 0%,#070707 70%)}
 .perm-card{width:100%;max-width:380px;animation:fadeUp .6s ease both}
 .perm-icon{font-size:64px;margin-bottom:20px}
 .perm-card h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
@@ -62,75 +53,94 @@ html,body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:va
 .perm-feat .text{font-size:13px;line-height:1.4}
 .perm-feat .text strong{color:var(--ink);display:block;font-size:14px;margin-bottom:2px}
 .perm-feat .text span{color:var(--dim)}
-.btn{padding:16px 32px;border-radius:var(--r2);font-size:16px;font-weight:700;border:none;cursor:pointer;transition:all .15s;width:100%}
-.btn:active{transform:scale(.97)}
-.btn-accent{background:var(--accent-g);color:#fff;box-shadow:0 4px 20px rgba(255,87,34,.3)}
-.btn-ghost{background:transparent;color:var(--dim);margin-top:8px}
 
 /* ═══ WALLET ═══ */
 #wallet{background:var(--bg);padding-bottom:calc(72px + var(--safe-b))}
-.app-header{padding:16px 20px 12px;display:flex;justify-content:space-between;align-items:center;
-  position:sticky;top:0;z-index:50;background:rgba(7,7,7,.85);backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.04)}
+.app-header{padding:14px 20px 10px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50;background:rgba(7,7,7,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.04)}
 .ah-brand{display:flex;align-items:center;gap:10px}
 .ah-logo{width:32px;height:32px;border-radius:10px;background:var(--accent-g);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#fff}
-.ah-name{font-size:16px;font-weight:700}
-.ah-name em{font-style:normal;color:var(--accent)}
-.ah-right{display:flex;align-items:center;gap:12px}
+.ah-name{font-size:16px;font-weight:700}.ah-name em{font-style:normal;color:var(--accent)}
+.ah-right{display:flex;align-items:center;gap:10px}
 .ah-pill{font-size:10px;padding:5px 10px;border-radius:99px;font-weight:700;letter-spacing:.04em;display:flex;align-items:center;gap:5px}
 .ah-pill.live{background:rgba(76,175,80,.15);color:var(--green)}
 .ah-pill .dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite}
-.notif-btn{width:36px;height:36px;border-radius:50%;background:var(--bg3);border:1px solid var(--dim2);
-  display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;position:relative}
-.notif-btn .badge{position:absolute;top:-2px;right:-2px;min-width:14px;height:14px;border-radius:50%;
-  background:var(--accent);font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center;
-  color:#fff;border:2px solid var(--bg)}
+.notif-btn{width:36px;height:36px;border-radius:50%;background:var(--bg3);border:1px solid var(--dim2);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;position:relative}
+.notif-btn .badge{position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;border-radius:50%;background:var(--accent);font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#fff;border:2px solid var(--bg)}
 
-.ctx-section{padding:16px 20px 8px}
-.ctx-label{font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
-.ctx-chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
-.ctx-chips::-webkit-scrollbar{display:none}
-.chip{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:12px;
-  font-size:12px;font-weight:600;background:var(--bg3);border:1px solid var(--dim2);color:var(--ink2)}
+/* Context bar */
+.ctx-section{padding:14px 20px 6px}
+.ctx-label{font-size:10px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px}
+.ctx-chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}.ctx-chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:10px;font-size:11px;font-weight:600;background:var(--bg3);border:1px solid var(--dim2);color:var(--ink2)}
 .chip.hot{background:rgba(255,87,34,.1);border-color:rgba(255,87,34,.2);color:var(--accent)}
-.chip .ci{font-size:15px}
+.chip.blue{background:rgba(33,150,243,.1);border-color:rgba(33,150,243,.2);color:var(--blue)}
+.chip.green{background:rgba(76,175,80,.1);border-color:rgba(76,175,80,.2);color:var(--green)}
+.chip .ci{font-size:14px}
 
-.sec-head{padding:20px 20px 12px;display:flex;justify-content:space-between;align-items:center}
-.sec-head h2{font-size:18px;font-weight:800;letter-spacing:-.01em}
-.sec-head .count{font-size:12px;color:var(--dim);font-weight:600}
+.sec-head{padding:18px 20px 10px;display:flex;justify-content:space-between;align-items:center}
+.sec-head h2{font-size:17px;font-weight:800;letter-spacing:-.01em}
+.sec-head .count{font-size:11px;color:var(--dim);font-weight:600}
 
-/* ═══ OFFER CARDS ═══ */
-.offers{padding:0 20px;display:flex;flex-direction:column;gap:16px;padding-bottom:20px}
-.card{border-radius:var(--r);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4);
-  animation:fadeUp .5s ease both;transition:transform .2s}
-.card:nth-child(1){animation-delay:.1s}.card:nth-child(2){animation-delay:.2s}.card:nth-child(3){animation-delay:.3s}
-.card-hero{position:relative;padding:28px 24px 22px;min-height:200px;display:flex;flex-direction:column;justify-content:flex-end}
-.card-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 20%,rgba(0,0,0,.75) 100%)}
-.card-badges{position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;z-index:2}
-.card-badge{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;
-  border-radius:8px;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);color:#fff;display:flex;align-items:center;gap:5px}
+/* ═══ CARDS ═══ */
+.offers{padding:0 16px;display:flex;flex-direction:column;gap:14px;padding-bottom:20px}
+.card{border-radius:var(--r);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4);animation:fadeUp .5s ease both;transition:transform .2s}
+.card:nth-child(1){animation-delay:.05s}.card:nth-child(2){animation-delay:.15s}.card:nth-child(3){animation-delay:.25s}
+.card-hero{position:relative;padding:24px 22px 20px;min-height:190px;display:flex;flex-direction:column;justify-content:flex-end}
+.card-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.8) 100%)}
+.card-badges{position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;z-index:2}
+.card-badge{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:8px;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);color:#fff;display:flex;align-items:center;gap:5px}
 .card-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite}
-.card-timer{color:var(--accent);background:rgba(0,0,0,.55);backdrop-filter:blur(10px);padding:5px 10px;
-  border-radius:8px;font-size:10px;font-weight:700}
-.card-emoji{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:80px;opacity:.12;z-index:0}
+.card-timer{color:#ffd23f;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);padding:4px 10px;border-radius:8px;font-size:9px;font-weight:700}
+.card-emoji{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:72px;opacity:.1;z-index:0}
 .card-content{position:relative;z-index:2}
-.card-discount{display:inline-block;font-size:13px;font-weight:800;padding:4px 12px;border-radius:8px;margin-bottom:10px;color:#fff}
-.card-h{font-size:22px;font-weight:800;line-height:1.15;letter-spacing:-.02em;margin-bottom:6px;text-shadow:0 2px 8px rgba(0,0,0,.4)}
-.card-sub{font-size:13px;color:rgba(255,255,255,.7);line-height:1.4;text-shadow:0 1px 4px rgba(0,0,0,.4)}
-.card-info{background:var(--bg2);padding:14px 24px;display:flex;border-top:1px solid rgba(255,255,255,.04)}
-.card-info-item{flex:1;display:flex;flex-direction:column;gap:2px}
-.card-info-item .l{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
-.card-info-item .v{font-size:13px;font-weight:700}
-.card-actions{background:var(--bg2);padding:14px 20px;display:flex;gap:10px;border-top:1px solid rgba(255,255,255,.04)}
-.card-actions .btn{flex:1;padding:14px;border-radius:14px;font-size:15px;font-weight:700}
-.btn-grab{color:#fff;box-shadow:0 4px 16px rgba(255,87,34,.25)}
+.card-discount{display:inline-block;font-size:12px;font-weight:800;padding:4px 10px;border-radius:8px;margin-bottom:8px;color:#fff}
+.card-h{font-size:20px;font-weight:800;line-height:1.15;letter-spacing:-.02em;margin-bottom:5px;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.card-sub{font-size:12px;color:rgba(255,255,255,.7);line-height:1.4;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+
+.card-meta{background:var(--bg2);padding:12px 22px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;border-top:1px solid rgba(255,255,255,.04)}
+.cm-item{display:flex;flex-direction:column;gap:1px}
+.cm-item .l{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.cm-item .v{font-size:12px;font-weight:700}
+.cm-item .v.accent{color:var(--accent)}.cm-item .v.blue{color:var(--blue)}.cm-item .v.green{color:var(--green)}
+
+.card-actions{background:var(--bg2);padding:10px 16px;display:flex;gap:8px;border-top:1px solid rgba(255,255,255,.04)}
+.card-actions .btn{flex:1;padding:13px;border-radius:14px;font-size:14px;font-weight:700}
+.btn-grab{color:#fff;box-shadow:0 3px 12px rgba(255,87,34,.2)}
 .btn-nah{background:var(--bg3);color:var(--dim);border:1px solid var(--dim2)!important}
 
+/* ═══ DEAL DETAIL ═══ */
+#deal{background:var(--bg);padding-bottom:calc(72px + var(--safe-b))}
+.deal-hero{position:relative;min-height:240px;display:flex;flex-direction:column;justify-content:flex-end;padding:24px 22px}
+.deal-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.85) 100%)}
+.deal-back{position:absolute;top:16px;left:16px;z-index:3;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;border:none;color:#fff}
+.deal-emoji{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);font-size:100px;opacity:.12;z-index:0}
+.deal-content{position:relative;z-index:2}
+.deal-discount{display:inline-block;font-size:14px;font-weight:800;padding:6px 14px;border-radius:10px;margin-bottom:10px;color:#fff}
+.deal-h{font-size:26px;font-weight:900;line-height:1.1;letter-spacing:-.03em;margin-bottom:6px}
+.deal-sub{font-size:14px;color:rgba(255,255,255,.7);line-height:1.5}
+
+.deal-body{padding:20px}
+.deal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.ds{background:var(--bg3);border:1px solid var(--dim2);border-radius:14px;padding:14px;text-align:center}
+.ds .icon{font-size:22px;margin-bottom:4px}
+.ds .val{font-size:16px;font-weight:800}
+.ds .lab{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+
+.deal-section{margin-bottom:16px}
+.deal-section h3{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:10px}
+.deal-signals{display:flex;flex-wrap:wrap;gap:6px}
+.signal-tag{font-size:11px;padding:6px 12px;border-radius:10px;background:var(--bg3);border:1px solid var(--dim2);color:var(--ink2);font-weight:600}
+
+.deal-map{width:100%;height:160px;border-radius:14px;overflow:hidden;border:1px solid var(--dim2);margin-bottom:16px;background:var(--bg3);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.deal-map img{width:100%;height:100%;object-fit:cover}
+.deal-map .placeholder{text-align:center;color:var(--dim);font-size:13px}
+
+.deal-cta{padding:0 20px 20px}
+.deal-cta .btn{padding:16px;border-radius:16px;font-size:16px}
+
 /* ═══ QR PASS ═══ */
-#qrpass{background:var(--bg);justify-content:center;align-items:center;padding:24px;
-  padding-bottom:calc(72px + var(--safe-b))}
-.qr-card{width:100%;max-width:360px;border-radius:24px;overflow:hidden;
-  box-shadow:0 16px 64px rgba(0,0,0,.6);animation:fadeUp .4s ease both}
+#qrpass{background:var(--bg);justify-content:center;align-items:center;padding:24px;padding-bottom:calc(72px + var(--safe-b))}
+.qr-card{width:100%;max-width:360px;border-radius:24px;overflow:hidden;box-shadow:0 16px 64px rgba(0,0,0,.6);animation:fadeUp .4s ease both}
 .qr-top{padding:28px 24px 20px;text-align:center;color:#fff}
 .qr-top .qtag{font-size:11px;text-transform:uppercase;letter-spacing:.14em;opacity:.6}
 .qr-top .amount{font-size:36px;font-weight:900;margin-top:4px}
@@ -142,40 +152,26 @@ html,body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:va
 .qr-hint{font-size:13px;color:#888}
 .qr-footer{padding:16px 24px;text-align:center;font-size:14px;font-weight:700}
 .qr-footer.ready{background:#fff3e0;color:#ff5722}
-.qr-footer.done{background:#e8f5e9;color:#4caf50}
 
 /* ═══ NAV ═══ */
-.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;
-  background:rgba(17,17,17,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-top:1px solid rgba(255,255,255,.06);padding:8px 16px;
-  padding-bottom:calc(8px + var(--safe-b));display:flex;justify-content:space-around}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;
-  font-size:10px;color:var(--dim);font-weight:600;padding:6px 12px;border-radius:12px;cursor:pointer}
-.nav-item .ni{font-size:22px;line-height:1}
-.nav-item.active{color:var(--accent)}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(17,17,17,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.06);padding:8px 16px;padding-bottom:calc(8px + var(--safe-b));display:flex;justify-content:space-around}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;font-size:10px;color:var(--dim);font-weight:600;padding:6px 12px;border-radius:12px;cursor:pointer}
+.nav-item .ni{font-size:22px;line-height:1}.nav-item.active{color:var(--accent)}
 
 /* ═══ TOAST ═══ */
-.toast{position:fixed;top:0;left:0;right:0;z-index:200;padding:12px 16px;
-  padding-top:calc(12px + env(safe-area-inset-top,0px));
-  background:rgba(17,17,17,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;
-  transform:translateY(-100%);transition:transform .3s ease;cursor:pointer}
+.toast{position:fixed;top:0;left:0;right:0;z-index:200;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top,0px));background:rgba(17,17,17,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;transform:translateY(-100%);transition:transform .3s ease;cursor:pointer}
 .toast.show{transform:translateY(0)}
-.toast .t-icon{font-size:32px;flex-shrink:0}
-.toast .t-body{flex:1}
-.toast .t-title{font-size:13px;font-weight:700;margin-bottom:2px}
-.toast .t-msg{font-size:12px;color:var(--dim);line-height:1.3}
-.toast .t-time{font-size:10px;color:var(--dim)}
+.toast .t-icon{font-size:36px;flex-shrink:0}
+.toast .t-body{flex:1}.toast .t-title{font-size:14px;font-weight:700;margin-bottom:2px}.toast .t-msg{font-size:12px;color:var(--dim);line-height:1.3}
+.toast .t-action{font-size:11px;font-weight:700;color:var(--accent);flex-shrink:0}
 
 .loading-wrap{padding:60px 20px;text-align:center}
-.loading-wrap .spinner{width:40px;height:40px;border:3px solid var(--dim2);border-top-color:var(--accent);
-  border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+.loading-wrap .spinner{width:40px;height:40px;border:3px solid var(--dim2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
 .loading-wrap p{font-size:14px;color:var(--dim)}
-@media(min-width:600px){.offers,.ctx-section,.sec-head{max-width:480px;margin-left:auto;margin-right:auto}}
+@media(min-width:600px){.offers,.ctx-section,.sec-head,.deal-body,.deal-cta{max-width:480px;margin-left:auto;margin-right:auto}}
 </style>
 </head>
 <body>
-
 <div id="splash" class="screen active">
   <div class="logo-ring"><div class="logo-inner"><span>CW</span></div></div>
   <h1>City <em>Wallet</em></h1>
@@ -187,14 +183,14 @@ html,body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:va
   <div class="perm-card">
     <div class="perm-icon">📍</div>
     <h2>Find offers near you</h2>
-    <p>City Wallet uses your location and real-time signals to generate offers from local merchants — made for this weather, this moment, this place.</p>
+    <p>City Wallet uses your location, real-time weather, air quality, and merchant demand signals to generate offers — made for this exact moment.</p>
     <div class="perm-features">
-      <div class="perm-feat"><div class="icon">🔔</div><div class="text"><strong>Smart notifications</strong><span>Get alerted when a perfect offer appears nearby</span></div></div>
-      <div class="perm-feat"><div class="icon">📍</div><div class="text"><strong>Location matching</strong><span>Find deals within walking distance of you</span></div></div>
-      <div class="perm-feat"><div class="icon">🔒</div><div class="text"><strong>Private by design</strong><span>Location processed on-device only. Never shared.</span></div></div>
+      <div class="perm-feat"><div class="icon">🔔</div><div class="text"><strong>Smart notifications</strong><span>Tap a notification to go straight to the deal</span></div></div>
+      <div class="perm-feat"><div class="icon">📍</div><div class="text"><strong>Location + weather</strong><span>Real-time weather, UV, air quality, walking distance</span></div></div>
+      <div class="perm-feat"><div class="icon">🔒</div><div class="text"><strong>GDPR compliant</strong><span>On-device processing. No data leaves your phone.</span></div></div>
     </div>
-    <button class="btn btn-accent" onclick="requestPermissions()">Enable & continue</button>
-    <button class="btn btn-ghost" onclick="skipPerms()">Maybe later</button>
+    <button class="btn btn-accent" onclick="requestPermissions()">Enable & start</button>
+    <button class="btn btn-ghost" onclick="skipPerms()">Skip for now</button>
   </div>
 </div>
 
@@ -206,14 +202,30 @@ html,body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:va
       <div class="notif-btn" onclick="fireNotif()">🔔<div class="badge" id="nBadge">0</div></div>
     </div>
   </div>
-  <div class="ctx-section"><div class="ctx-label">Live context signals</div><div class="ctx-chips" id="ctxChips"></div></div>
-  <div class="sec-head"><h2>For you right now</h2><span class="count" id="offerCount"></span></div>
+  <div class="ctx-section"><div class="ctx-label">Context signals</div><div class="ctx-chips" id="ctxChips"></div></div>
+  <div class="sec-head"><h2>Generated for you</h2><span class="count" id="offerCount"></span></div>
   <div class="offers" id="offersList"><div class="loading-wrap"><div class="spinner"></div><p>Sensing context & generating offers...</p></div></div>
-  <div class="nav">
-    <div class="nav-item active"><span class="ni">🏠</span>Wallet</div>
-    <a class="nav-item" href="/merchant.html"><span class="ni">🏪</span>Merchants</a>
-    <a class="nav-item" href="/ledger.html"><span class="ni">📊</span>Ledger</a>
+  <div class="nav"><div class="nav-item active"><span class="ni">🏠</span>Wallet</div><a class="nav-item" href="/merchant.html"><span class="ni">🏪</span>Merchants</a><a class="nav-item" href="/ledger.html"><span class="ni">📊</span>Ledger</a></div>
+</div>
+
+<div id="deal" class="screen">
+  <div class="deal-hero" id="dealHero">
+    <button class="deal-back" onclick="showScreen('wallet')">←</button>
+    <div class="deal-emoji" id="dealEmoji"></div>
+    <div class="deal-content">
+      <div class="deal-discount" id="dealDiscount"></div>
+      <div class="deal-h" id="dealH"></div>
+      <div class="deal-sub" id="dealSub"></div>
+    </div>
   </div>
+  <div class="deal-body">
+    <div class="deal-stats" id="dealStats"></div>
+    <div class="deal-section"><h3>Why this offer</h3><div class="deal-signals" id="dealSignals"></div></div>
+    <a id="dealMapLink" target="_blank" rel="noopener"><div class="deal-map" id="dealMap"><div class="placeholder">📍 Tap to open directions</div></div></a>
+    <div class="deal-section"><h3>Merchant details</h3><div id="dealMerchant" style="font-size:13px;color:var(--ink2);line-height:1.6"></div></div>
+  </div>
+  <div class="deal-cta"><button class="btn btn-accent" id="dealCta" onclick="redeemDeal()">Redeem this offer</button></div>
+  <div class="nav"><div class="nav-item" onclick="showScreen('wallet')"><span class="ni">🏠</span>Wallet</div><a class="nav-item" href="/merchant.html"><span class="ni">🏪</span>Merchants</a><a class="nav-item" href="/ledger.html"><span class="ni">📊</span>Ledger</a></div>
 </div>
 
 <div id="qrpass" class="screen">
@@ -223,87 +235,95 @@ html,body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:va
     <div class="qr-footer ready" id="qrFoot">READY TO REDEEM</div>
   </div>
   <button class="btn btn-ghost" style="margin-top:16px;color:var(--dim)" onclick="showScreen('wallet')">← Back to offers</button>
-  <div class="nav">
-    <div class="nav-item" onclick="showScreen('wallet')"><span class="ni">🏠</span>Wallet</div>
-    <a class="nav-item" href="/merchant.html"><span class="ni">🏪</span>Merchants</a>
-    <a class="nav-item" href="/ledger.html"><span class="ni">📊</span>Ledger</a>
-  </div>
+  <div class="nav"><div class="nav-item" onclick="showScreen('wallet')"><span class="ni">🏠</span>Wallet</div><a class="nav-item" href="/merchant.html"><span class="ni">🏪</span>Merchants</a><a class="nav-item" href="/ledger.html"><span class="ni">📊</span>Ledger</a></div>
 </div>
 
 <div class="toast" id="toast" onclick="onToast()">
   <div class="t-icon" id="tIcon">☕</div>
   <div class="t-body"><div class="t-title" id="tTitle"></div><div class="t-msg" id="tMsg"></div></div>
-  <div class="t-time">now</div>
+  <div class="t-action">View →</div>
 </div>
 
 <script>
 const API=window.location.origin;
-let ctx=null,offers=[],nCount=0;
+let ctx=null,offers=[],nCount=0,currentDeal=null,currentDealIdx=0;
 let uid=localStorage.getItem('cw_uid');
 if(!uid){uid='u-'+Math.random().toString(36).slice(2,10);localStorage.setItem('cw_uid',uid)}
 
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
 
-// ── SPLASH ────────────────────────────────
-setTimeout(()=>{localStorage.getItem('cw_perms')?startApp():showScreen('perms')},1800);
+// Listen for SW messages (notification tapped → open deal)
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.addEventListener('message',e=>{
+    if(e.data?.type==='OPEN_OFFER'){const o=offers.find(x=>x.id===e.data.offerId);if(o)openDeal(o)}
+  });
+}
+// Handle hash-based deep link from notification
+window.addEventListener('load',()=>{
+  const h=location.hash;if(h.startsWith('#offer=')){const id=h.slice(7);setTimeout(()=>{const o=offers.find(x=>x.id===id);if(o)openDeal(o)},2000)}
+});
 
-// ── PERMISSIONS ───────────────────────────
+setTimeout(()=>{localStorage.getItem('cw_perms')?startApp():showScreen('perms')},1600);
+
 async function requestPermissions(){
-  if('Notification' in window && Notification.permission==='default') await Notification.requestPermission();
-  if(navigator.geolocation) navigator.geolocation.getCurrentPosition(()=>{},()=>{},{timeout:5000});
-  localStorage.setItem('cw_perms','1');
-  startApp();
+  if('Notification' in window&&Notification.permission==='default')await Notification.requestPermission();
+  if(navigator.geolocation)navigator.geolocation.getCurrentPosition(()=>{},()=>{},{timeout:5000});
+  localStorage.setItem('cw_perms','1');startApp();
 }
 function skipPerms(){localStorage.setItem('cw_perms','1');startApp()}
 
-// ── START ─────────────────────────────────
 async function startApp(){
   showScreen('wallet');
   fetch(API+'/api/optin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:uid})}).catch(()=>{});
-  if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  if('serviceWorker' in navigator)await navigator.serviceWorker.register('/sw.js').catch(()=>{});
 
   let lat=48.1351,lng=11.582;
   try{const p=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{enableHighAccuracy:true,timeout:8000}));lat=p.coords.latitude;lng=p.coords.longitude}catch(e){}
 
   try{const r=await fetch(API+'/api/context?lat='+lat+'&lng='+lng);ctx=await r.json()}
-  catch(e){ctx={weather:{temperature_c:14,is_cold:true,description:'Partly cloudy',source:'fallback'},
+  catch(e){ctx={weather:{temperature_c:14,is_cold:true,description:'Partly cloudy',source:'fallback',air_quality:{aqi_label:'Good'},uv_label:'Low'},
     time:{hour:new Date().getHours(),minute:new Date().getMinutes(),day_of_week:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()],is_lunch:new Date().getHours()>=11&&new Date().getHours()<=14,is_afternoon:new Date().getHours()>=14},
     composite:{signals:['offline'],trigger_score:30,should_generate:true,description:'offline',urgency:'medium'},payone:{},events:[],location:{lat,lng}}}
   renderChips();
 
   try{const r2=await fetch(API+'/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({context:ctx,user_signals:{lat,lng}})});const d=await r2.json();offers=d.offers||[]}catch(e){offers=[]}
   renderOffers();
-  setTimeout(()=>{if(offers.length){showToast(offers[0]);sendPush(offers[0])}},3000);
+
+  // Staggered notifications
+  if(offers.length>=1)setTimeout(()=>pushNotif(offers[0]),3000);
+  if(offers.length>=2)setTimeout(()=>pushNotif(offers[1]),12000);
+  if(offers.length>=3)setTimeout(()=>pushNotif(offers[2]),25000);
 }
 
-// ── CHIPS ─────────────────────────────────
 function renderChips(){
-  if(!ctx)return;const w=ctx.weather||{},t=ctx.time||{};
-  const chips=[
-    {i:w.is_rainy?'🌧️':w.is_cold?'🥶':w.is_hot?'🔥':'⛅',t:`${w.temperature_c||'--'}° · ${w.description||''}`,h:w.is_cold||w.is_rainy||w.is_hot},
-    {i:'🕐',t:`${t.day_of_week||''} ${t.hour||''}:${String(t.minute||0).padStart(2,'0')}`,h:t.is_lunch||t.is_afternoon},
-    {i:'📍',t:'Munich area',h:true},
-  ];
+  if(!ctx)return;const w=ctx.weather||{},t=ctx.time||{},aq=w.air_quality||{};
+  const chips=[];
+  chips.push({i:w.is_rainy?'🌧️':w.is_cold?'🥶':w.is_hot?'🔥':'⛅',t:`${w.temperature_c||'--'}°C ${w.description||''}`,c:w.is_cold||w.is_rainy?'hot':''});
+  if(w.feels_like_label)chips.push({i:'🌡️',t:w.feels_like_label,c:'hot'});
+  chips.push({i:'🕐',t:`${t.day_of_week||''} ${t.hour||''}:${String(t.minute||0).padStart(2,'0')}`,c:t.is_lunch?'hot':''});
+  chips.push({i:'📍',t:`${ctx.location?.lat?.toFixed(2)}, ${ctx.location?.lng?.toFixed(2)}`,c:'blue'});
+  if(w.uv_label)chips.push({i:'☀️',t:`UV ${w.uv_label}`,c:''});
+  if(aq.aqi_label)chips.push({i:'💨',t:`Air: ${aq.aqi_label}`,c:aq.aqi_label==='Good'?'green':''});
   const low=Object.values(ctx.payone||{}).filter(p=>p.demand_state==='low');
-  if(low.length)chips.push({i:'📉',t:`${low.length} quiet shops`,h:true});
-  if((ctx.events||[]).length)chips.push({i:'🎪',t:ctx.events[0].name.split(' ').slice(0,3).join(' '),h:false});
-  chips.push({i:'🔒',t:'On-device',h:false});
-  document.getElementById('ctxChips').innerHTML=chips.map(c=>`<div class="chip ${c.h?'hot':''}"><span class="ci">${c.i}</span>${c.t}</div>`).join('');
+  if(low.length)chips.push({i:'📉',t:`${low.length} quiet shops`,c:'hot'});
+  if((ctx.events||[]).length)chips.push({i:'🎪',t:ctx.events[0].name.split(' ').slice(0,3).join(' '),c:''});
+  if(w.sunrise)chips.push({i:'🌅',t:`☀ ${w.sunrise}`,c:''});
+  chips.push({i:'🔒',t:'On-device',c:'green'});
+  document.getElementById('ctxChips').innerHTML=chips.map(c=>`<div class="chip ${c.c}"><span class="ci">${c.i}</span>${c.t}</div>`).join('');
 }
 
-// ── OFFERS ─────────────────────────────────
 const GR=['linear-gradient(135deg,#1a0a00,#4a1500,#1a0a00)','linear-gradient(135deg,#001a2c,#003366,#001a2c)','linear-gradient(135deg,#1a001a,#4a0033,#1a001a)','linear-gradient(135deg,#001a00,#003300,#001a00)'];
 const DG=['var(--accent-g)','var(--blue-g)','var(--purple-g)','var(--green-g)'];
 const AC=['#ff5722','#2196f3','#9c27b0','#4caf50'];
 
 function renderOffers(){
   const el=document.getElementById('offersList');
-  document.getElementById('offerCount').textContent=offers.length+' generated';
+  document.getElementById('offerCount').textContent=offers.length+' offers';
   if(!offers.length){el.innerHTML='<div class="loading-wrap"><p>No offers for your current context.</p></div>';return}
   el.innerHTML=offers.map((o,i)=>{const g=i%GR.length;return`
-  <div class="card" id="c-${o.id}">
+  <div class="card" id="c-${o.id}" onclick="openDeal(offers[${i}])">
     <div class="card-hero" style="background:${GR[g]}">
-      <div class="card-badges"><div class="card-badge"><span class="dot"></span>Generated now</div><div class="card-timer">⏱ ${o.expiry_minutes}min</div></div>
+      <div class="card-badges"><div class="card-badge"><span class="dot"></span>Generated now</div><div class="card-timer">⏱ ${o.expiry_minutes}m · ${o.distance_label||'--'}</div></div>
       <div class="card-emoji">${o.icon||'✨'}</div>
       <div class="card-content">
         <div class="card-discount" style="background:${DG[g]}">${o.discount_label}</div>
@@ -311,21 +331,55 @@ function renderOffers(){
         <div class="card-sub">${o.subline}</div>
       </div>
     </div>
-    <div class="card-info">
-      <div class="card-info-item"><span class="l">Where</span><span class="v">${o.merchant_name}</span></div>
-      <div class="card-info-item"><span class="l">Area</span><span class="v">${o.merchant_area}</span></div>
-      <div class="card-info-item"><span class="l">Mood</span><span class="v" style="color:${AC[g]}">${o.mood||'inviting'}</span></div>
-      <div class="card-info-item"><span class="l">Vibe</span><span class="v">${o.emotional_frame||'--'}</span></div>
+    <div class="card-meta">
+      <div class="cm-item"><span class="l">Where</span><span class="v">${o.merchant_name}</span></div>
+      <div class="cm-item"><span class="l">Walk</span><span class="v blue">${o.walk_min||'?'}min</span></div>
+      <div class="cm-item"><span class="l">Mood</span><span class="v" style="color:${AC[g]}">${o.mood||'--'}</span></div>
+      <div class="cm-item"><span class="l">Dist</span><span class="v accent">${o.distance_label||'--'}</span></div>
     </div>
-    <div class="card-actions">
-      <button class="btn btn-grab" style="background:${DG[g]}" onclick="grab('${o.id}',${g})">${o.cta||'Grab this deal'}</button>
+    <div class="card-actions" onclick="event.stopPropagation()">
+      <button class="btn btn-grab" style="background:${DG[g]}" onclick="openDeal(offers[${i}])">${o.cta||'View deal'}</button>
       <button class="btn btn-nah" onclick="dismiss('${o.id}')">Pass</button>
     </div>
   </div>`}).join('');
 }
 
-function grab(id,g){
-  const o=offers.find(x=>x.id===id);if(!o)return;
+// ═══ DEAL DETAIL ═══
+function openDeal(o){
+  if(!o)return;currentDeal=o;
+  const g=offers.indexOf(o)%GR.length;currentDealIdx=g>=0?g:0;
+  document.getElementById('dealHero').style.background=GR[currentDealIdx];
+  document.getElementById('dealEmoji').textContent=o.icon||'✨';
+  document.getElementById('dealDiscount').style.background=DG[currentDealIdx];
+  document.getElementById('dealDiscount').textContent=o.discount_label;
+  document.getElementById('dealH').textContent=o.headline;
+  document.getElementById('dealSub').textContent=o.subline;
+  document.getElementById('dealCta').style.background=DG[currentDealIdx];
+
+  document.getElementById('dealStats').innerHTML=`
+    <div class="ds"><div class="icon">🚶</div><div class="val">${o.walk_min||'?'} min</div><div class="lab">Walk</div></div>
+    <div class="ds"><div class="icon">📍</div><div class="val">${o.distance_label||'--'}</div><div class="lab">Distance</div></div>
+    <div class="ds"><div class="icon">⏱</div><div class="val">${o.expiry_minutes}m</div><div class="lab">Expires</div></div>`;
+
+  const signals=(o.trigger_signals||[]).concat([o.emotional_frame,o.mood,'Payone: low demand',ctx?.weather?.description].filter(Boolean));
+  document.getElementById('dealSignals').innerHTML=signals.map(s=>`<div class="signal-tag">${s}</div>`).join('');
+
+  const mapsUrl=o.maps_url||`https://www.google.com/maps/dir/?api=1&destination=${o.merchant_lat},${o.merchant_lng}&travelmode=walking`;
+  document.getElementById('dealMapLink').href=mapsUrl;
+  document.getElementById('dealMap').innerHTML=`<img src="https://maps.googleapis.com/maps/api/staticmap?center=${o.merchant_lat},${o.merchant_lng}&zoom=16&size=600x300&markers=color:red|${o.merchant_lat},${o.merchant_lng}&key=placeholder" onerror="this.parentElement.innerHTML='<div class=placeholder>📍 ${o.merchant_name} · ${o.merchant_area}<br>Tap to open Google Maps</div>'">`;
+
+  document.getElementById('dealMerchant').innerHTML=`
+    <strong>${o.merchant_name}</strong> · ${o.merchant_area}<br>
+    Category: ${o.merchant_category} · Discount: ${o.discount_label}<br>
+    Code: <code style="background:var(--bg3);padding:2px 8px;border-radius:4px;font-family:monospace;font-weight:700">${o.code}</code>`;
+
+  showScreen('deal');
+  if(navigator.vibrate)navigator.vibrate(30);
+}
+
+function redeemDeal(){
+  if(!currentDeal)return;
+  const o=currentDeal,g=currentDealIdx;
   document.getElementById('qrTop').style.background=DG[g];
   document.getElementById('qrAmt').textContent=o.discount_label;
   document.getElementById('qrMer').textContent=o.merchant_name+' · '+o.merchant_area;
@@ -335,13 +389,14 @@ function grab(id,g){
   showScreen('qrpass');
   if(navigator.vibrate)navigator.vibrate(50);
 }
+
 function dismiss(id){
   const el=document.getElementById('c-'+id);if(!el)return;
   el.style.transition='all .3s';el.style.transform='translateX(120%) rotate(5deg)';el.style.opacity='0';
   setTimeout(()=>el.remove(),350);if(navigator.vibrate)navigator.vibrate(20);
 }
 
-// ── NOTIFICATIONS ─────────────────────────
+// ═══ NOTIFICATIONS ═══
 function showToast(o){
   if(!o)return;nCount++;document.getElementById('nBadge').textContent=nCount;
   document.getElementById('tIcon').textContent=o.icon||'☕';
@@ -349,13 +404,26 @@ function showToast(o){
   document.getElementById('tMsg').textContent=o.headline;
   document.getElementById('toast').classList.add('show');
   if(navigator.vibrate)navigator.vibrate([100,50,100]);
-  setTimeout(()=>document.getElementById('toast').classList.remove('show'),5000);
+  setTimeout(()=>document.getElementById('toast').classList.remove('show'),6000);
 }
-function onToast(){document.getElementById('toast').classList.remove('show');if(offers.length)grab(offers[0].id,0)}
-function fireNotif(){if(offers.length)showToast(offers[Math.floor(Math.random()*offers.length)])}
-function sendPush(o){
-  if(!o||!('Notification' in window)||Notification.permission!=='granted')return;
-  new Notification('City Wallet — '+o.merchant_name,{body:o.headline+' — '+o.discount_label,icon:'/icon-192.png',vibrate:[100,50,100],tag:'cw-'+o.id});
+function onToast(){document.getElementById('toast').classList.remove('show');if(currentToastOffer)openDeal(currentToastOffer)}
+let currentToastOffer=null;
+function fireNotif(){if(offers.length){const o=offers[Math.floor(Math.random()*offers.length)];currentToastOffer=o;showToast(o)}}
+
+function pushNotif(o){
+  if(!o)return;currentToastOffer=o;showToast(o);
+  // Send real push via service worker
+  if(navigator.serviceWorker&&navigator.serviceWorker.controller){
+    navigator.serviceWorker.controller.postMessage({
+      type:'SHOW_NOTIFICATION',title:o.merchant_name+' — '+o.discount_label,
+      body:o.headline,offerId:o.id,merchantId:o.merchant_id
+    });
+  } else if('Notification' in window&&Notification.permission==='granted'){
+    const n=new Notification('City Wallet — '+o.merchant_name,{
+      body:o.headline+' — '+o.discount_label,icon:'/icon-192.png',vibrate:[100,50,100],tag:'cw-'+o.id,data:{offerId:o.id}
+    });
+    n.onclick=()=>{window.focus();openDeal(o);n.close()};
+  }
 }
 </script>
 </body>

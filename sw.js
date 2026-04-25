@@ -1,4 +1,4 @@
-const CACHE = 'citywallet-v2';
+const CACHE = 'citywallet-v3';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -22,10 +22,45 @@ self.addEventListener('fetch', e => {
   }).catch(() => caches.match('/index.html'))));
 });
 
+// When user taps a notification → open the app and navigate to that offer
 self.addEventListener('notificationclick', e => {
   e.notification.close();
-  e.waitUntil(self.clients.matchAll({type:'window'}).then(clients => {
-    if (clients.length) return clients[0].focus();
-    return self.clients.openWindow('/');
-  }));
+  const offerId = e.notification.data?.offerId;
+  const action = e.action;
+
+  if (action === 'dismiss') return;
+
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
+      // If app is already open, focus it and send the offer ID
+      for (const client of clients) {
+        if (client.url.includes(self.registration.scope)) {
+          client.postMessage({ type: 'OPEN_OFFER', offerId });
+          return client.focus();
+        }
+      }
+      // Otherwise open the app with the offer ID as a hash
+      return self.clients.openWindow('/#offer=' + (offerId || ''));
+    })
+  );
+});
+
+// Listen for messages from the main page
+self.addEventListener('message', e => {
+  if (e.data?.type === 'SHOW_NOTIFICATION') {
+    const d = e.data;
+    self.registration.showNotification(d.title, {
+      body: d.body,
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      vibrate: [100, 50, 100, 50, 100],
+      tag: 'offer-' + (d.offerId || 'new'),
+      renotify: true,
+      data: { offerId: d.offerId, merchantId: d.merchantId },
+      actions: [
+        { action: 'open', title: 'View deal' },
+        { action: 'dismiss', title: 'Later' }
+      ]
+    });
+  }
 });
