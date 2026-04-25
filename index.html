@@ -292,9 +292,26 @@ const API=window.location.origin;
 let offers=[],weather={},currentOffer=null,lat=48.1351,lng=11.582,nN=0;
 const uid=localStorage.getItem('cw_u')||(()=>{const u='u-'+Math.random().toString(36).slice(2,8);localStorage.setItem('cw_u',u);return u})();
 
+let pushOk=false;
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
 function showTab(id){showScreen(id);document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('on'));
   if(id==='savings')loadSavings()}
+
+async function subscribePush(reg){
+  try{
+    const resp=await fetch(API+'/api/vapid-public');
+    const{publicKey}=await resp.json();
+    const appKey=urlB64ToUint8(publicKey);
+    const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:appKey});
+    const r=await fetch(API+'/api/push/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({subscription:sub.toJSON(),lat,lng})});
+    const d=await r.json();
+    pushOk=d.ok;
+    console.log('Push subscribed! Total subs:',d.total_subs);
+    // Update status in header
+    document.getElementById('hdrSub').textContent+=' · 🔔 Push active';
+  }catch(e){console.log('Push subscription failed:',e);pushOk=false}
+}
 
 // ── BOOT ──────────────────────────────────────────────
 setTimeout(()=>localStorage.getItem('cw_p')?boot():showScreen('perms'),1200);
@@ -305,33 +322,45 @@ async function grantPerms(){
   localStorage.setItem('cw_p','1');boot();
 }
 
+// Convert base64url to Uint8Array (proper VAPID key decoding)
+function urlB64ToUint8(b64){
+  const pad='='.repeat((4-b64.length%4)%4);
+  const raw=atob(b64.replace(/-/g,'+').replace(/_/g,'/')+pad);
+  return Uint8Array.from(raw,c=>c.charCodeAt(0));
+}
+
 async function boot(){
   showScreen('app');
-  if('serviceWorker' in navigator){
-    const reg=await navigator.serviceWorker.register('/sw.js').catch(()=>null);
-    // Subscribe to real push notifications
-    if(reg && Notification.permission==='granted'){
-      try{
-        const vapidResp=await fetch(API+'/api/vapid-public');
-        const{publicKey}=await vapidResp.json();
-        const rawKey=Uint8Array.from(atob(publicKey.replace(/-/g,'+').replace(/_/g,'/')+'=='),c=>c.charCodeAt(0));
-        const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:rawKey});
-        // Send subscription + location to server
-        fetch(API+'/api/push/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({subscription:sub.toJSON(),lat,lng})}).catch(()=>{});
-      }catch(e){console.log('Push sub failed:',e)}
-    }
-  }
 
-  // Get real location
+  // Get location FIRST (needed for push subscription + offers)
   try{
     const p=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{enableHighAccuracy:true,timeout:10000,maximumAge:30000}));
     lat=p.coords.latitude;lng=p.coords.longitude;
-  }catch(e){}
+  }catch(e){console.log('Location failed, using Munich default')}
+
+  // Register SW + subscribe to push
+  if('serviceWorker' in navigator){
+    try{
+      const reg=await navigator.serviceWorker.register('/sw.js');
+      await navigator.serviceWorker.ready; // Wait until SW is active
+
+      if(Notification.permission==='granted'){
+        await subscribePush(reg);
+      } else if(Notification.permission==='default'){
+        const perm=await Notification.requestPermission();
+        if(perm==='granted') await subscribePush(reg);
+      }
+    }catch(e){console.log('SW setup error:',e)}
+  }
 
   await loadOffers();
 
-  // Staggered local notifications as preview
+  // Auto-refresh every 15s to pick up new boosts
+  setInterval(async()=>{
+    try{await loadOffers()}catch(e){}
+  }, 15000);
+
+  // Staggered local notifications
   if(offers.length>=1)setTimeout(()=>notify(offers[0]),4000);
   if(offers.length>=2)setTimeout(()=>notify(offers[1]),20000);
 
