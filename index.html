@@ -178,18 +178,42 @@ async function boot(){
 
   await loadOffer();
   await loadActivity();
-  setInterval(loadOffer,20000);
-  setInterval(loadActivity,30000);
-  if(location.hash.startsWith('#fill='))loadOffer();
-  setTimeout(()=>{if(offer)showToast(offer)},3000);
+  // Poll every 8 seconds — picks up merchant fills quickly
+  setInterval(loadOffer, 8000);
+  setInterval(loadActivity, 25000);
+  setTimeout(()=>{if(offer)showToast(offer)},2500);
 }
 
 const GRADS=['linear-gradient(135deg,#3a2010 0%,#7a4020 50%,#a05530 100%)','linear-gradient(135deg,#1a2a3a,#2a5070,#3a7090)','linear-gradient(135deg,#2a1a2e,#5a3060,#804080)','linear-gradient(135deg,#1a2a1a,#2a5030,#3a7040)'];
 
+let lastOfferId='';
 async function loadOffer(){
   try{
-    const r=await fetch(`${API}/api/offer?lat=${lat}&lng=${lng}`);const d=await r.json();
-    if(d.has_offer){offer=d.offer;renderOffer()}else{renderEmpty()}
+    // Check for direct fill link in hash
+    let url=`${API}/api/offer?lat=${lat}&lng=${lng}`;
+    if(location.hash.startsWith('#fill=')){
+      url+=`&fill=${location.hash.slice(6)}`;
+    }
+    const r=await fetch(url);const d=await r.json();
+    if(d.has_offer){
+      const newId=d.offer?.id||'';
+      const isNew=newId && newId!==lastOfferId;
+      offer=d.offer;
+      lastOfferId=newId;
+      renderOffer();
+      // If this is a NEW offer (merchant just filled), notify immediately
+      if(isNew && d.source==='active_fill'){
+        showToast(offer);
+        // Also fire a real local notification
+        if('Notification' in window && Notification.permission==='granted'){
+          const n=new Notification(offer.notification_text||'New offer nearby',{
+            body:`${offer.merchant_name} · ${offer.item} · €${offer.discount_price}`,
+            icon:'/icon-192.png', vibrate:[80,40,80], tag:'cw-fill-'+newId
+          });
+          n.onclick=()=>{window.focus();n.close()};
+        }
+      }
+    }else{renderEmpty()}
     document.getElementById('topR').textContent=`${offer?.temp||'--'}° · ${offer?.weather||''}`;
     renderCtx();
   }catch(e){renderEmpty()}

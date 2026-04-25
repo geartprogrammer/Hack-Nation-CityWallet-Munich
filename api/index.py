@@ -354,14 +354,23 @@ def arrive():
 @app.route("/api/offer", methods=["GET"])
 def get_offer():
     lat=float(request.args.get("lat",48.1351));lng=float(request.args.get("lng",11.582))
-    # Check active fills nearby
+    fill_id=request.args.get("fill","")  # Direct fill link from merchant
+
+    # Direct fill link — always works
+    if fill_id and fill_id in FILLS:
+        f=FILLS[fill_id]
+        d=_h(lat,lng,f["merchant_lat"],f["merchant_lng"])
+        return jsonify({"has_offer":True,"source":"merchant_fill","offer":{**f,
+            "distance_m":int(d),"walk_min":max(1,int(d/80)),
+            "maps_url":f"https://www.google.com/maps/dir/?api=1&destination={f['merchant_lat']},{f['merchant_lng']}&travelmode=walking"}})
+
+    # Check active fills (works when same Vercel instance)
     for fid, f in FILLS.items():
         if f["status"] != "active": continue
         d = _h(lat,lng,f["merchant_lat"],f["merchant_lng"])
-        if d < 2000:
-            return jsonify({"has_offer":True,"offer":{**f,
-                "distance_m":int(d),"walk_min":max(1,int(d/80)),
-                "maps_url":f"https://www.google.com/maps/dir/?api=1&destination={f['merchant_lat']},{f['merchant_lng']}&travelmode=walking"}})
+        return jsonify({"has_offer":True,"source":"active_fill","offer":{**f,
+            "distance_m":int(d),"walk_min":max(1,int(d/80)),
+            "maps_url":f"https://www.google.com/maps/dir/?api=1&destination={f['merchant_lat']},{f['merchant_lng']}&travelmode=walking"}})
     # No active fill — find the closest open cafe and generate an offer
     w = _weather(lat, lng); hr = datetime.now().hour
     # Sort ALL cafes by distance, pick the closest open one

@@ -189,6 +189,10 @@ async function fillSeats(){
     document.getElementById('aiNotif').textContent=a.notification_text;
     document.getElementById('aiReason').textContent='🧠 '+a.reasoning;
     document.getElementById('aiBox').classList.add('show');
+    // Show share link so user can get the offer directly
+    const fillId=d.fill?.id||'';
+    const shareUrl=window.location.origin+'/#fill='+fillId;
+    document.getElementById('aiSent').innerHTML=`${p.sent} push · <a href="${shareUrl}" target="_blank" style="color:var(--primary);font-weight:700">Share link</a>`;
     navigator.vibrate?.([50,30,50]);
   }catch(e){console.log(e)}
   btn.textContent='Fill my seats';btn.disabled=false;
