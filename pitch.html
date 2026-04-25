@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Time Market · Live</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700;9..40,900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#0a0908;color:#f5f0e8;min-height:100vh;
+  background-image:radial-gradient(circle at 80% 20%,rgba(194,90,30,.06),transparent 50%)}
+.shell{max-width:1100px;margin:0 auto;padding:40px}
+.top{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:40px}
+.top h1{font-size:18px;font-weight:700}.top h1 em{color:#c25a1e;font-style:normal}
+.top .live{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#c25a1e;letter-spacing:.08em;text-transform:uppercase}
+.top .live .dot{width:8px;height:8px;border-radius:50%;background:#c25a1e;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero{text-align:center;padding:40px 0 48px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:40px}
+.hero .label{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:8px}
+.hero .amount{font-size:clamp(48px,10vw,100px);font-weight:900;letter-spacing:-.04em;color:#e07832;transition:all .3s}
+.hero .amount.bump{transform:scale(1.04);text-shadow:0 0 40px rgba(224,120,50,.3)}
+.hero .sub{font-size:13px;color:rgba(255,255,255,.4);margin-top:8px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid rgba(255,255,255,.06);border-radius:12px;margin-bottom:40px;overflow:hidden}
+.stat{padding:24px;text-align:center;border-right:1px solid rgba(255,255,255,.06)}.stat:last-child{border-right:none}
+.stat .v{font-size:32px;font-weight:900}.stat .v.orange{color:#e07832}.stat .v.green{color:#4caf50}
+.stat .l{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+.feed{border:1px solid rgba(255,255,255,.06);border-radius:12px;max-height:300px;overflow-y:auto}
+.fi{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;font-size:13px;animation:fadeIn .3s}
+.fi:last-child{border-bottom:none}
+.fi .badge{font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em}
+.badge.auction{background:rgba(194,90,30,.15);color:#e07832}.badge.redeem{background:rgba(76,175,80,.15);color:#4caf50}
+.badge.subscribe{background:rgba(255,255,255,.06);color:rgba(255,255,255,.4)}
+.fi .time{font-family:monospace;font-size:11px;color:rgba(255,255,255,.3)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.footer{margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.06em}
+.qr-section{text-align:center;margin-top:32px;padding:24px;background:rgba(255,255,255,.03);border-radius:12px;border:1px solid rgba(255,255,255,.06)}
+.qr-section h3{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:12px;letter-spacing:.08em;text-transform:uppercase}
+.qr-section img{width:160px;height:160px;border-radius:12px}
+.qr-section .url{font-family:monospace;font-size:12px;color:#e07832;margin-top:8px}
+@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}.shell{padding:20px}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top">
+    <h1>The <em>Time Market</em> · Live Dashboard</h1>
+    <div class="live"><div class="dot"></div><span id="liveLabel">CONNECTING</span></div>
+  </div>
+  <div class="hero">
+    <div class="label">Total cashback distributed</div>
+    <div class="amount" id="hAmt">€0.00</div>
+    <div class="sub" id="hSub">Waiting for data...</div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="v orange" id="sAuctions">0</div><div class="l">Auctions</div></div>
+    <div class="stat"><div class="v green" id="sRedemptions">0</div><div class="l">Redemptions</div></div>
+    <div class="stat"><div class="v" id="sSubs">0</div><div class="l">Subscribers</div></div>
+    <div class="stat"><div class="v" id="sMerchants">0</div><div class="l">Merchants</div></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <span style="font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em">Live Event Feed</span>
+    <span style="font-size:11px;color:rgba(255,255,255,.3)" id="fCount">0 events</span>
+  </div>
+  <div class="feed" id="feed"><div class="fi" style="justify-content:center;color:rgba(255,255,255,.3)">Waiting for events...</div></div>
+  <div class="qr-section">
+    <h3>Scan to install City Wallet</h3>
+    <img id="installQR" src="" alt="Install QR">
+    <div class="url" id="installURL"></div>
+  </div>
+  <div class="footer"><span>The Time Market · HackNation 2026</span><span id="clock">--:--:--</span><span>DSV Gruppe Challenge</span></div>
+</div>
+<script>
+const API=window.location.origin;
+let lastCB=0;
+setInterval(()=>{const n=new Date();document.getElementById('clock').textContent=n.toLocaleTimeString()},1000);
+
+async function poll(){
+  try{
+    const r=await fetch(API+'/api/live');const d=await r.json();
+    const el=document.getElementById('hAmt');
+    el.textContent='€'+d.total_cashback.toFixed(2);
+    if(d.total_cashback>lastCB){el.classList.add('bump');setTimeout(()=>el.classList.remove('bump'),400)}
+    lastCB=d.total_cashback;
+    document.getElementById('hSub').textContent=`${d.merchants} merchants · ${d.subscribers} users · ${d.auctions} auctions · ${new Date().toLocaleTimeString()}`;
+    document.getElementById('sAuctions').textContent=d.auctions;
+    document.getElementById('sRedemptions').textContent=d.redemptions;
+    document.getElementById('sSubs').textContent=d.subscribers;
+    document.getElementById('sMerchants').textContent=d.merchants;
+    document.getElementById('liveLabel').textContent='LIVE';
+    if(d.events?.length){
+      document.getElementById('fCount').textContent=d.events.length+' events';
+      document.getElementById('feed').innerHTML=d.events.slice().reverse().map(e=>{
+        const badge=e.type==='auction'?'auction':e.type==='redeem'?'redeem':'subscribe';
+        const text=e.type==='auction'?`${e.data?.merchant||'?'} auctioned ${e.data?.item||'?'} · ${e.data?.discount||'?'}% · score ${e.data?.winner_score||'?'}`:
+          e.type==='redeem'?`${e.data?.merchant||'?'} · ${e.data?.item||'?'} redeemed · €${e.data?.cashback||'?'} cashback`:
+          `New subscriber · ${e.data?.total||'?'} total`;
+        return`<div class="fi"><div style="display:flex;align-items:center;gap:8px"><span class="badge ${badge}">${badge}</span><span>${text}</span></div><span class="time">${e.ts?.split('T')[1]?.slice(0,8)||''}</span></div>`;
+      }).join('');
+    }
+  }catch(e){document.getElementById('liveLabel').textContent='RECONNECTING'}
+}
+// Install QR
+document.getElementById('installQR').src=API+'/api/qr?text='+encodeURIComponent(window.location.origin);
+document.getElementById('installURL').textContent=window.location.origin;
+poll();setInterval(poll,3000);
+</script>
+</body>
+</html>

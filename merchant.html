@@ -4,43 +4,51 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#f5f0e8">
-<title>Merchant · City Wallet</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<title>Merchant · Time Market</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{--bg:#f5f0e8;--bg2:#ece5d8;--bg3:#e3dbd0;--card:#fffcf6;--ink:#1a1714;--ink2:#4a4540;--dim:#8a847a;--dim2:#b8b0a4;
-  --accent:#d4622a;--accent-soft:rgba(212,98,42,.1);--green:#2d8a4e;--green-soft:rgba(45,138,78,.1);
-  --red:#c0392b;--r:22px;--r2:16px;--safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px)}
+  --accent:#c25a1e;--accent2:#e07832;--accent-soft:rgba(194,90,30,.08);--green:#2d7a42;--green-soft:rgba(45,122,66,.08);--red:#c0392b;
+  --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px)}
 html,body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .screen{display:none;min-height:100vh;flex-direction:column}.screen.active{display:flex}
-.btn{padding:14px;border-radius:var(--r2);font-size:15px;font-weight:700;border:none;cursor:pointer;width:100%;transition:all .1s}
-.btn:active{transform:scale(.97)}.btn-primary{background:var(--ink);color:var(--bg)}.btn-accent{background:var(--accent);color:#fff}
+.btn{width:100%;padding:14px;border-radius:14px;font-size:15px;font-weight:700;border:none;cursor:pointer}
+.btn:active{transform:scale(.97);opacity:.9}
+.btn-dark{background:var(--ink);color:var(--bg)}.btn-accent{background:var(--accent);color:#fff}
 .btn-green{background:var(--green);color:#fff}.btn-outline{background:var(--card);border:1px solid var(--bg2);color:var(--ink)}
-input,select{width:100%;padding:13px;border:1px solid var(--bg2);border-radius:var(--r2);font-size:15px;background:var(--card);font-family:inherit}
-input:focus{border-color:var(--accent);outline:none}
+input,select{width:100%;padding:13px;border:1px solid var(--bg2);border-radius:14px;font-size:14px;background:var(--card);font-family:inherit}
+input:focus,select:focus{border-color:var(--accent);outline:none}
 .hdr{padding:14px 20px;padding-top:calc(14px + var(--safe-t));display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bg2)}
-.hdr h1{font-size:16px;font-weight:700}.hdr h1 em{color:var(--accent);font-style:normal}
-.tabs{display:flex;padding:8px 16px;gap:4px}.tab{flex:1;padding:10px 4px;text-align:center;font-size:12px;font-weight:700;border-radius:12px;cursor:pointer;background:var(--card);border:1px solid var(--bg2);color:var(--dim)}.tab.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.hdr h1{font-size:15px;font-weight:700}.hdr h1 em{color:var(--accent);font-style:normal}
+.hdr span{font-size:11px;color:var(--dim)}
+.tabs{display:flex;padding:8px 16px;gap:4px}
+.tab{flex:1;padding:10px 4px;text-align:center;font-size:12px;font-weight:700;border-radius:12px;cursor:pointer;background:var(--card);border:1px solid var(--bg2);color:var(--dim)}
+.tab.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .panel{display:none;padding:16px 20px;padding-bottom:calc(20px + var(--safe-b))}.panel.on{display:block}
-.field{margin-bottom:12px}.field label{display:block;font-size:12px;font-weight:600;color:var(--dim);margin-bottom:4px}
+.field{margin-bottom:12px}.field label{display:block;font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.card-s{background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:8px;border:1px solid var(--bg2);display:flex;justify-content:space-between;align-items:center}
+.card-s .l{display:flex;flex-direction:column;gap:2px}.card-s .l b{font-size:14px}.card-s .l span{font-size:11px;color:var(--dim)}
+.card-s .r{text-align:right}.card-s .r b{font-size:14px;color:var(--green)}.card-s .r span{font-size:10px;color:var(--dim);font-family:monospace}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.stat{background:var(--card);border-radius:var(--r2);padding:16px;border:1px solid var(--bg2);text-align:center}
-.stat .sv{font-size:24px;font-weight:800}.stat .sv.green{color:var(--green)}.stat .sv.accent{color:var(--accent)}
+.stat{background:var(--card);border-radius:14px;padding:16px;border:1px solid var(--bg2);text-align:center}
+.stat .sv{font-size:26px;font-weight:900}.stat .sv.green{color:var(--green)}.stat .sv.accent{color:var(--accent)}
 .stat .sl{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
-.card-s{background:var(--card);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;border:1px solid var(--bg2);display:flex;justify-content:space-between;align-items:center}
-.card-s .left{display:flex;flex-direction:column;gap:2px}.card-s .left b{font-size:14px}.card-s .left span{font-size:11px;color:var(--dim)}
-.card-s .right{text-align:right}.card-s .right b{font-size:14px;color:var(--green)}.card-s .right span{font-size:10px;color:var(--dim);font-family:monospace}
-.scan-area{width:100%;aspect-ratio:1;max-width:340px;margin:0 auto 12px;border-radius:var(--r);overflow:hidden;background:#000;position:relative}
-.scan-area video{width:100%;height:100%;object-fit:cover}
-.scan-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.scan-frame{width:180px;height:180px;border:3px solid var(--accent);border-radius:16px;box-shadow:0 0 0 9999px rgba(0,0,0,.4)}
-.result{background:var(--card);border-radius:var(--r);padding:20px;margin-top:12px;text-align:center;border:2px solid var(--bg2);display:none;animation:fadeUp .3s both}
-.result.show{display:block}.result.ok{border-color:var(--green)}.result.err{border-color:var(--red)}
-.result .ri{font-size:40px;margin-bottom:6px}.result .rt{font-size:18px;font-weight:800}.result .rs{font-size:13px;color:var(--dim);margin-top:4px}
 .msg{padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;margin-top:8px;display:none}
 .msg.ok{display:block;background:var(--green-soft);color:var(--green)}
-.section-title{font-size:12px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin:16px 0 10px}
+.stitle{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin:16px 0 10px}
+.scan-area{width:100%;aspect-ratio:1;max-width:320px;margin:0 auto 12px;border-radius:20px;overflow:hidden;background:#000;position:relative}
+.scan-area video{width:100%;height:100%;object-fit:cover}
+.scan-frame{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.scan-frame div{width:180px;height:180px;border:3px solid var(--accent);border-radius:16px;box-shadow:0 0 0 9999px rgba(0,0,0,.4)}
+.result{background:var(--card);border-radius:16px;padding:20px;margin-top:12px;text-align:center;border:2px solid var(--bg2);display:none;animation:fadeUp .3s both}
+.result.show{display:block}.result.ok{border-color:var(--green)}.result.err{border-color:var(--red)}
+.budget-card{background:var(--card);border-radius:16px;padding:20px;border:1px solid var(--bg2);text-align:center;margin-bottom:16px}
+.budget-card .big{font-size:44px;font-weight:900;color:var(--accent)}
+.budget-card .sub{font-size:12px;color:var(--dim);margin-top:2px}
+.budget-bar{height:8px;background:var(--bg2);border-radius:99px;margin:12px 0;overflow:hidden}
+.budget-bar div{height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
 </style>
 </head>
 <body>
@@ -48,195 +56,174 @@ input:focus{border-color:var(--accent);outline:none}
 <!-- LOGIN -->
 <div id="login" class="screen active">
   <div style="padding:0 28px;flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;max-width:380px;margin:0 auto">
-    <div style="font-size:48px;margin-bottom:16px">🏪</div>
-    <h2 style="font-size:22px;font-weight:800;margin-bottom:4px">Merchant login</h2>
-    <p style="font-size:13px;color:var(--dim);margin-bottom:24px">Log in or create a new merchant account</p>
-    <div class="field"><label>Cafe / Shop name</label><input id="lName" placeholder="e.g. Café Riese"></div>
-    <div class="field"><label>4-digit PIN</label><input id="lPin" type="password" maxlength="6" placeholder="e.g. 1234" inputmode="numeric"></div>
-    <button class="btn btn-primary" onclick="doLogin()" style="margin-bottom:8px">Log in</button>
-    <button class="btn btn-outline" onclick="doRegister()">Create new account</button>
-    <div class="msg" id="loginMsg"></div>
+    <div style="font-size:44px;margin-bottom:16px">🏪</div>
+    <h2 style="font-size:22px;font-weight:800;margin-bottom:4px">The Time Market</h2>
+    <p style="font-size:13px;color:var(--dim);margin-bottom:24px;line-height:1.5">Sell your quiet hours. Set a budget. The AI fills your seats.</p>
+    <div class="field"><label>Cafe name</label><input id="lN" placeholder="e.g. Café Riese"></div>
+    <div class="field"><label>4-digit PIN</label><input id="lP" type="password" maxlength="6" placeholder="1234" inputmode="numeric"></div>
+    <button class="btn btn-dark" onclick="doLogin()" style="margin-bottom:8px">Log in</button>
+    <button class="btn btn-outline" onclick="doReg()">Create account</button>
+    <div class="msg" id="lMsg"></div>
   </div>
 </div>
 
 <!-- MAIN -->
 <div id="main" class="screen">
-  <div class="hdr"><h1 id="mName">City <em>Wallet</em></h1><span id="mInfo" style="font-size:11px;color:var(--dim)"></span></div>
+  <div class="hdr"><h1>The <em>Time Market</em></h1><span id="mInfo"></span></div>
   <div class="tabs">
-    <div class="tab on" onclick="showP('scan',this)">📷 Scan</div>
-    <div class="tab" onclick="showP('items',this)">📦 Items</div>
-    <div class="tab" onclick="showP('boost',this)">🔔 Boost</div>
-    <div class="tab" onclick="showP('stats',this)">📊 Stats</div>
+    <div class="tab on" onclick="sp('auction',this)">🧠 Auction</div>
+    <div class="tab" onclick="sp('scan',this)">📷 Scan</div>
+    <div class="tab" onclick="sp('items',this)">📦 Items</div>
+    <div class="tab" onclick="sp('stats',this)">📊 Stats</div>
+  </div>
+
+  <!-- AUCTION (the main thing) -->
+  <div class="panel on" id="p-auction">
+    <div class="budget-card">
+      <div style="font-size:12px;color:var(--dim);margin-bottom:4px">Budget remaining today</div>
+      <div class="big" id="aBudget">€20.00</div>
+      <div class="budget-bar"><div id="aBudgetBar" style="width:100%"></div></div>
+      <div class="sub" id="aBudgetSub">€0 spent of €20 budget</div>
+    </div>
+    <div class="field"><label>Item to sell</label><select id="aItem"><option value="">-- Add items first --</option></select></div>
+    <div class="field"><label>Max discount %</label><input id="aDisc" type="number" value="20" min="5" max="40" inputmode="numeric"></div>
+    <button class="btn btn-accent" onclick="runAuction()">🧠 Run auction — AI picks the best user</button>
+    <div class="msg" id="aMsg"></div>
+    <div class="stitle">Recent auctions</div>
+    <div id="aHistory"><div style="text-align:center;padding:16px;color:var(--dim);font-size:13px">No auctions yet. Add items and run one!</div></div>
   </div>
 
   <!-- SCAN -->
-  <div class="panel on" id="p-scan">
-    <div class="scan-area"><video id="cam" autoplay playsinline muted></video><div class="scan-overlay"><div class="scan-frame"></div></div></div>
-    <p style="text-align:center;font-size:13px;color:var(--dim);margin-bottom:12px">Point camera at customer's QR</p>
-    <div class="field"><input id="codeIn" placeholder="Or type code: CW-XXXXXXXX" oninput="this.value=this.value.toUpperCase()" style="font-family:monospace;font-weight:700;text-align:center;font-size:18px"></div>
+  <div class="panel" id="p-scan">
+    <div class="scan-area"><video id="cam" autoplay playsinline muted></video><div class="scan-frame"><div></div></div></div>
+    <p style="text-align:center;font-size:13px;color:var(--dim);margin-bottom:8px">Scan customer's QR code</p>
+    <div class="field"><input id="cIn" placeholder="Or type: TM-XXXXXXXX" oninput="this.value=this.value.toUpperCase()" style="font-family:monospace;font-weight:700;text-align:center;font-size:18px"></div>
     <button class="btn btn-green" onclick="doVerify()">Verify & Redeem</button>
-    <div class="result" id="res"><div class="ri" id="rI"></div><div class="rt" id="rT"></div><div class="rs" id="rS"></div></div>
+    <div class="result" id="res"><div style="font-size:40px;margin-bottom:6px" id="rI"></div><div style="font-size:18px;font-weight:800" id="rT"></div><div style="font-size:13px;color:var(--dim);margin-top:4px" id="rS"></div></div>
   </div>
 
   <!-- ITEMS -->
   <div class="panel" id="p-items">
-    <p style="font-size:13px;color:var(--dim);margin-bottom:12px">Add your menu items. When you boost, users see the specific item with its price.</p>
-    <div class="field"><label>Item name</label><input id="iName" placeholder="e.g. Cappuccino"></div>
-    <div class="field"><label>Price (€)</label><input id="iPrice" type="number" step="0.10" value="3.50" inputmode="decimal"></div>
-    <button class="btn btn-primary" onclick="addItem()">+ Add item</button>
-    <div class="msg" id="itemMsg"></div>
-    <div class="section-title">Your items</div>
-    <div id="itemList"><div style="text-align:center;padding:16px;color:var(--dim);font-size:13px">No items yet</div></div>
-  </div>
-
-  <!-- BOOST -->
-  <div class="panel" id="p-boost">
-    <div style="background:var(--card);border-radius:var(--r);padding:20px;border:1px solid var(--bg2);text-align:center;margin-bottom:12px">
-      <div style="font-size:13px;color:var(--dim);margin-bottom:4px">Push subscribers nearby</div>
-      <div style="font-size:44px;font-weight:900;color:var(--accent)" id="bSubs">0</div>
-    </div>
-    <div class="field"><label>Select item to boost</label><select id="bItem"><option value="">-- Choose item --</option></select></div>
-    <div class="field"><label>Discount %</label><input id="bDisc" type="number" value="15" min="5" max="40" inputmode="numeric"></div>
-    <div class="field"><label>Custom message (optional)</label><input id="bMsg" placeholder="e.g. Fresh batch just brewed!"></div>
-    <button class="btn btn-accent" onclick="doBoost()">🔔 Boost now — send notification</button>
-    <div class="msg" id="boostMsg"></div>
-    <div class="section-title">Boost history</div>
-    <div id="boostHistory"><div style="text-align:center;padding:16px;color:var(--dim);font-size:13px">No boosts yet</div></div>
+    <p style="font-size:13px;color:var(--dim);margin-bottom:12px">Add menu items. When you run an auction, the AI sells these to nearby users.</p>
+    <div class="field"><label>Item name</label><input id="iN" placeholder="e.g. Cappuccino"></div>
+    <div class="field"><label>Price (€)</label><input id="iP" type="number" step="0.10" value="3.50" inputmode="decimal"></div>
+    <button class="btn btn-dark" onclick="addItem()">+ Add item</button>
+    <div class="msg" id="iMsg"></div>
+    <div class="stitle">Your menu</div>
+    <div id="iList"><div style="text-align:center;padding:16px;color:var(--dim);font-size:13px">No items yet</div></div>
   </div>
 
   <!-- STATS -->
   <div class="panel" id="p-stats">
     <div class="stat-grid">
-      <div class="stat"><div class="sv green" id="sRed">0</div><div class="sl">Redemptions</div></div>
-      <div class="stat"><div class="sv accent" id="sRev">€0</div><div class="sl">Revenue</div></div>
-      <div class="stat"><div class="sv" id="sBoosts">0</div><div class="sl">Boosts sent</div></div>
-      <div class="stat"><div class="sv green" id="sConv">0%</div><div class="sl">Conversion</div></div>
+      <div class="stat"><div class="sv accent" id="xAuctions">0</div><div class="sl">Auctions run</div></div>
+      <div class="stat"><div class="sv green" id="xReds">0</div><div class="sl">Redeemed</div></div>
+      <div class="stat"><div class="sv" id="xConv">0%</div><div class="sl">Conversion</div></div>
+      <div class="stat"><div class="sv green" id="xRev">€0</div><div class="sl">Revenue</div></div>
     </div>
-    <div class="section-title">Recent redemptions</div>
-    <div id="statList"><div style="text-align:center;padding:16px;color:var(--dim);font-size:13px">Nothing yet</div></div>
+    <div class="stitle">Recent</div>
+    <div id="xList"><div style="text-align:center;padding:16px;color:var(--dim);font-size:13px">Nothing yet</div></div>
   </div>
 </div>
 
 <script>
 const API=window.location.origin;
-let token='',mid='',mData=null;
+let token='',mid='';
+function ah(){return{'Content-Type':'application/json','Authorization':'Bearer '+token}}
+function sp(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.getElementById('p-'+id).classList.add('on');btn.classList.add('on');if(id==='stats')loadStats();if(id==='items')loadItems();if(id==='scan')startCam();if(id==='auction'){loadItems();loadDash()}}
+function msg(id,t){const e=document.getElementById(id);e.textContent=t;e.className='msg ok';setTimeout(()=>e.style.display='none',4000)}
 
-// ═══ AUTH ═══
 async function doLogin(){
-  const name=document.getElementById('lName').value.trim(),pin=document.getElementById('lPin').value.trim();
-  if(!name||!pin){showMsg('loginMsg','Fill both fields','err');return}
-  const r=await fetch(API+'/api/merchant/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,pin})});
+  const n=document.getElementById('lN').value.trim(),p=document.getElementById('lP').value.trim();
+  if(!n||!p){document.getElementById('lMsg').textContent='Fill both fields';document.getElementById('lMsg').className='msg ok';return}
+  const r=await fetch(API+'/api/merchant/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,pin:p})});
   const d=await r.json();
-  if(r.ok){token=d.token;mid=d.merchant_id;mData=d.merchant;enterApp()}
-  else{showMsg('loginMsg',d.error||'Login failed','err')}
+  if(r.ok){token=d.token;mid=d.merchant_id;enter(d)}
+  else{document.getElementById('lMsg').textContent=d.error||'Failed';document.getElementById('lMsg').className='msg ok'}
 }
-async function doRegister(){
-  const name=document.getElementById('lName').value.trim(),pin=document.getElementById('lPin').value.trim();
-  if(!name||pin.length<4){showMsg('loginMsg','Need name + 4 digit PIN','err');return}
-  let lat=48.1351,lng=11.582;
-  try{const p=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{timeout:5000}));lat=p.coords.latitude;lng=p.coords.longitude}catch(e){}
-  const r=await fetch(API+'/api/merchant/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,pin,lat,lng})});
+async function doReg(){
+  const n=document.getElementById('lN').value.trim(),p=document.getElementById('lP').value.trim();
+  if(!n||p.length<4){document.getElementById('lMsg').textContent='Name + 4-digit PIN';document.getElementById('lMsg').className='msg ok';return}
+  let la=48.1351,lo=11.582;
+  try{const pos=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{timeout:5000}));la=pos.coords.latitude;lo=pos.coords.longitude}catch(e){}
+  const r=await fetch(API+'/api/merchant/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,pin:p,lat:la,lng:lo})});
   const d=await r.json();
-  if(r.ok){token=d.token;mid=d.merchant_id;mData={name};enterApp()}
-  else{showMsg('loginMsg',d.error||'Registration failed','err')}
+  if(r.ok){token=d.token;mid=d.merchant_id;enter(d)}
+  else{document.getElementById('lMsg').textContent=d.error||'Failed';document.getElementById('lMsg').className='msg ok'}
 }
-function enterApp(){
-  document.getElementById('login').classList.remove('active');
-  document.getElementById('main').classList.add('active');
-  document.getElementById('mName').innerHTML=mData?.name||'Merchant';
-  loadItems();loadStats();startCam();
+function enter(d){
+  document.getElementById('login').classList.remove('active');document.getElementById('main').classList.add('active');
+  document.getElementById('mInfo').textContent=d.name||'Merchant';loadItems();loadDash();
 }
-function authHeaders(){return{'Content-Type':'application/json','Authorization':'Bearer '+token}}
-function showMsg(id,txt){const el=document.getElementById(id);el.textContent=txt;el.className='msg ok';el.style.display='block';setTimeout(()=>el.style.display='none',4000)}
 
-function showP(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.getElementById('p-'+id).classList.add('on');btn.classList.add('on');if(id==='stats')loadStats();if(id==='boost')loadBoostPanel();if(id==='scan')startCam();if(id==='items')loadItems()}
+// ITEMS
+async function loadItems(){
+  const r=await fetch(API+'/api/merchant/items',{headers:ah()});if(!r.ok)return;const d=await r.json();
+  const sel=document.getElementById('aItem');
+  sel.innerHTML=d.items.length?d.items.map(i=>`<option value="${i.id}" data-price="${i.price}">${i.name} (€${i.price.toFixed(2)})</option>`):'<option>-- Add items first --</option>';
+  document.getElementById('iList').innerHTML=d.items.length?d.items.map(i=>`<div class="card-s"><div class="l"><b>${i.name}</b></div><div class="r"><b>€${i.price.toFixed(2)}</b></div></div>`).join(''):'<div style="text-align:center;padding:16px;color:var(--dim)">No items</div>';
+}
+async function addItem(){
+  const n=document.getElementById('iN').value.trim(),p=parseFloat(document.getElementById('iP').value);
+  if(!n)return;
+  await fetch(API+'/api/merchant/items',{method:'POST',headers:ah(),body:JSON.stringify({name:n,price:p})});
+  msg('iMsg','Added '+n);loadItems();document.getElementById('iN').value='';
+}
 
-// ═══ SCAN ═══
+// AUCTION
+async function loadDash(){
+  const r=await fetch(API+'/api/merchant/dashboard',{headers:ah()});if(!r.ok)return;const d=await r.json();
+  const bud=d.budget||20,spent=d.spent_today||0,rem=Math.max(bud-spent,0);
+  document.getElementById('aBudget').textContent='€'+rem.toFixed(2);
+  document.getElementById('aBudgetBar').style.width=Math.round(rem/bud*100)+'%';
+  document.getElementById('aBudgetSub').textContent=`€${spent.toFixed(2)} spent of €${bud.toFixed(2)} budget`;
+  document.getElementById('mInfo').textContent=`${d.subscribers_nearby||0} users nearby`;
+  if(d.recent_auctions?.length){
+    document.getElementById('aHistory').innerHTML=d.recent_auctions.reverse().map(a=>`<div class="card-s"><div class="l"><b>${a.item} · ${a.discount_pct}%</b><span>${a.status} · score ${a.winner_score} · ${a.winner_dist}m</span></div><div class="r"><b>${a.code}</b><span>€${a.budget_used}</span></div></div>`).join('');
+  }
+}
+async function runAuction(){
+  const sel=document.getElementById('aItem');const opt=sel.options[sel.selectedIndex];
+  if(!opt||!opt.value){msg('aMsg','Add items first');return}
+  const disc=parseInt(document.getElementById('aDisc').value);
+  const r=await fetch(API+'/api/auction/run',{method:'POST',headers:ah(),
+    body:JSON.stringify({item:opt.text.split(' (')[0],price:parseFloat(opt.dataset.price||3.5),max_discount:disc})});
+  const d=await r.json();
+  if(r.ok){
+    msg('aMsg',`Sent to user ${d.winner_dist}m away · Score: ${d.winner_score} · Code: ${d.code}`);
+    navigator.vibrate?.([50,30,50]);loadDash();
+  }else{msg('aMsg',d.error||'Failed')}
+}
+
+// SCAN
 let scanning=false;
 async function startCam(){
   if(scanning)return;
-  try{
-    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
-    document.getElementById('cam').srcObject=stream;scanning=true;
-    if('BarcodeDetector' in window){
-      const det=new BarcodeDetector({formats:['qr_code']});const v=document.getElementById('cam');
-      const loop=async()=>{if(!scanning)return;try{const codes=await det.detect(v);if(codes.length&&codes[0].rawValue.startsWith('CW-')){document.getElementById('codeIn').value=codes[0].rawValue;doVerify();return}}catch(e){}requestAnimationFrame(loop)};
-      v.addEventListener('playing',()=>setTimeout(loop,500),{once:true});
-    }
+  try{const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    document.getElementById('cam').srcObject=s;scanning=true;
+    if('BarcodeDetector' in window){const det=new BarcodeDetector({formats:['qr_code']});const v=document.getElementById('cam');
+      const loop=async()=>{if(!scanning)return;try{const c=await det.detect(v);if(c.length&&c[0].rawValue.startsWith('TM-')){document.getElementById('cIn').value=c[0].rawValue;doVerify();return}}catch(e){}requestAnimationFrame(loop)};
+      v.addEventListener('playing',()=>setTimeout(loop,500),{once:true})}
   }catch(e){}
 }
 async function doVerify(){
-  const code=document.getElementById('codeIn').value.trim();if(!code)return;
-  const r=await fetch(API+'/api/verify',{method:'POST',headers:authHeaders(),body:JSON.stringify({code})});
-  const d=await r.json();const el=document.getElementById('res');
-  if(d.valid){
-    el.className='result show ok';document.getElementById('rI').textContent='✅';
-    document.getElementById('rT').textContent='Redeemed!';
-    document.getElementById('rS').textContent=`${d.item||d.merchant} · €${d.redemption?.cashback} cashback · Final: €${d.redemption?.final}`;
-    navigator.vibrate?.([50,30,50,30,50]);
-  }else{
-    el.className='result show err';document.getElementById('rI').textContent='❌';
-    document.getElementById('rT').textContent=d.error||'Invalid';
-    document.getElementById('rS').textContent=d.redeemed_at?'Used at '+d.redeemed_at:'Try again';
-    navigator.vibrate?.(200);
-  }
-  document.getElementById('codeIn').value='';
+  const code=document.getElementById('cIn').value.trim();if(!code)return;
+  const r=await fetch(API+'/api/verify',{method:'POST',headers:ah(),body:JSON.stringify({code})});const d=await r.json();const el=document.getElementById('res');
+  if(d.valid){el.className='result show ok';document.getElementById('rI').textContent='✅';document.getElementById('rT').textContent='Redeemed!';
+    document.getElementById('rS').textContent=`${d.item||d.merchant} · €${d.redemption?.cashback} cashback · Final: €${d.redemption?.final}`;navigator.vibrate?.([50,30,50,30,50])
+  }else{el.className='result show err';document.getElementById('rI').textContent='❌';document.getElementById('rT').textContent=d.error||'Invalid';
+    document.getElementById('rS').textContent='';navigator.vibrate?.(200)}
+  document.getElementById('cIn').value='';loadDash();
 }
 
-// ═══ ITEMS ═══
-async function loadItems(){
-  const r=await fetch(API+'/api/merchant/items',{headers:authHeaders()});
-  if(!r.ok)return;const d=await r.json();
-  const el=document.getElementById('itemList');const sel=document.getElementById('bItem');
-  if(d.items.length){
-    el.innerHTML=d.items.map(i=>`<div class="card-s"><div class="left"><b>${i.name}</b><span>${i.category}</span></div><div class="right"><b>€${i.price.toFixed(2)}</b><span>${i.id}</span></div></div>`).join('');
-    sel.innerHTML='<option value="">-- Choose --</option>'+d.items.map(i=>`<option value="${i.id}">${i.name} (€${i.price.toFixed(2)})</option>`).join('');
-  }else{el.innerHTML='<div style="text-align:center;padding:16px;color:var(--dim);font-size:13px">No items — add one above</div>'}
-}
-async function addItem(){
-  const name=document.getElementById('iName').value.trim(),price=parseFloat(document.getElementById('iPrice').value);
-  if(!name)return;
-  await fetch(API+'/api/merchant/items',{method:'POST',headers:authHeaders(),body:JSON.stringify({name,price})});
-  showMsg('itemMsg',`Added ${name}`);loadItems();
-  document.getElementById('iName').value='';
-}
-
-// ═══ BOOST ═══
-async function loadBoostPanel(){
-  loadItems();
-  const r=await fetch(API+'/api/merchant/dashboard',{headers:authHeaders()});if(!r.ok)return;
-  const d=await r.json();
-  document.getElementById('bSubs').textContent=d.active_subscribers;
-  const hist=document.getElementById('boostHistory');
-  if(d.recent_boosts?.length){
-    hist.innerHTML=d.recent_boosts.reverse().map(b=>`<div class="card-s"><div class="left"><b>${b.item_name} · ${b.discount_pct}%</b><span>${b.code}</span></div><div class="right"><b>${b.redeemed_by?.length||0} used</b><span>${b.created?.split('T')[1]?.slice(0,5)||''}</span></div></div>`).join('');
-  }
-}
-async function doBoost(){
-  const item_id=document.getElementById('bItem').value;
-  const disc=parseInt(document.getElementById('bDisc').value);
-  const msg=document.getElementById('bMsg').value.trim();
-  const r=await fetch(API+'/api/merchant/boost',{method:'POST',headers:authHeaders(),
-    body:JSON.stringify({item_id,discount:disc,message:msg})});
-  const d=await r.json();
-  showMsg('boostMsg',`Sent to ${d.sent} users · Code: ${d.code}`);
-  navigator.vibrate?.([50,30,50]);
-  loadBoostPanel();
-}
-
-// ═══ STATS ═══
+// STATS
 async function loadStats(){
-  const r=await fetch(API+'/api/merchant/dashboard',{headers:authHeaders()});if(!r.ok)return;
-  const d=await r.json();
-  document.getElementById('sRed').textContent=d.total_redemptions||0;
-  document.getElementById('sRev').textContent='€'+(d.total_revenue||0).toFixed(2);
-  document.getElementById('sBoosts').textContent=d.total_boosts||0;
-  document.getElementById('sConv').textContent=(d.conversion_rate_pct||0)+'%';
-  document.getElementById('mInfo').textContent=`${d.active_subscribers} subs · ${d.total_boosts||0} boosts`;
-  const list=document.getElementById('statList');
-  if(d.recent_redemptions?.length){
-    list.innerHTML=d.recent_redemptions.reverse().map(r=>`<div class="card-s"><div class="left"><b>${r.item||r.merchant}</b><span>${r.ts} · ${r.code}</span></div><div class="right"><b class="green">€${r.final}</b><span>-€${r.cashback} cb</span></div></div>`).join('');
-  }
+  const r=await fetch(API+'/api/merchant/dashboard',{headers:ah()});if(!r.ok)return;const d=await r.json();
+  document.getElementById('xAuctions').textContent=d.auctions_run||0;
+  document.getElementById('xReds').textContent=d.redemptions||0;
+  document.getElementById('xConv').textContent=(d.conversion_pct||0)+'%';
+  document.getElementById('xRev').textContent='€'+(d.revenue||0).toFixed(2);
+  if(d.recent_redemptions?.length)document.getElementById('xList').innerHTML=d.recent_redemptions.reverse().map(r=>`<div class="card-s"><div class="l"><b>${r.item||r.merchant}</b><span>${r.ts} · ${r.code}</span></div><div class="r"><b style="color:var(--green)">€${r.final}</b></div></div>`).join('');
 }
 </script>
 </body>

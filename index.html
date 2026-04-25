@@ -8,534 +8,356 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="/manifest.json">
 <title>City Wallet</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{
-  --bg:#f5f0e8;--bg2:#ece5d8;--bg3:#e3dbd0;
-  --card:#fffcf6;--card2:#f9f4ec;
-  --ink:#1a1714;--ink2:#4a4540;--dim:#8a847a;--dim2:#b8b0a4;
-  --accent:#d4622a;--accent2:#e8854d;--accent-soft:rgba(212,98,42,.1);
-  --green:#2d8a4e;--green-soft:rgba(45,138,78,.1);
-  --blue:#3a7bd5;--red:#c0392b;
-  --r:22px;--r2:16px;
-  --safe-b:env(safe-area-inset-bottom,0px);
-  --safe-t:env(safe-area-inset-top,0px);
-}
+:root{--bg:#f5f0e8;--bg2:#ece5d8;--bg3:#e3dbd0;--card:#fffcf6;--ink:#1a1714;--ink2:#4a4540;--dim:#8a847a;--dim2:#b8b0a4;
+  --accent:#c25a1e;--accent2:#e07832;--accent-soft:rgba(194,90,30,.08);--green:#2d7a42;--green-soft:rgba(45,122,66,.08);
+  --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px)}
 html,body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);
-  min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased;overflow:hidden}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes spin{to{transform:rotate(360deg)}}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
-@keyframes glow{0%,100%{box-shadow:0 4px 24px rgba(212,98,42,.15)}50%{box-shadow:0 4px 32px rgba(212,98,42,.3)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes flip{0%{transform:rotateY(0)}100%{transform:rotateY(180deg)}}
+.screen{display:none;height:100vh;height:100dvh;flex-direction:column;overflow:hidden}.screen.active{display:flex}
 
-.screen{display:none;min-height:100vh;min-height:100dvh;flex-direction:column}.screen.active{display:flex}
-
-/* ═══ SPLASH ═══ */
-#splash{background:var(--bg);justify-content:center;align-items:center;gap:20px}
-#splash .mark{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--accent),var(--accent2));
-  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:24px;animation:glow 2s infinite}
-#splash h1{font-size:22px;font-weight:700;letter-spacing:-.02em}
-#splash .sub{font-size:13px;color:var(--dim)}
-#splash .dots{display:flex;gap:6px;margin-top:24px}
-#splash .dot{width:6px;height:6px;border-radius:50%;background:var(--dim2);animation:pulse .6s ease infinite}
-#splash .dot:nth-child(2){animation-delay:.2s}
-#splash .dot:nth-child(3){animation-delay:.4s}
-
-/* ═══ PERMISSIONS ═══ */
-#perms{background:var(--bg);padding:0 28px;justify-content:center;align-items:center;text-align:center}
-.perm-wrap{max-width:360px;animation:fadeUp .5s ease both}
-.perm-wrap .icon{font-size:56px;margin-bottom:16px}
-.perm-wrap h2{font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:8px}
-.perm-wrap p{font-size:14px;color:var(--dim);line-height:1.6;margin-bottom:24px}
-.perm-items{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;text-align:left}
-.perm-item{display:flex;gap:12px;align-items:center;padding:14px;background:var(--card);border-radius:var(--r2);border:1px solid var(--bg2)}
-.perm-item .pi-icon{font-size:20px;width:36px;height:36px;border-radius:10px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.perm-item .pi-text{font-size:13px;color:var(--ink2);line-height:1.4}
-.perm-item .pi-text b{color:var(--ink);display:block;font-size:14px}
-.btn{padding:16px;border-radius:var(--r2);font-size:15px;font-weight:700;border:none;cursor:pointer;width:100%;transition:all .15s}
+/* ═══ ONBOARDING ═══ */
+#onboard{background:var(--bg);justify-content:center;align-items:center;text-align:center;padding:0 32px}
+.ob-mark{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:22px;margin:0 auto 24px}
+#onboard h1{font-size:26px;font-weight:900;letter-spacing:-.03em;line-height:1.15;margin-bottom:8px}
+#onboard h1 em{font-style:normal;color:var(--accent)}
+#onboard p{font-size:14px;color:var(--dim);line-height:1.6;max-width:320px;margin:0 auto 28px}
+.ob-features{display:flex;flex-direction:column;gap:10px;max-width:320px;margin:0 auto 28px;text-align:left}
+.ob-f{display:flex;gap:10px;align-items:center;font-size:13px;color:var(--ink2)}
+.ob-f b{color:var(--ink)}
+.ob-f .oi{width:32px;height:32px;border-radius:10px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.btn{width:100%;max-width:320px;padding:16px;border-radius:14px;font-size:15px;font-weight:700;border:none;cursor:pointer}
 .btn:active{transform:scale(.97);opacity:.9}
-.btn-primary{background:var(--ink);color:var(--bg);box-shadow:0 4px 16px rgba(26,23,20,.15)}
-.btn-skip{background:none;color:var(--dim);margin-top:6px;font-size:13px}
+.btn-dark{background:var(--ink);color:var(--bg)}
+.btn-ghost{background:none;color:var(--dim);font-size:13px;margin-top:6px}
 
-/* ═══ MAIN APP ═══ */
-#app{background:var(--bg);padding-bottom:calc(68px + var(--safe-b))}
-
-/* Header */
-.hdr{padding:14px 20px;padding-top:calc(14px + var(--safe-t));display:flex;justify-content:space-between;align-items:center}
-.hdr-left{display:flex;align-items:center;gap:10px}
-.hdr-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));
-  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px}
-.hdr-text h1{font-size:16px;font-weight:700;line-height:1.1}
-.hdr-text span{font-size:11px;color:var(--dim)}
-.hdr-right{display:flex;gap:8px}
-.hdr-btn{width:34px;height:34px;border-radius:50%;background:var(--card);border:1px solid var(--bg2);
-  display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;position:relative}
-.hdr-btn .bdg{position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;border-radius:50%;
-  background:var(--accent);color:#fff;font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg)}
+/* ═══ MAIN — THE OFFER ═══ */
+#main{background:var(--bg)}
+.main-top{padding:14px 20px;padding-top:calc(14px + var(--safe-t));display:flex;justify-content:space-between;align-items:center}
+.mt-left{display:flex;align-items:center;gap:8px}
+.mt-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:11px}
+.mt-text{font-size:14px;font-weight:700}.mt-text em{font-style:normal;color:var(--accent)}
+.mt-sub{font-size:11px;color:var(--dim)}
+.mt-right{display:flex;gap:6px;align-items:center}
+.mt-pill{font-size:10px;font-weight:700;padding:4px 10px;border-radius:99px;display:flex;align-items:center;gap:4px}
+.mt-pill.live{background:var(--green-soft);color:var(--green)}
+.mt-pill .dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite}
 
 /* Context strip */
-.ctx{padding:4px 20px 12px;display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch}.ctx::-webkit-scrollbar{display:none}
-.ctx-tag{flex-shrink:0;font-size:11px;font-weight:600;padding:6px 11px;border-radius:10px;
-  background:var(--card);border:1px solid var(--bg2);color:var(--ink2);display:flex;align-items:center;gap:4px}
-.ctx-tag.hot{background:var(--accent-soft);border-color:rgba(212,98,42,.15);color:var(--accent)}
-.ctx-tag.green{background:var(--green-soft);border-color:rgba(45,138,78,.15);color:var(--green)}
+.ctx{padding:4px 20px 10px;display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch}.ctx::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;font-size:10px;font-weight:600;padding:5px 10px;border-radius:8px;background:var(--card);border:1px solid var(--bg2);color:var(--dim)}
+.chip.hot{background:var(--accent-soft);color:var(--accent);border-color:rgba(194,90,30,.12)}
 
-/* Section */
-.sec{padding:8px 20px 10px;display:flex;justify-content:space-between;align-items:baseline}
-.sec h2{font-size:17px;font-weight:800;letter-spacing:-.02em}
-.sec span{font-size:12px;color:var(--dim)}
+/* ═══ THE CARD ═══ (the entire app is this one card) */
+.offer-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:0 20px;perspective:1000px}
+.offer-card{width:100%;max-width:380px;border-radius:24px;overflow:hidden;background:var(--card);
+  box-shadow:0 8px 40px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.03);
+  transition:transform .6s;transform-style:preserve-3d;position:relative;cursor:pointer}
+.offer-card.flipped{transform:rotateY(180deg)}
+.offer-front,.offer-back{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.offer-back{position:absolute;inset:0;transform:rotateY(180deg);background:var(--card);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
 
-/* ═══ HORIZONTAL SWIPE CARDS ═══ */
-.cards-wrap{position:relative;padding:0 0 8px}
-.cards{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
-  padding:0 20px 16px;scroll-padding:0 20px}.cards::-webkit-scrollbar{display:none}
-.card{flex-shrink:0;width:calc(100vw - 56px);max-width:340px;scroll-snap-align:start;
-  background:var(--card);border-radius:var(--r);overflow:hidden;
-  border:1px solid rgba(0,0,0,.04);box-shadow:0 2px 16px rgba(0,0,0,.04);
-  animation:fadeUp .4s ease both;cursor:pointer;transition:transform .2s}
-.card:active{transform:scale(.985)}
+/* Front */
+.of-hero{position:relative;height:180px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px 22px;color:#fff}
+.of-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 20%,rgba(0,0,0,.75) 100%)}
+.of-emoji{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);font-size:72px;opacity:.15}
+.of-content{position:relative;z-index:1}
+.of-tag{display:inline-block;font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;
+  background:rgba(255,255,255,.2);backdrop-filter:blur(8px);margin-bottom:6px;letter-spacing:.02em}
+.of-h{font-size:22px;font-weight:900;line-height:1.12;letter-spacing:-.02em}
+.of-s{font-size:12px;opacity:.8;margin-top:3px}
 
-.card-top{position:relative;height:140px;display:flex;flex-direction:column;justify-content:flex-end;padding:16px 18px;color:#fff}
-.card-top::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 20%,rgba(0,0,0,.7) 100%);border-radius:var(--r) var(--r) 0 0}
-.card-emoji{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);font-size:56px;opacity:.2;z-index:0}
-.card-top-content{position:relative;z-index:1}
-.card-label{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;background:rgba(255,255,255,.2);backdrop-filter:blur(8px);margin-bottom:6px}
-.card-h{font-size:18px;font-weight:800;line-height:1.15;letter-spacing:-.01em}
-.card-s{font-size:12px;opacity:.8;margin-top:2px}
+.of-body{padding:18px 22px}
+.of-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg2)}
+.of-row:last-child{border-bottom:none}
+.of-k{font-size:12px;color:var(--dim);font-weight:600}.of-v{font-size:13px;font-weight:700}
+.of-v.accent{color:var(--accent)}.of-v.green{color:var(--green)}
 
-.card-body{padding:14px 18px}
-.card-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.card-row:last-child{margin-bottom:0}
-.card-tag{font-size:11px;color:var(--dim);font-weight:600}
-.card-val{font-size:12px;font-weight:700;color:var(--ink)}
-.card-val.accent{color:var(--accent)}
-.card-val.green{color:var(--green)}
+.of-why{padding:12px 22px;background:var(--accent-soft);font-size:11px;color:var(--accent);line-height:1.5;font-weight:500}
 
-.card-cta{padding:12px 18px;border-top:1px solid var(--bg2)}
-.card-cta button{width:100%;padding:12px;border-radius:12px;background:var(--ink);color:var(--bg);
-  font-size:14px;font-weight:700;border:none;cursor:pointer}
-.card-cta button:active{opacity:.85}
+.of-cta{padding:16px 22px}
+.of-cta button{width:100%;padding:15px;border-radius:14px;background:var(--ink);color:var(--bg);
+  font-size:15px;font-weight:700;border:none;cursor:pointer}
+.of-cta button:active{opacity:.85}
 
-/* Dots indicator */
-.dots-row{display:flex;justify-content:center;gap:5px;padding:4px 0 8px}
-.dot-ind{width:6px;height:6px;border-radius:50%;background:var(--dim2);transition:all .2s}
-.dot-ind.active{width:18px;background:var(--accent);border-radius:3px}
+/* Back (QR) */
+.ob-merchant{font-size:20px;font-weight:800;margin-bottom:2px}
+.ob-item{font-size:14px;color:var(--accent);font-weight:700;margin-bottom:16px}
+.qr-box{width:210px;height:210px;border-radius:16px;overflow:hidden;background:var(--bg2);margin-bottom:12px;display:flex;align-items:center;justify-content:center}
+.qr-box img{width:100%;height:100%}
+.qr-code{font-family:monospace;font-size:20px;font-weight:900;letter-spacing:.08em;margin-bottom:4px}
+.qr-hint{font-size:12px;color:var(--dim);margin-bottom:16px}
+.qr-status{font-size:13px;font-weight:700;padding:8px 16px;border-radius:8px}
+.qr-status.ready{background:var(--accent-soft);color:var(--accent)}
+.qr-status.done{background:var(--green-soft);color:var(--green)}
 
-/* ═══ QR SCREEN (slides up) ═══ */
-#qr{background:var(--bg);position:fixed;inset:0;z-index:200;display:none;flex-direction:column;justify-content:center;align-items:center;padding:24px;animation:slideUp .3s ease}
-#qr.open{display:flex}
-.qr-close{position:absolute;top:20px;left:20px;top:calc(20px + var(--safe-t));width:40px;height:40px;border-radius:50%;
-  background:var(--card);border:1px solid var(--bg2);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;border:none}
-.qr-card{width:100%;max-width:340px;background:var(--card);border-radius:24px;overflow:hidden;
-  box-shadow:0 12px 48px rgba(0,0,0,.08);animation:fadeUp .3s ease both}
-.qr-top{padding:24px 24px 16px;text-align:center}
-.qr-merchant{font-size:20px;font-weight:800;letter-spacing:-.02em}
-.qr-offer{font-size:14px;color:var(--accent);font-weight:700;margin-top:2px}
-.qr-address{font-size:12px;color:var(--dim);margin-top:4px}
-.qr-body{padding:8px 24px 20px;text-align:center}
-.qr-img{width:200px;height:200px;margin:0 auto 12px;border-radius:16px;overflow:hidden;background:var(--bg2);display:flex;align-items:center;justify-content:center}
-.qr-img img{width:100%;height:100%}
-.qr-code-text{font-family:monospace;font-size:18px;font-weight:800;letter-spacing:.08em;color:var(--ink)}
-.qr-hint{font-size:12px;color:var(--dim);margin-top:6px}
-.qr-meta{padding:14px 24px;background:var(--bg);display:flex;justify-content:space-around;font-size:12px}
-.qr-meta-item{text-align:center}
-.qr-meta-item .val{font-weight:700;font-size:14px;color:var(--ink)}
-.qr-meta-item .lab{color:var(--dim);font-size:10px;text-transform:uppercase;letter-spacing:.04em;margin-top:1px}
-.qr-footer{padding:14px 24px;text-align:center;font-size:13px;font-weight:700;color:var(--accent);background:var(--accent-soft)}
-.qr-actions{display:flex;gap:10px;padding:16px 24px}
-.qr-actions button{flex:1;padding:12px;border-radius:12px;font-size:13px;font-weight:700;border:none;cursor:pointer}
-.qr-btn-map{background:var(--bg);color:var(--ink);border:1px solid var(--bg2) !important}
-.qr-btn-done{background:var(--green);color:#fff}
+/* Empty state */
+.empty{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px}
+.empty .icon{font-size:48px;margin-bottom:16px;opacity:.6}
+.empty h2{font-size:18px;font-weight:700;margin-bottom:6px}
+.empty p{font-size:13px;color:var(--dim);line-height:1.5;max-width:280px}
 
-/* ═══ SAVINGS TAB ═══ */
-#savings{background:var(--bg);padding:20px;padding-top:calc(20px + var(--safe-t));padding-bottom:calc(80px + var(--safe-b))}
-.sav-hero{background:var(--card);border-radius:var(--r);padding:28px 24px;text-align:center;margin-bottom:16px;border:1px solid var(--bg2)}
-.sav-hero .amount{font-size:48px;font-weight:900;letter-spacing:-.04em;color:var(--green)}
-.sav-hero .label{font-size:13px;color:var(--dim);margin-top:4px}
-.sav-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
-.sav-stat{background:var(--card);border-radius:var(--r2);padding:16px;text-align:center;border:1px solid var(--bg2)}
-.sav-stat .sv{font-size:22px;font-weight:800}.sav-stat .sl{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
-.sav-section h3{font-size:14px;font-weight:700;margin-bottom:10px;color:var(--ink2)}
-.sav-item{background:var(--card);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;
-  display:flex;justify-content:space-between;align-items:center;border:1px solid var(--bg2)}
-.sav-item .si-left{display:flex;flex-direction:column;gap:2px}
-.sav-item .si-name{font-size:14px;font-weight:600}.sav-item .si-time{font-size:11px;color:var(--dim)}
-.sav-item .si-amount{font-size:16px;font-weight:800;color:var(--green)}
-.sav-empty{text-align:center;padding:32px;color:var(--dim);font-size:14px}
+/* Bottom: savings pill */
+.bottom-bar{padding:12px 20px;padding-bottom:calc(12px + var(--safe-b));display:flex;justify-content:space-between;align-items:center;
+  background:var(--card);border-top:1px solid var(--bg2)}
+.bb-saved{display:flex;align-items:center;gap:8px}
+.bb-saved .amt{font-size:18px;font-weight:900;color:var(--green)}
+.bb-saved .label{font-size:11px;color:var(--dim)}
+.bb-link{font-size:12px;font-weight:700;color:var(--accent);cursor:pointer;text-decoration:none}
 
-/* ═══ TOAST ═══ */
+/* ═══ SAVINGS SHEET ═══ */
+.sheet{position:fixed;inset:0;z-index:200;display:none;flex-direction:column}
+.sheet.open{display:flex}
+.sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.3)}
+.sheet-body{margin-top:auto;background:var(--bg);border-radius:20px 20px 0 0;padding:20px;
+  padding-bottom:calc(20px + var(--safe-b));max-height:70vh;overflow-y:auto;position:relative;animation:slideUp .3s ease}
+.sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--dim2);margin:0 auto 16px}
+.sheet-body h2{font-size:18px;font-weight:800;margin-bottom:4px}
+.s-total{font-size:36px;font-weight:900;color:var(--green);margin-bottom:16px}
+.s-item{background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:6px;display:flex;justify-content:space-between;
+  align-items:center;border:1px solid var(--bg2)}
+.s-item .l b{font-size:13px;display:block}.s-item .l span{font-size:11px;color:var(--dim)}
+.s-item .r{font-size:15px;font-weight:800;color:var(--green)}
+
+/* Toast */
 .toast{position:fixed;top:0;left:0;right:0;z-index:300;padding:14px 20px;
-  padding-top:calc(14px + var(--safe-t));
-  background:var(--card);border-bottom:1px solid var(--bg2);
-  box-shadow:0 4px 24px rgba(0,0,0,.08);
-  display:flex;align-items:center;gap:12px;
+  padding-top:calc(14px + var(--safe-t));background:var(--card);border-bottom:1px solid var(--bg2);
+  box-shadow:0 4px 20px rgba(0,0,0,.06);display:flex;align-items:center;gap:12px;
   transform:translateY(-100%);transition:transform .3s ease;cursor:pointer}
 .toast.show{transform:translateY(0)}
-.toast .t-dot{width:36px;height:36px;border-radius:10px;background:var(--accent-soft);
-  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.toast .t-body{flex:1}
-.toast .t-h{font-size:13px;font-weight:700;color:var(--ink)}
-.toast .t-s{font-size:11px;color:var(--dim)}
-.toast .t-go{font-size:11px;font-weight:700;color:var(--accent);flex-shrink:0}
-
-/* ═══ NAV ═══ */
-.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--card);
-  border-top:1px solid var(--bg2);padding:6px 0;padding-bottom:calc(6px + var(--safe-b));display:flex}
-.nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px;
-  font-size:10px;font-weight:600;color:var(--dim);cursor:pointer;transition:color .2s;text-decoration:none}
-.nav-tab .ni{font-size:22px}
-.nav-tab.on{color:var(--accent)}
-.nav-tab.on .ni{transform:scale(1.1)}
-
-.loading{text-align:center;padding:48px 20px;color:var(--dim)}
-.loading .sp{width:36px;height:36px;border:3px solid var(--bg2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
+.toast .td{width:36px;height:36px;border-radius:10px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:18px}
+.toast .tb{flex:1}.toast .th{font-size:13px;font-weight:700}.toast .ts{font-size:11px;color:var(--dim)}
+.toast .ta{font-size:11px;font-weight:700;color:var(--accent)}
 </style>
 </head>
 <body>
 
-<!-- SPLASH -->
-<div id="splash" class="screen active">
-  <div class="mark">CW</div>
-  <h1>City Wallet</h1>
-  <div class="sub">Finding offers near you...</div>
-  <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-</div>
-
-<!-- PERMISSIONS -->
-<div id="perms" class="screen">
-  <div class="perm-wrap">
-    <div class="icon">📍</div>
-    <h2>Offers near you</h2>
-    <p>We use your location and real-time weather to find the best deals within walking distance. Nothing leaves your phone.</p>
-    <div class="perm-items">
-      <div class="perm-item"><div class="pi-icon">📍</div><div class="pi-text"><b>Location</b>Only show cafes you can walk to</div></div>
-      <div class="perm-item"><div class="pi-icon">🔔</div><div class="pi-text"><b>Notifications</b>Tap a notification to open the deal</div></div>
-      <div class="perm-item"><div class="pi-icon">🔒</div><div class="pi-text"><b>Privacy</b>On-device only. GDPR compliant.</div></div>
-    </div>
-    <button class="btn btn-primary" onclick="grantPerms()">Enable & start</button>
-    <button class="btn btn-skip" onclick="grantPerms()">Skip</button>
+<!-- ONBOARDING (once) -->
+<div id="onboard" class="screen active">
+  <div class="ob-mark">TM</div>
+  <h1>The <em>Time Market</em></h1>
+  <p>Cafes sell their quiet hours. The AI buys them for you. One perfect offer, delivered to your lock screen.</p>
+  <div class="ob-features">
+    <div class="ob-f"><div class="oi">🧠</div><b>AI picks you</b> — out of everyone nearby, you got this offer</div>
+    <div class="ob-f"><div class="oi">📍</div><b>Location-aware</b> — only offers you can walk to</div>
+    <div class="ob-f"><div class="oi">🔒</div><b>Private</b> — your data stays on your phone</div>
   </div>
+  <button class="btn btn-dark" onclick="start()">Get started</button>
+  <button class="btn btn-ghost" onclick="start()">How it works</button>
 </div>
 
 <!-- MAIN APP -->
-<div id="app" class="screen">
-  <div class="hdr">
-    <div class="hdr-left">
-      <div class="hdr-mark">CW</div>
-      <div class="hdr-text"><h1>City Wallet</h1><span id="hdrSub">Munich</span></div>
+<div id="main" class="screen">
+  <div class="main-top">
+    <div class="mt-left">
+      <div class="mt-mark">TM</div>
+      <div><div class="mt-text">The <em>Time Market</em></div><div class="mt-sub" id="hSub">Loading...</div></div>
     </div>
-    <div class="hdr-right">
-      <div class="hdr-btn" onclick="refresh()">🔄</div>
-      <div class="hdr-btn" id="bellBtn" onclick="pushOne()">🔔<div class="bdg" id="nBdg" style="display:none">1</div></div>
-    </div>
+    <div class="mt-right"><div class="mt-pill live"><span class="dot"></span>Live</div></div>
   </div>
   <div class="ctx" id="ctx"></div>
-  <div class="sec"><h2 id="secTitle">Nearby</h2><span id="secCount"></span></div>
-  <div class="cards-wrap">
-    <div class="cards" id="cards"><div class="loading"><div class="sp"></div><p>Finding offers...</p></div></div>
-    <div class="dots-row" id="dots"></div>
+  <div class="offer-wrap" id="offerWrap">
+    <div style="text-align:center;padding:40px;color:var(--dim)"><div style="width:32px;height:32px;border:3px solid var(--bg2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px"></div>Finding your offer...</div>
   </div>
-  <div class="nav">
-    <div class="nav-tab on" onclick="showTab('app')"><span class="ni">✨</span>Offers</div>
-    <div class="nav-tab" onclick="showTab('savings')"><span class="ni">💰</span>Savings</div>
-    <a class="nav-tab" href="/merchant.html"><span class="ni">🏪</span>Merchant</a>
+  <div class="bottom-bar">
+    <div class="bb-saved"><div class="amt" id="bbAmt">€0.00</div><div class="label">saved</div></div>
+    <a class="bb-link" onclick="openSheet()">View savings →</a>
   </div>
 </div>
 
-<!-- SAVINGS -->
-<div id="savings" class="screen">
-  <div class="sav-hero"><div class="amount" id="savTotal">€0.00</div><div class="label">Total saved with City Wallet</div></div>
-  <div class="sav-stats">
-    <div class="sav-stat"><div class="sv" id="savCount">0</div><div class="sl">Redeemed</div></div>
-    <div class="sav-stat"><div class="sv" id="savStreak">0</div><div class="sl">Day streak</div></div>
-    <div class="sav-stat"><div class="sv" id="savAvg">€0</div><div class="sl">Avg saved</div></div>
-  </div>
-  <div class="sav-section"><h3>History</h3><div id="savHistory"><div class="sav-empty">No redemptions yet. Grab a deal!</div></div></div>
-  <div class="nav">
-    <div class="nav-tab" onclick="showTab('app')"><span class="ni">✨</span>Offers</div>
-    <div class="nav-tab on" onclick="showTab('savings')"><span class="ni">💰</span>Savings</div>
-    <a class="nav-tab" href="/merchant.html"><span class="ni">🏪</span>Merchant</a>
-  </div>
-</div>
-
-<!-- QR OVERLAY -->
-<div id="qr">
-  <button class="qr-close" onclick="closeQR()">✕</button>
-  <div class="qr-card">
-    <div class="qr-top"><div class="qr-merchant" id="qrName"></div><div class="qr-offer" id="qrOffer"></div><div class="qr-address" id="qrAddr"></div></div>
-    <div class="qr-body"><div class="qr-img" id="qrImg"></div><div class="qr-code-text" id="qrCodeT"></div><div class="qr-hint">Show this to the barista</div></div>
-    <div class="qr-meta">
-      <div class="qr-meta-item"><div class="val" id="qrDist"></div><div class="lab">Distance</div></div>
-      <div class="qr-meta-item"><div class="val" id="qrWalk"></div><div class="lab">Walk</div></div>
-      <div class="qr-meta-item"><div class="val" id="qrExp"></div><div class="lab">Expires</div></div>
-    </div>
-    <div class="qr-footer" id="qrStatus">Ready to redeem</div>
-    <div class="qr-actions">
-      <a class="qr-btn-map" id="qrMapBtn" target="_blank" rel="noopener" style="text-decoration:none;text-align:center;display:block;padding:12px;border-radius:12px;font-size:13px;font-weight:700;background:var(--bg);color:var(--ink);border:1px solid var(--bg2)">📍 Directions</a>
-      <button class="qr-btn-done" onclick="markRedeemed()">✓ I've redeemed this</button>
-    </div>
+<!-- SAVINGS SHEET -->
+<div class="sheet" id="sheet">
+  <div class="sheet-bg" onclick="closeSheet()"></div>
+  <div class="sheet-body">
+    <div class="sheet-handle"></div>
+    <h2>Your savings</h2>
+    <div class="s-total" id="sTotal">€0.00</div>
+    <div id="sList"><div style="text-align:center;padding:16px;color:var(--dim);font-size:13px">No redemptions yet</div></div>
   </div>
 </div>
 
 <!-- TOAST -->
 <div class="toast" id="toast" onclick="onToast()">
-  <div class="t-dot" id="tDot">☕</div>
-  <div class="t-body"><div class="t-h" id="tH"></div><div class="t-s" id="tS"></div></div>
-  <div class="t-go">View →</div>
+  <div class="td" id="tD">☕</div>
+  <div class="tb"><div class="th" id="tH"></div><div class="ts" id="tS"></div></div>
+  <div class="ta">View →</div>
 </div>
 
 <script>
 const API=window.location.origin;
-let offers=[],weather={},currentOffer=null,lat=48.1351,lng=11.582,nN=0;
-const uid=localStorage.getItem('cw_u')||(()=>{const u='u-'+Math.random().toString(36).slice(2,8);localStorage.setItem('cw_u',u);return u})();
+let offer=null,lat=48.1351,lng=11.582,flipped=false;
+const uid=localStorage.getItem('tm_u')||(()=>{const u='u-'+Math.random().toString(36).slice(2,8);localStorage.setItem('tm_u',u);return u})();
 
-let pushOk=false;
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
-function showTab(id){showScreen(id);document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('on'));
-  if(id==='savings')loadSavings()}
+function urlB64(b){const p='='.repeat((4-b.length%4)%4);return Uint8Array.from(atob(b.replace(/-/g,'+').replace(/_/g,'/')+p),c=>c.charCodeAt(0))}
 
-async function subscribePush(reg){
-  try{
-    const resp=await fetch(API+'/api/vapid-public');
-    const{publicKey}=await resp.json();
-    const appKey=urlB64ToUint8(publicKey);
-    const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:appKey});
-    const r=await fetch(API+'/api/push/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({subscription:sub.toJSON(),lat,lng})});
-    const d=await r.json();
-    pushOk=d.ok;
-    console.log('Push subscribed! Total subs:',d.total_subs);
-    // Update status in header
-    document.getElementById('hdrSub').textContent+=' · 🔔 Push active';
-  }catch(e){console.log('Push subscription failed:',e);pushOk=false}
-}
-
-// ── BOOT ──────────────────────────────────────────────
-setTimeout(()=>localStorage.getItem('cw_p')?boot():showScreen('perms'),1200);
-
-async function grantPerms(){
+async function start(){
   if('Notification' in window&&Notification.permission==='default')await Notification.requestPermission();
   navigator.geolocation?.getCurrentPosition(()=>{},()=>{},{timeout:5000});
-  localStorage.setItem('cw_p','1');boot();
+  localStorage.setItem('tm_ok','1');boot();
 }
 
-// Convert base64url to Uint8Array (proper VAPID key decoding)
-function urlB64ToUint8(b64){
-  const pad='='.repeat((4-b64.length%4)%4);
-  const raw=atob(b64.replace(/-/g,'+').replace(/_/g,'/')+pad);
-  return Uint8Array.from(raw,c=>c.charCodeAt(0));
-}
+setTimeout(()=>localStorage.getItem('tm_ok')?boot():null,800);
 
 async function boot(){
-  showScreen('app');
+  showScreen('main');
+  try{const p=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{enableHighAccuracy:true,timeout:10000}));lat=p.coords.latitude;lng=p.coords.longitude}catch(e){}
 
-  // Get location FIRST (needed for push subscription + offers)
-  try{
-    const p=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{enableHighAccuracy:true,timeout:10000,maximumAge:30000}));
-    lat=p.coords.latitude;lng=p.coords.longitude;
-  }catch(e){console.log('Location failed, using Munich default')}
-
-  // Register SW + subscribe to push
+  // SW + push
   if('serviceWorker' in navigator){
-    try{
-      const reg=await navigator.serviceWorker.register('/sw.js');
-      await navigator.serviceWorker.ready; // Wait until SW is active
-
+    const reg=await navigator.serviceWorker.register('/sw.js').catch(()=>null);
+    if(reg){
+      await navigator.serviceWorker.ready;
       if(Notification.permission==='granted'){
-        await subscribePush(reg);
-      } else if(Notification.permission==='default'){
-        const perm=await Notification.requestPermission();
-        if(perm==='granted') await subscribePush(reg);
+        try{
+          const vr=await fetch(API+'/api/vapid-public');const{publicKey}=await vr.json();
+          const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64(publicKey)});
+          await fetch(API+'/api/push/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({subscription:sub.toJSON(),lat,lng})});
+        }catch(e){console.log('Push failed:',e)}
       }
-    }catch(e){console.log('SW setup error:',e)}
-  }
-
-  await loadOffers();
-
-  // Auto-refresh every 15s to pick up new boosts
-  setInterval(async()=>{
-    try{await loadOffers()}catch(e){}
-  }, 15000);
-
-  // Staggered local notifications
-  if(offers.length>=1)setTimeout(()=>notify(offers[0]),4000);
-  if(offers.length>=2)setTimeout(()=>notify(offers[1]),20000);
-
-  // Listen for SW notification clicks (boost or regular offer)
-  navigator.serviceWorker?.addEventListener('message',e=>{
-    if(e.data?.type==='OPEN_OFFER'){
-      const oid=e.data.offerId;
-      // First check loaded offers, then try to fetch boost details
-      let o=offers.find(x=>x.id===oid);
-      if(o){openQR(o)}
-      else{fetch(API+'/api/boost/'+oid).then(r=>r.json()).then(b=>{
-        if(b&&b.code)openQR({id:b.id,code:b.code,name:b.merchant_name,headline:b.item_name+' · '+b.discount_pct+'% off',
-          subline:'Boosted by '+b.merchant_name,label:b.discount_pct+'% off',cashback:b.cashback,
-          distance_m:0,walk_min:0,expiry_min:30,maps_url:`https://www.google.com/maps/dir/?api=1&destination=${b.merchant_lat},${b.merchant_lng}&travelmode=walking`})
-      }).catch(()=>{})}
     }
-  });
+    navigator.serviceWorker.addEventListener('message',e=>{
+      if(e.data?.type==='OPEN_OFFER'){
+        const aid=e.data.auctionId||e.data.offerId;
+        if(aid)fetch(API+'/api/auction/'+aid).then(r=>r.json()).then(a=>{if(a&&a.code){offer=a;renderOffer();flipToQR()}}).catch(()=>{});
+      }
+    });
+  }
 
-  // Deep link from notification
+  await loadOffer();
+  setInterval(loadOffer,20000); // refresh every 20s
+  loadSavingsBar();
+
+  // Deep link
   if(location.hash.startsWith('#offer=')){
-    const id=location.hash.slice(7);
-    setTimeout(()=>{const o=offers.find(x=>x.id===id);if(o)openQR(o)},500);
+    const aid=location.hash.slice(7);
+    fetch(API+'/api/auction/'+aid).then(r=>r.json()).then(a=>{if(a&&a.code){offer=a;renderOffer();flipToQR()}}).catch(()=>{});
   }
 }
 
-let boosts=[];
-async function loadOffers(){
-  const resp=await fetch(`${API}/api/nearby?lat=${lat}&lng=${lng}&radius=2000&limit=15`);
-  const data=await resp.json();
-  offers=data.offers||[];
-  boosts=data.active_boosts||[];
-  weather=data.weather||{};
-
-  // Merge boosts as priority cards at the top
-  const boostCards=boosts.map(b=>({
-    id:b.id,code:b.code,name:b.merchant,headline:`🔔 ${b.merchant} · ${b.discount}% off ${b.item}`,
-    subline:`€${b.cashback} cashback · Boosted by merchant`,frame:'boost',
-    label:`${b.discount}% off`,discount_pct:b.discount,cashback:b.cashback,
-    distance_m:Math.round(_hClient(lat,lng,b.lat,b.lng)),walk_min:Math.max(1,Math.round(_hClient(lat,lng,b.lat,b.lng)/80)),
-    demand:'boosted',score:999,is_boost:true,
-    maps_url:`https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}&travelmode=walking`,
-    street:'',wifi:false,outdoor:false,expiry_min:30,payone_tx:0
-  }));
-  offers=[...boostCards,...offers];
-
-  document.getElementById('hdrSub').textContent=`${weather.temp||'--'}° · ${weather.desc||''} · ${offers.length} offers`;
-  renderCtx();renderCards();
-}
-function _hClient(a,b,c,d){const R=6371000,dl=((c-a)*Math.PI/180),dn=((d-b)*Math.PI/180);const x=Math.sin(dl/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dn/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
-const refresh=()=>loadOffers();
-
-// ── CONTEXT CHIPS ─────────────────────────────────────
-function renderCtx(){
-  const w=weather;const chips=[];
-  chips.push({t:`${w.temp||'--'}° ${w.desc||''}`,hot:w.is_cold||w.is_rainy});
-  if(w.feels&&Math.abs(w.feels-w.temp)>2)chips.push({t:`Feels ${w.feels}°`,hot:true});
-  chips.push({t:`UV ${w.uv_label||'?'}`,hot:false});
-  chips.push({t:`📍 ${offers.length} places`,hot:true});
-  const q=offers.filter(o=>o.demand==='quiet').length;
-  if(q)chips.push({t:`${q} quiet now`,green:true});
-  chips.push({t:'🔒 On-device',green:true});
-  document.getElementById('ctx').innerHTML=chips.map(c=>`<div class="ctx-tag ${c.hot?'hot':c.green?'green':''}">${c.t}</div>`).join('');
-}
-
-// ── HORIZONTAL CARDS ──────────────────────────────────
-const GRADS=[
-  'linear-gradient(135deg,#3a2618,#6b3a1f)','linear-gradient(135deg,#1a2a3a,#2a4a6a)',
-  'linear-gradient(135deg,#2a1a2a,#5a2a4a)','linear-gradient(135deg,#1a2a1a,#2a4a2a)',
-  'linear-gradient(135deg,#3a3020,#6a5530)','linear-gradient(135deg,#1a2030,#2a3a5a)',
-];
-
-function renderCards(){
-  const el=document.getElementById('cards');
-  document.getElementById('secTitle').textContent=offers.length?'Nearby right now':'No offers nearby';
-  document.getElementById('secCount').textContent=offers.length?`${offers.length} within range`:'Move closer to Munich cafes';
-  if(!offers.length){el.innerHTML='<div class="loading"><p>No cafes within range. Try walking closer or increase radius.</p></div>';return}
-  el.innerHTML=offers.map((o,i)=>{
-    const g=GRADS[i%GRADS.length];
-    const emoji=o.frame==='boost'?'🔔':o.frame==='shelter'?'☔':o.frame==='warmth'?'🔥':o.frame==='refresh'?'🧊':o.frame==='hunger'?'🍽':o.frame==='quiet'?'🤫':'✨';
-    if(o.is_boost)g='linear-gradient(135deg,#4a1500,#d4622a)';
-    return`
-    <div class="card" onclick="openQR(offers[${i}])">
-      <div class="card-top" style="background:${g}">
-        <div class="card-emoji">${emoji}</div>
-        <div class="card-top-content">
-          <div class="card-label">${o.label} · ${o.distance_m}m</div>
-          <div class="card-h">${o.headline}</div>
-          <div class="card-s">${o.subline}</div>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="card-row"><span class="card-tag">Walk</span><span class="card-val">${o.walk_min} min</span></div>
-        <div class="card-row"><span class="card-tag">Demand</span><span class="card-val ${o.demand==='quiet'?'green':'accent'}">${o.demand}</span></div>
-        <div class="card-row"><span class="card-tag">Cashback</span><span class="card-val green">€${o.cashback}</span></div>
-        ${o.wifi?'<div class="card-row"><span class="card-tag">WiFi</span><span class="card-val green">Free</span></div>':''}
-      </div>
-      <div class="card-cta"><button>Tap to redeem</button></div>
-    </div>`}).join('');
-
-  // Dots
-  document.getElementById('dots').innerHTML=offers.slice(0,8).map((_,i)=>`<div class="dot-ind ${i===0?'active':''}" id="di${i}"></div>`).join('');
-  el.addEventListener('scroll',()=>{
-    const idx=Math.round(el.scrollLeft/(el.scrollWidth/offers.length));
-    document.querySelectorAll('.dot-ind').forEach((d,i)=>d.classList.toggle('active',i===idx));
-  },{passive:true});
-}
-
-// ── QR SCREEN ─────────────────────────────────────────
-function openQR(o){
-  if(!o)return;currentOffer=o;
-  document.getElementById('qrName').textContent=o.name;
-  document.getElementById('qrOffer').textContent=o.label+' · '+o.headline;
-  document.getElementById('qrAddr').textContent=[o.street,o.housenumber].filter(Boolean).join(' ')||o.name;
-  document.getElementById('qrCodeT').textContent=o.code;
-  document.getElementById('qrImg').innerHTML=`<img src="${API}/api/qr?text=${encodeURIComponent(o.code)}">`;
-  document.getElementById('qrDist').textContent=o.distance_m+'m';
-  document.getElementById('qrWalk').textContent=o.walk_min+'min';
-  document.getElementById('qrExp').textContent=o.expiry_min+'min';
-  document.getElementById('qrMapBtn').href=o.maps_url;
-  document.getElementById('qrStatus').textContent='Ready to redeem';
-  document.getElementById('qrStatus').style.color='var(--accent)';
-  document.getElementById('qrStatus').style.background='var(--accent-soft)';
-  document.getElementById('qr').classList.add('open');document.getElementById('qr').style.display='flex';
-  if(navigator.vibrate)navigator.vibrate(40);
-  fetch(API+'/api/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'accept',offer_id:o.id})}).catch(()=>{});
-}
-function closeQR(){document.getElementById('qr').classList.remove('open');document.getElementById('qr').style.display='none'}
-
-function markRedeemed(){
-  if(!currentOffer)return;
-  fetch(API+'/api/redeem',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({code:currentOffer.code,merchant_name:currentOffer.name,cashback:currentOffer.cashback,user_id:uid})}).catch(()=>{});
-  document.getElementById('qrStatus').textContent='✓ Redeemed — cashback credited!';
-  document.getElementById('qrStatus').style.color='var(--green)';
-  document.getElementById('qrStatus').style.background='var(--green-soft)';
-  if(navigator.vibrate)navigator.vibrate([50,30,50]);
-}
-
-// ── SAVINGS ───────────────────────────────────────────
-async function loadSavings(){
+async function loadOffer(){
   try{
-    const r=await fetch(API+'/api/savings?user_id='+uid);const d=await r.json();
-    document.getElementById('savTotal').textContent='€'+d.total_saved.toFixed(2);
-    document.getElementById('savCount').textContent=d.redemption_count;
-    document.getElementById('savStreak').textContent=d.streak_days;
-    document.getElementById('savAvg').textContent='€'+(d.total_saved/Math.max(d.redemption_count,1)).toFixed(2);
-    const hist=document.getElementById('savHistory');
-    if(d.history.length){
-      hist.innerHTML=d.history.reverse().map(h=>`<div class="sav-item"><div class="si-left"><div class="si-name">${h.merchant}</div><div class="si-time">${h.ts}</div></div><div class="si-amount">-€${h.cashback.toFixed(2)}</div></div>`).join('');
-    }else{hist.innerHTML='<div class="sav-empty">No redemptions yet. Grab a deal!</div>'}
-  }catch(e){}
+    const r=await fetch(`${API}/api/myoffer?lat=${lat}&lng=${lng}`);
+    const d=await r.json();
+    if(d.has_offer){offer=d.offer;renderOffer();renderCtx()}
+    else{renderEmpty();renderCtx()}
+    document.getElementById('hSub').textContent=`${offer?.temp||'--'}° · ${offer?.weather||''}`;
+  }catch(e){renderEmpty()}
 }
 
-// ── NOTIFICATIONS ─────────────────────────────────────
-let toastOffer=null;
-function notify(o){
-  if(!o)return;toastOffer=o;nN++;
-  document.getElementById('nBdg').style.display='flex';document.getElementById('nBdg').textContent=nN;
-  // In-app toast
-  document.getElementById('tDot').textContent=o.frame==='warmth'?'🔥':o.frame==='shelter'?'☔':'☕';
-  document.getElementById('tH').textContent=o.name+' · '+o.label;
-  document.getElementById('tS').textContent=o.distance_m+'m away';
-  document.getElementById('toast').classList.add('show');
-  if(navigator.vibrate)navigator.vibrate([60,40,60]);
-  setTimeout(()=>document.getElementById('toast').classList.remove('show'),5000);
-  // Push via SW
-  if(navigator.serviceWorker?.controller){
-    navigator.serviceWorker.controller.postMessage({type:'SHOW_NOTIFICATION',title:o.name+' · '+o.label,body:o.subline,offerId:o.id});
-  }else if('Notification' in window&&Notification.permission==='granted'){
-    const n=new Notification(o.name+' · '+o.label,{body:o.distance_m+'m away',icon:'/icon-192.png',tag:'cw-'+o.id,data:{offerId:o.id}});
-    n.onclick=()=>{window.focus();openQR(o);n.close()};
-  }
+function renderCtx(){
+  if(!offer)return;
+  const chips=[
+    {t:`${offer.temp||'--'}° ${offer.weather||''}`,hot:true},
+    {t:`${offer.distance_m||'?'}m away`},
+    {t:`${offer.discount_pct||'?'}% AI-priced`,hot:true},
+    {t:'🔒 On-device'},
+  ];
+  document.getElementById('ctx').innerHTML=chips.map(c=>`<div class="chip ${c.hot?'hot':''}">${c.t}</div>`).join('');
 }
-function onToast(){document.getElementById('toast').classList.remove('show');if(toastOffer)openQR(toastOffer)}
-function pushOne(){if(offers.length)notify(offers[Math.floor(Math.random()*offers.length)])}
+
+const GRADS=['linear-gradient(135deg,#2a1810,#5c3317,#8b5a2b)','linear-gradient(135deg,#1a2a3a,#2a4a6a,#3a6a8a)',
+  'linear-gradient(135deg,#2a1a2a,#5a2a4a,#8a4a6a)','linear-gradient(135deg,#1a2a1a,#2a4a2a,#4a6a4a)'];
+
+function renderOffer(){
+  if(!offer)return;
+  flipped=false;
+  const g=GRADS[Math.abs(hashCode(offer.merchant_name||''))%GRADS.length];
+  const emoji=offer.frame==='shelter'?'☔':offer.frame==='warmth'?'🔥':offer.frame==='hunger'?'🍽':'✨';
+  document.getElementById('offerWrap').innerHTML=`
+    <div class="offer-card" id="offerCard" onclick="flipCard()">
+      <div class="offer-front">
+        <div class="of-hero" style="background:${g}">
+          <div class="of-emoji">${emoji}</div>
+          <div class="of-content">
+            <div class="of-tag">${offer.discount_pct||'?'}% off · AI-allocated to you</div>
+            <div class="of-h">${offer.headline||offer.merchant_name||'Offer'}</div>
+            <div class="of-s">${offer.subline||''}</div>
+          </div>
+        </div>
+        <div class="of-body">
+          <div class="of-row"><span class="of-k">Merchant</span><span class="of-v">${offer.merchant_name||'Cafe'}</span></div>
+          <div class="of-row"><span class="of-k">Item</span><span class="of-v">${offer.item||'Special'}</span></div>
+          <div class="of-row"><span class="of-k">Distance</span><span class="of-v accent">${offer.distance_m||'?'}m · ${offer.walk_min||'?'} min walk</span></div>
+          <div class="of-row"><span class="of-k">Cashback</span><span class="of-v green">€${offer.cashback||'?'}</span></div>
+        </div>
+        ${offer.why?`<div class="of-why">🧠 ${offer.why}</div>`:''}
+        <div class="of-cta"><button>Tap to reveal your QR code</button></div>
+      </div>
+      <div class="offer-back">
+        <div class="ob-merchant">${offer.merchant_name||'Cafe'}</div>
+        <div class="ob-item">${offer.discount_pct||'?'}% off ${offer.item||''}</div>
+        <div class="qr-box"><img src="${API}/api/qr?text=${encodeURIComponent(offer.code||'')}" alt="QR"></div>
+        <div class="qr-code">${offer.code||''}</div>
+        <div class="qr-hint">Show this to the barista</div>
+        <div class="qr-status ready" id="qrSt">Ready to redeem</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--dim)">${flipped?'Tap card to go back':'Tap card to see QR code'}</div>
+    ${offer.maps_url?`<a href="${offer.maps_url}" target="_blank" style="display:block;text-align:center;margin-top:8px;font-size:12px;color:var(--accent);font-weight:600;text-decoration:none">📍 Get directions</a>`:''}`;
+}
+
+function flipCard(){
+  const card=document.getElementById('offerCard');
+  if(!card)return;
+  flipped=!flipped;
+  card.classList.toggle('flipped');
+  if(navigator.vibrate)navigator.vibrate(30);
+}
+function flipToQR(){
+  setTimeout(()=>{const card=document.getElementById('offerCard');if(card&&!flipped){flipped=true;card.classList.add('flipped')}},300);
+}
+
+function renderEmpty(){
+  document.getElementById('offerWrap').innerHTML=`
+    <div class="empty">
+      <div class="icon">🌤</div>
+      <h2>No offers right now</h2>
+      <p>The AI is waiting for the right moment — when a cafe near you is quiet and the context is right. We'll notify you.</p>
+    </div>`;
+}
+
+function hashCode(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i);return h}
+
+// Savings
+async function loadSavingsBar(){
+  try{const r=await fetch(API+'/api/savings?user_id='+uid);const d=await r.json();
+    document.getElementById('bbAmt').textContent='€'+d.total_saved.toFixed(2)}catch(e){}}
+
+function openSheet(){document.getElementById('sheet').classList.add('open');loadSavingsSheet()}
+function closeSheet(){document.getElementById('sheet').classList.remove('open')}
+async function loadSavingsSheet(){
+  try{const r=await fetch(API+'/api/savings?user_id='+uid);const d=await r.json();
+    document.getElementById('sTotal').textContent='€'+d.total_saved.toFixed(2);
+    document.getElementById('sList').innerHTML=d.history.length?d.history.reverse().map(h=>
+      `<div class="s-item"><div class="l"><b>${h.merchant||h.item||'Cafe'}</b><span>${h.ts}</span></div><div class="r">-€${h.cashback?.toFixed(2)||'?'}</div></div>`
+    ).join(''):'<div style="text-align:center;padding:16px;color:var(--dim);font-size:13px">No redemptions yet</div>'
+  }catch(e){}}
+
+// Notifications
+let toastOffer=null;
+function showToast(o){
+  toastOffer=o;document.getElementById('tD').textContent='☕';
+  document.getElementById('tH').textContent=(o.merchant_name||'Cafe')+' · '+(o.discount_pct||'?')+'% off';
+  document.getElementById('tS').textContent=(o.distance_m||'?')+'m away';
+  document.getElementById('toast').classList.add('show');
+  navigator.vibrate?.([60,40,60]);setTimeout(()=>document.getElementById('toast').classList.remove('show'),6000);
+}
+function onToast(){document.getElementById('toast').classList.remove('show');if(toastOffer){offer=toastOffer;renderOffer();flipToQR()}}
+
+// Show toast for first offer after load
+setTimeout(()=>{if(offer)showToast(offer)},3000);
 </script>
 </body>
 </html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Munich Markt - QR Poster</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #fff; color: #14140f;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 20px;
+  }
+
+  .poster {
+    width: 100%; max-width: 600px; padding: 48px 40px;
+    border: 3px solid #14140f; border-radius: 4px;
+    text-align: center;
+  }
+
+  .poster .brand {
+    font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: #b85c2b; font-weight: 700; margin-bottom: 24px;
+  }
+
+  .poster h1 {
+    font-size: 36px; font-weight: 700; line-height: 1.15;
+    letter-spacing: -0.02em; margin-bottom: 8px;
+  }
+  .poster h1 em { font-style: italic; color: #b85c2b; }
+
+  .poster .offer-value {
+    font-size: 52px; font-weight: 800; color: #b85c2b;
+    margin: 16px 0 4px;
+  }
+  .poster .offer-text {
+    font-size: 18px; color: #44443e; margin-bottom: 24px;
+  }
+
+  .poster .qr-frame {
+    display: inline-block; padding: 16px;
+    border: 2px solid #e2dfd6; border-radius: 8px;
+    margin: 0 auto 20px;
+    background: #fff;
+  }
+  .poster .qr-frame img {
+    display: block; width: 220px; height: 220px;
+  }
+
+  .poster .scan-text {
+    font-size: 16px; font-weight: 600; margin-bottom: 6px;
+  }
+  .poster .scan-sub {
+    font-size: 13px; color: #76746b; line-height: 1.5;
+    max-width: 380px; margin: 0 auto 24px;
+  }
+
+  .poster .steps {
+    display: flex; justify-content: center; gap: 32px;
+    margin-bottom: 24px; padding-top: 20px;
+    border-top: 1px solid #e2dfd6;
+  }
+  .poster .step { text-align: center; max-width: 140px; }
+  .poster .step .num {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #14140f; color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; margin-bottom: 8px;
+  }
+  .poster .step .label {
+    font-size: 13px; font-weight: 600; margin-bottom: 2px;
+  }
+  .poster .step .desc {
+    font-size: 11px; color: #76746b; line-height: 1.4;
+  }
+
+  .poster .footer {
+    font-size: 10px; color: #a6a299; letter-spacing: 0.08em;
+    text-transform: uppercase; padding-top: 16px;
+    border-top: 1px solid #e2dfd6;
+  }
+
+  .poster .privacy {
+    margin-top: 8px; font-size: 10px; color: #a6a299;
+    font-style: italic; text-transform: none; letter-spacing: 0;
+  }
+
+  @media print {
+    body { padding: 0; }
+    .poster { border: none; max-width: none; }
+    .no-print { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="poster">
+  <div class="brand">Munich Markt</div>
+
+  <h1>Get a <em>deal</em> right now.</h1>
+
+  <div class="offer-value" id="offerValue">EUR 1.50 off</div>
+  <div class="offer-text" id="offerText">any hot drink</div>
+
+  <div class="qr-frame">
+    <img id="qrCode" src="" alt="Scan to add to your wallet">
+  </div>
+
+  <div class="scan-text">Scan with your phone camera</div>
+  <div class="scan-sub">
+    The offer adds to your Apple Wallet or Google Wallet.
+    No app to download. No sign-up. No tracking.
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="num">1</div>
+      <div class="label">Scan</div>
+      <div class="desc">Point your camera at the QR code</div>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <div class="label">Add to wallet</div>
+      <div class="desc">One tap to add the pass</div>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <div class="label">Show barcode</div>
+      <div class="desc">Show the pass to redeem</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span id="merchantName">Cafe Riese</span> · <span id="merchantArea">Schwabing</span> ·
+    Valid <span id="merchantHours">14:00 - 16:00</span> today
+  </div>
+  <div class="privacy">Your location stays on your phone. We never see where you are.</div>
+</div>
+
+<div class="no-print" style="position:fixed;bottom:16px;right:16px;display:flex;gap:8px">
+  <button onclick="window.print()" style="padding:10px 20px;background:#14140f;color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer;font-weight:600">Print this poster</button>
+  <button onclick="downloadQR()" style="padding:10px 20px;background:#b85c2b;color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer;font-weight:600">Download QR (PNG)</button>
+</div>
+
+<script>
+  const pathParts = window.location.pathname.split('/');
+  const merchantId = pathParts[pathParts.length - 1] || 'cafe-riese';
+  const baseUrl = window.location.origin;
+
+  async function load() {
+    // Load merchant data
+    const resp = await fetch('/api/catalog');
+    const catalog = await resp.json();
+    const merchant = catalog.find(m => m.id === merchantId) || catalog[0];
+
+    document.getElementById('merchantName').textContent = merchant.name;
+    document.getElementById('merchantArea').textContent = merchant.area;
+    document.getElementById('merchantHours').textContent = `${merchant.quiet_start} - ${merchant.quiet_end}`;
+    document.getElementById('offerValue').textContent = `EUR ${merchant.offer_value.toFixed(2)} off`;
+    document.getElementById('offerText').textContent = merchant.offer_text;
+
+    // Load QR code (real, scannable)
+    document.getElementById('qrCode').src = `/qr/svg?merchant=${merchant.id}`;
+  }
+
+  function downloadQR() {
+    const merchant = document.getElementById('merchantName').textContent.replace(/\s+/g, '-').toLowerCase();
+    const link = document.createElement('a');
+    link.href = `/qr/png?merchant=${merchantId}`;
+    link.download = `qr-${merchant}.png`;
+    link.click();
+  }
+
+  load();
+</script>
+</body>
+</html>
