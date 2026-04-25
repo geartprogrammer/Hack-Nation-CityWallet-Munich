@@ -3,227 +3,196 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#f5f0e8">
-<title>Merchant · Time Market</title>
+<meta name="theme-color" content="#faf6ef">
+<title>Merchant · City Wallet</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{--bg:#f5f0e8;--bg2:#ece5d8;--bg3:#e3dbd0;--card:#fffcf6;--ink:#1a1714;--ink2:#4a4540;--dim:#8a847a;--dim2:#b8b0a4;
-  --accent:#c25a1e;--accent2:#e07832;--accent-soft:rgba(194,90,30,.08);--green:#2d7a42;--green-soft:rgba(45,122,66,.08);--red:#c0392b;
+:root{--bg:#faf6ef;--bg2:#f0ebe2;--card:#fff;--ink:#181510;--ink2:#504b42;--dim:#928b7f;--dim2:#c4bdb0;
+  --primary:#bf5a1b;--primary2:#d9722f;--primary-soft:rgba(191,90,27,.07);
+  --green:#2b7d42;--green-soft:rgba(43,125,66,.07);--red:#c0392b;
   --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px)}
 html,body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .screen{display:none;min-height:100vh;flex-direction:column}.screen.active{display:flex}
-.btn{width:100%;padding:14px;border-radius:14px;font-size:15px;font-weight:700;border:none;cursor:pointer}
-.btn:active{transform:scale(.97);opacity:.9}
-.btn-dark{background:var(--ink);color:var(--bg)}.btn-accent{background:var(--accent);color:#fff}
-.btn-green{background:var(--green);color:#fff}.btn-outline{background:var(--card);border:1px solid var(--bg2);color:var(--ink)}
-input,select{width:100%;padding:13px;border:1px solid var(--bg2);border-radius:14px;font-size:14px;background:var(--card);font-family:inherit}
-input:focus,select:focus{border-color:var(--accent);outline:none}
+.btn{width:100%;padding:15px;border-radius:14px;font-size:15px;font-weight:700;border:none;cursor:pointer}
+.btn:active{transform:scale(.97)}.btn-dark{background:var(--ink);color:#fff}
+.btn-fill{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-size:18px;font-weight:900;
+  padding:20px;border-radius:18px;box-shadow:0 6px 24px rgba(191,90,27,.2)}
+.btn-outline{background:var(--card);border:1px solid var(--bg2);color:var(--ink)}
+input{width:100%;padding:13px;border:1px solid var(--bg2);border-radius:14px;font-size:14px;background:var(--card);font-family:inherit}
+input:focus{border-color:var(--primary);outline:none}
 .hdr{padding:14px 20px;padding-top:calc(14px + var(--safe-t));display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bg2)}
-.hdr h1{font-size:15px;font-weight:700}.hdr h1 em{color:var(--accent);font-style:normal}
-.hdr span{font-size:11px;color:var(--dim)}
-.tabs{display:flex;padding:8px 16px;gap:4px}
-.tab{flex:1;padding:10px 4px;text-align:center;font-size:12px;font-weight:700;border-radius:12px;cursor:pointer;background:var(--card);border:1px solid var(--bg2);color:var(--dim)}
-.tab.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.panel{display:none;padding:16px 20px;padding-bottom:calc(20px + var(--safe-b))}.panel.on{display:block}
+.hdr h1{font-size:15px;font-weight:700}.hdr h1 em{color:var(--primary);font-style:normal}
 .field{margin-bottom:12px}.field label{display:block;font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-.card-s{background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:8px;border:1px solid var(--bg2);display:flex;justify-content:space-between;align-items:center}
-.card-s .l{display:flex;flex-direction:column;gap:2px}.card-s .l b{font-size:14px}.card-s .l span{font-size:11px;color:var(--dim)}
-.card-s .r{text-align:right}.card-s .r b{font-size:14px;color:var(--green)}.card-s .r span{font-size:10px;color:var(--dim);font-family:monospace}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.stat{background:var(--card);border-radius:14px;padding:16px;border:1px solid var(--bg2);text-align:center}
-.stat .sv{font-size:26px;font-weight:900}.stat .sv.green{color:var(--green)}.stat .sv.accent{color:var(--accent)}
-.stat .sl{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
 .msg{padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;margin-top:8px;display:none}
-.msg.ok{display:block;background:var(--green-soft);color:var(--green)}
-.stitle{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin:16px 0 10px}
-.scan-area{width:100%;aspect-ratio:1;max-width:320px;margin:0 auto 12px;border-radius:20px;overflow:hidden;background:#000;position:relative}
-.scan-area video{width:100%;height:100%;object-fit:cover}
-.scan-frame{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.scan-frame div{width:180px;height:180px;border:3px solid var(--accent);border-radius:16px;box-shadow:0 0 0 9999px rgba(0,0,0,.4)}
-.result{background:var(--card);border-radius:16px;padding:20px;margin-top:12px;text-align:center;border:2px solid var(--bg2);display:none;animation:fadeUp .3s both}
-.result.show{display:block}.result.ok{border-color:var(--green)}.result.err{border-color:var(--red)}
-.budget-card{background:var(--card);border-radius:16px;padding:20px;border:1px solid var(--bg2);text-align:center;margin-bottom:16px}
-.budget-card .big{font-size:44px;font-weight:900;color:var(--accent)}
-.budget-card .sub{font-size:12px;color:var(--dim);margin-top:2px}
-.budget-bar{height:8px;background:var(--bg2);border-radius:99px;margin:12px 0;overflow:hidden}
-.budget-bar div{height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.msg.show{display:block;background:var(--green-soft);color:var(--green)}
+
+/* Status card */
+.status-card{background:var(--card);border-radius:20px;padding:28px 24px;margin:16px 20px;text-align:center;
+  border:1px solid var(--bg2);box-shadow:0 2px 16px rgba(0,0,0,.03)}
+.sc-status{font-size:14px;font-weight:700;color:var(--primary);margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:6px}
+.sc-status .dot{width:8px;height:8px;border-radius:50%;background:var(--primary);animation:pulse 1.4s infinite}
+.sc-sub{font-size:12px;color:var(--dim);margin-bottom:16px}
+.sc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.sc-stat{background:var(--bg);border-radius:12px;padding:12px 8px}
+.sc-stat .v{font-size:22px;font-weight:900}.sc-stat .v.green{color:var(--green)}.sc-stat .v.primary{color:var(--primary)}
+.sc-stat .l{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+
+/* AI analysis */
+.ai-box{background:var(--primary-soft);border-radius:14px;padding:16px;margin:12px 20px;animation:fadeUp .4s both;display:none}
+.ai-box.show{display:block}
+.ai-box h3{font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.ai-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
+.ai-row .k{color:var(--dim)}.ai-row .v{font-weight:700}
+.ai-reason{margin-top:8px;font-size:11px;color:var(--ink2);line-height:1.5;padding:8px 12px;background:var(--card);border-radius:8px}
+
+/* Arrivals */
+.arrivals{padding:0 20px;margin-top:16px}
+.arrivals h3{font-size:12px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.arr-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border-radius:12px;margin-bottom:6px;border:1px solid var(--bg2);animation:fadeUp .3s both}
+.arr-avatar{width:32px;height:32px;border-radius:50%;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.arr-body{flex:1}.arr-name{font-size:13px;font-weight:600}.arr-detail{font-size:11px;color:var(--dim)}
+.arr-time{font-size:11px;color:var(--dim)}
+
+/* Fill button section */
+.fill-section{padding:16px 20px}
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
 <div id="login" class="screen active">
-  <div style="padding:0 28px;flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;max-width:380px;margin:0 auto">
-    <div style="font-size:44px;margin-bottom:16px">🏪</div>
-    <h2 style="font-size:22px;font-weight:800;margin-bottom:4px">The Time Market</h2>
-    <p style="font-size:13px;color:var(--dim);margin-bottom:24px;line-height:1.5">Sell your quiet hours. Set a budget. The AI fills your seats.</p>
+  <div style="padding:0 28px;flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;max-width:360px;margin:0 auto">
+    <div style="font-size:44px;margin-bottom:12px">🏪</div>
+    <h2 style="font-size:22px;font-weight:900;margin-bottom:4px">City Wallet Merchant</h2>
+    <p style="font-size:13px;color:var(--dim);margin-bottom:20px;line-height:1.5">One button fills your quiet hours. The AI does the rest.</p>
     <div class="field"><label>Cafe name</label><input id="lN" placeholder="e.g. Café Riese"></div>
     <div class="field"><label>4-digit PIN</label><input id="lP" type="password" maxlength="6" placeholder="1234" inputmode="numeric"></div>
-    <button class="btn btn-dark" onclick="doLogin()" style="margin-bottom:8px">Log in</button>
-    <button class="btn btn-outline" onclick="doReg()">Create account</button>
+    <button class="btn btn-dark" onclick="doLogin()" style="margin-bottom:6px">Log in</button>
+    <button class="btn btn-outline" onclick="doReg()">Create new account</button>
     <div class="msg" id="lMsg"></div>
   </div>
 </div>
 
 <!-- MAIN -->
 <div id="main" class="screen">
-  <div class="hdr"><h1>The <em>Time Market</em></h1><span id="mInfo"></span></div>
-  <div class="tabs">
-    <div class="tab on" onclick="sp('auction',this)">🧠 Auction</div>
-    <div class="tab" onclick="sp('scan',this)">📷 Scan</div>
-    <div class="tab" onclick="sp('items',this)">📦 Items</div>
-    <div class="tab" onclick="sp('stats',this)">📊 Stats</div>
+  <div class="hdr">
+    <h1 id="mName">City <em>Wallet</em></h1>
+    <span style="font-size:11px;color:var(--dim)" id="mSub"></span>
   </div>
 
-  <!-- AUCTION (the main thing) -->
-  <div class="panel on" id="p-auction">
-    <div class="budget-card">
-      <div style="font-size:12px;color:var(--dim);margin-bottom:4px">Budget remaining today</div>
-      <div class="big" id="aBudget">€20.00</div>
-      <div class="budget-bar"><div id="aBudgetBar" style="width:100%"></div></div>
-      <div class="sub" id="aBudgetSub">€0 spent of €20 budget</div>
+  <div class="status-card">
+    <div class="sc-status"><span class="dot"></span><span id="scStatus">Quiet period</span></div>
+    <div class="sc-sub" id="scSub">Your cafe could use more customers right now</div>
+    <div class="sc-stats">
+      <div class="sc-stat"><div class="v primary" id="xUsers">0</div><div class="l">Users nearby</div></div>
+      <div class="sc-stat"><div class="v green" id="xArrivals">0</div><div class="l">Walked in</div></div>
+      <div class="sc-stat"><div class="v" id="xFills">0</div><div class="l">Fills today</div></div>
     </div>
-    <div class="field"><label>Item to sell</label><select id="aItem"><option value="">-- Add items first --</option></select></div>
-    <div class="field"><label>Max discount %</label><input id="aDisc" type="number" value="20" min="5" max="40" inputmode="numeric"></div>
-    <button class="btn btn-accent" onclick="runAuction()">🧠 Run auction — AI picks the best user</button>
-    <div class="msg" id="aMsg"></div>
-    <div class="stitle">Recent auctions</div>
-    <div id="aHistory"><div style="text-align:center;padding:16px;color:var(--dim);font-size:13px">No auctions yet. Add items and run one!</div></div>
-  </div>
-
-  <!-- SCAN -->
-  <div class="panel" id="p-scan">
-    <div class="scan-area"><video id="cam" autoplay playsinline muted></video><div class="scan-frame"><div></div></div></div>
-    <p style="text-align:center;font-size:13px;color:var(--dim);margin-bottom:8px">Scan customer's QR code</p>
-    <div class="field"><input id="cIn" placeholder="Or type: TM-XXXXXXXX" oninput="this.value=this.value.toUpperCase()" style="font-family:monospace;font-weight:700;text-align:center;font-size:18px"></div>
-    <button class="btn btn-green" onclick="doVerify()">Verify & Redeem</button>
-    <div class="result" id="res"><div style="font-size:40px;margin-bottom:6px" id="rI"></div><div style="font-size:18px;font-weight:800" id="rT"></div><div style="font-size:13px;color:var(--dim);margin-top:4px" id="rS"></div></div>
-  </div>
-
-  <!-- ITEMS -->
-  <div class="panel" id="p-items">
-    <p style="font-size:13px;color:var(--dim);margin-bottom:12px">Add menu items. When you run an auction, the AI sells these to nearby users.</p>
-    <div class="field"><label>Item name</label><input id="iN" placeholder="e.g. Cappuccino"></div>
-    <div class="field"><label>Price (€)</label><input id="iP" type="number" step="0.10" value="3.50" inputmode="decimal"></div>
-    <button class="btn btn-dark" onclick="addItem()">+ Add item</button>
-    <div class="msg" id="iMsg"></div>
-    <div class="stitle">Your menu</div>
-    <div id="iList"><div style="text-align:center;padding:16px;color:var(--dim);font-size:13px">No items yet</div></div>
-  </div>
-
-  <!-- STATS -->
-  <div class="panel" id="p-stats">
-    <div class="stat-grid">
-      <div class="stat"><div class="sv accent" id="xAuctions">0</div><div class="sl">Auctions run</div></div>
-      <div class="stat"><div class="sv green" id="xReds">0</div><div class="sl">Redeemed</div></div>
-      <div class="stat"><div class="sv" id="xConv">0%</div><div class="sl">Conversion</div></div>
-      <div class="stat"><div class="sv green" id="xRev">€0</div><div class="sl">Revenue</div></div>
+    <div class="fill-section" style="padding:0">
+      <button class="btn btn-fill" onclick="fillSeats()">Fill my seats</button>
+      <div style="text-align:center;font-size:11px;color:var(--dim);margin-top:8px">AI picks the item, sets the discount, writes the message, sends it.</div>
     </div>
-    <div class="stitle">Recent</div>
-    <div id="xList"><div style="text-align:center;padding:16px;color:var(--dim);font-size:13px">Nothing yet</div></div>
+  </div>
+
+  <div class="ai-box" id="aiBox">
+    <h3>🧠 AI Analysis</h3>
+    <div class="ai-row"><span class="k">Item picked</span><span class="v" id="aiItem">—</span></div>
+    <div class="ai-row"><span class="k">Original price</span><span class="v" id="aiOrig">—</span></div>
+    <div class="ai-row"><span class="k">AI discount</span><span class="v" style="color:var(--primary)" id="aiDisc">—</span></div>
+    <div class="ai-row"><span class="k">Customer pays</span><span class="v" style="color:var(--green)" id="aiPays">—</span></div>
+    <div class="ai-row"><span class="k">Sent to</span><span class="v" id="aiSent">—</span></div>
+    <div class="ai-row"><span class="k">Notification</span><span class="v" id="aiNotif" style="font-size:11px;max-width:200px;text-align:right">—</span></div>
+    <div class="ai-reason" id="aiReason"></div>
+  </div>
+
+  <div class="arrivals" id="arrivalsSection">
+    <h3>Recent arrivals</h3>
+    <div id="arrList" style="text-align:center;padding:16px;font-size:13px;color:var(--dim)">
+      No arrivals yet. Tap "Fill my seats" to start.
+    </div>
+  </div>
+
+  <div style="padding:20px">
+    <a href="/" style="font-size:12px;color:var(--primary);font-weight:600;text-decoration:none">← Open user app</a>
+    <span style="margin:0 8px;color:var(--dim)">·</span>
+    <a href="/pitch.html" style="font-size:12px;color:var(--primary);font-weight:600;text-decoration:none">Live dashboard →</a>
   </div>
 </div>
 
 <script>
 const API=window.location.origin;
-let token='',mid='';
+let token='',mid='',mData=null;
 function ah(){return{'Content-Type':'application/json','Authorization':'Bearer '+token}}
-function sp(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.getElementById('p-'+id).classList.add('on');btn.classList.add('on');if(id==='stats')loadStats();if(id==='items')loadItems();if(id==='scan')startCam();if(id==='auction'){loadItems();loadDash()}}
-function msg(id,t){const e=document.getElementById(id);e.textContent=t;e.className='msg ok';setTimeout(()=>e.style.display='none',4000)}
+function showMsg(id,t){const e=document.getElementById(id);e.textContent=t;e.className='msg show';setTimeout(()=>e.className='msg',5000)}
 
 async function doLogin(){
   const n=document.getElementById('lN').value.trim(),p=document.getElementById('lP').value.trim();
-  if(!n||!p){document.getElementById('lMsg').textContent='Fill both fields';document.getElementById('lMsg').className='msg ok';return}
+  if(!n||!p)return;
   const r=await fetch(API+'/api/merchant/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,pin:p})});
   const d=await r.json();
-  if(r.ok){token=d.token;mid=d.merchant_id;enter(d)}
-  else{document.getElementById('lMsg').textContent=d.error||'Failed';document.getElementById('lMsg').className='msg ok'}
+  if(r.ok){token=d.token;mid=d.merchant_id;mData=d.merchant;enter()}
+  else showMsg('lMsg',d.error||'Login failed');
 }
 async function doReg(){
   const n=document.getElementById('lN').value.trim(),p=document.getElementById('lP').value.trim();
-  if(!n||p.length<4){document.getElementById('lMsg').textContent='Name + 4-digit PIN';document.getElementById('lMsg').className='msg ok';return}
+  if(!n||p.length<4){showMsg('lMsg','Name + 4-digit PIN');return}
   let la=48.1351,lo=11.582;
   try{const pos=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{timeout:5000}));la=pos.coords.latitude;lo=pos.coords.longitude}catch(e){}
   const r=await fetch(API+'/api/merchant/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,pin:p,lat:la,lng:lo})});
   const d=await r.json();
-  if(r.ok){token=d.token;mid=d.merchant_id;enter(d)}
-  else{document.getElementById('lMsg').textContent=d.error||'Failed';document.getElementById('lMsg').className='msg ok'}
-}
-function enter(d){
-  document.getElementById('login').classList.remove('active');document.getElementById('main').classList.add('active');
-  document.getElementById('mInfo').textContent=d.name||'Merchant';loadItems();loadDash();
+  if(r.ok){token=d.token;mid=d.merchant_id;mData={name:n};enter()}
+  else showMsg('lMsg',d.error||'Failed');
 }
 
-// ITEMS
-async function loadItems(){
-  const r=await fetch(API+'/api/merchant/items',{headers:ah()});if(!r.ok)return;const d=await r.json();
-  const sel=document.getElementById('aItem');
-  sel.innerHTML=d.items.length?d.items.map(i=>`<option value="${i.id}" data-price="${i.price}">${i.name} (€${i.price.toFixed(2)})</option>`):'<option>-- Add items first --</option>';
-  document.getElementById('iList').innerHTML=d.items.length?d.items.map(i=>`<div class="card-s"><div class="l"><b>${i.name}</b></div><div class="r"><b>€${i.price.toFixed(2)}</b></div></div>`).join(''):'<div style="text-align:center;padding:16px;color:var(--dim)">No items</div>';
-}
-async function addItem(){
-  const n=document.getElementById('iN').value.trim(),p=parseFloat(document.getElementById('iP').value);
-  if(!n)return;
-  await fetch(API+'/api/merchant/items',{method:'POST',headers:ah(),body:JSON.stringify({name:n,price:p})});
-  msg('iMsg','Added '+n);loadItems();document.getElementById('iN').value='';
+function enter(){
+  document.getElementById('login').classList.remove('active');
+  document.getElementById('main').classList.add('active');
+  document.getElementById('mName').innerHTML=mData?.name||'Merchant';
+  loadDash();
+  setInterval(loadDash, 10000);
 }
 
-// AUCTION
 async function loadDash(){
-  const r=await fetch(API+'/api/merchant/dashboard',{headers:ah()});if(!r.ok)return;const d=await r.json();
-  const bud=d.budget||20,spent=d.spent_today||0,rem=Math.max(bud-spent,0);
-  document.getElementById('aBudget').textContent='€'+rem.toFixed(2);
-  document.getElementById('aBudgetBar').style.width=Math.round(rem/bud*100)+'%';
-  document.getElementById('aBudgetSub').textContent=`€${spent.toFixed(2)} spent of €${bud.toFixed(2)} budget`;
-  document.getElementById('mInfo').textContent=`${d.subscribers_nearby||0} users nearby`;
-  if(d.recent_auctions?.length){
-    document.getElementById('aHistory').innerHTML=d.recent_auctions.reverse().map(a=>`<div class="card-s"><div class="l"><b>${a.item} · ${a.discount_pct}%</b><span>${a.status} · score ${a.winner_score} · ${a.winner_dist}m</span></div><div class="r"><b>${a.code}</b><span>€${a.budget_used}</span></div></div>`).join('');
-  }
-}
-async function runAuction(){
-  const sel=document.getElementById('aItem');const opt=sel.options[sel.selectedIndex];
-  if(!opt||!opt.value){msg('aMsg','Add items first');return}
-  const disc=parseInt(document.getElementById('aDisc').value);
-  const r=await fetch(API+'/api/auction/run',{method:'POST',headers:ah(),
-    body:JSON.stringify({item:opt.text.split(' (')[0],price:parseFloat(opt.dataset.price||3.5),max_discount:disc})});
-  const d=await r.json();
-  if(r.ok){
-    msg('aMsg',`Sent to user ${d.winner_dist}m away · Score: ${d.winner_score} · Code: ${d.code}`);
-    navigator.vibrate?.([50,30,50]);loadDash();
-  }else{msg('aMsg',d.error||'Failed')}
-}
-
-// SCAN
-let scanning=false;
-async function startCam(){
-  if(scanning)return;
-  try{const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
-    document.getElementById('cam').srcObject=s;scanning=true;
-    if('BarcodeDetector' in window){const det=new BarcodeDetector({formats:['qr_code']});const v=document.getElementById('cam');
-      const loop=async()=>{if(!scanning)return;try{const c=await det.detect(v);if(c.length&&c[0].rawValue.startsWith('TM-')){document.getElementById('cIn').value=c[0].rawValue;doVerify();return}}catch(e){}requestAnimationFrame(loop)};
-      v.addEventListener('playing',()=>setTimeout(loop,500),{once:true})}
+  try{
+    const r=await fetch(API+'/api/merchant/dashboard',{headers:ah()});if(!r.ok)return;const d=await r.json();
+    document.getElementById('xUsers').textContent=d.subscribers||0;
+    document.getElementById('xArrivals').textContent=d.total_arrivals||0;
+    document.getElementById('xFills').textContent=d.fills||0;
+    document.getElementById('mSub').textContent=`${d.subscribers||0} users nearby`;
+    // Show arrivals
+    const arrs=d.recent_arrivals||[];
+    if(arrs.length){
+      document.getElementById('arrList').innerHTML=arrs.slice().reverse().map(a=>
+        `<div class="arr-item"><div class="arr-avatar">✓</div><div class="arr-body"><div class="arr-name">${a.user_name||'Customer'} arrived</div><div class="arr-detail">${a.item||'?'} · saved €${(a.saved||0).toFixed(2)}</div></div><div class="arr-time">${a.ts||''}</div></div>`
+      ).join('');
+    }
   }catch(e){}
 }
-async function doVerify(){
-  const code=document.getElementById('cIn').value.trim();if(!code)return;
-  const r=await fetch(API+'/api/verify',{method:'POST',headers:ah(),body:JSON.stringify({code})});const d=await r.json();const el=document.getElementById('res');
-  if(d.valid){el.className='result show ok';document.getElementById('rI').textContent='✅';document.getElementById('rT').textContent='Redeemed!';
-    document.getElementById('rS').textContent=`${d.item||d.merchant} · €${d.redemption?.cashback} cashback · Final: €${d.redemption?.final}`;navigator.vibrate?.([50,30,50,30,50])
-  }else{el.className='result show err';document.getElementById('rI').textContent='❌';document.getElementById('rT').textContent=d.error||'Invalid';
-    document.getElementById('rS').textContent='';navigator.vibrate?.(200)}
-  document.getElementById('cIn').value='';loadDash();
-}
 
-// STATS
-async function loadStats(){
-  const r=await fetch(API+'/api/merchant/dashboard',{headers:ah()});if(!r.ok)return;const d=await r.json();
-  document.getElementById('xAuctions').textContent=d.auctions_run||0;
-  document.getElementById('xReds').textContent=d.redemptions||0;
-  document.getElementById('xConv').textContent=(d.conversion_pct||0)+'%';
-  document.getElementById('xRev').textContent='€'+(d.revenue||0).toFixed(2);
-  if(d.recent_redemptions?.length)document.getElementById('xList').innerHTML=d.recent_redemptions.reverse().map(r=>`<div class="card-s"><div class="l"><b>${r.item||r.merchant}</b><span>${r.ts} · ${r.code}</span></div><div class="r"><b style="color:var(--green)">€${r.final}</b></div></div>`).join('');
+async function fillSeats(){
+  const btn=document.querySelector('.btn-fill');
+  btn.textContent='AI is thinking...';btn.disabled=true;
+  try{
+    const r=await fetch(API+'/api/fill',{method:'POST',headers:ah()});
+    const d=await r.json();
+    if(!r.ok){btn.textContent='Fill my seats';btn.disabled=false;showMsg('lMsg',d.error||'Failed');return}
+    const a=d.analysis;const p=d.push;
+    // Show AI analysis
+    document.getElementById('aiItem').textContent=a.item.name;
+    document.getElementById('aiOrig').textContent='€'+a.item.price.toFixed(2);
+    document.getElementById('aiDisc').textContent=a.discount_pct+'% off';
+    document.getElementById('aiPays').textContent='€'+a.discount_price.toFixed(2);
+    document.getElementById('aiSent').textContent=p.sent+' users';
+    document.getElementById('aiNotif').textContent=a.notification_text;
+    document.getElementById('aiReason').textContent='🧠 '+a.reasoning;
+    document.getElementById('aiBox').classList.add('show');
+    navigator.vibrate?.([50,30,50]);
+  }catch(e){console.log(e)}
+  btn.textContent='Fill my seats';btn.disabled=false;
+  loadDash();
 }
 </script>
 </body>

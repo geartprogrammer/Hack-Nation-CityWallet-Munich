@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#f5f0e8">
+<meta name="theme-color" content="#faf6ef">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="/manifest.json">
@@ -11,182 +11,133 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{--bg:#f5f0e8;--bg2:#ece5d8;--bg3:#e3dbd0;--card:#fffcf6;--ink:#1a1714;--ink2:#4a4540;--dim:#8a847a;--dim2:#b8b0a4;
-  --accent:#c25a1e;--accent2:#e07832;--accent-soft:rgba(194,90,30,.08);--green:#2d7a42;--green-soft:rgba(45,122,66,.08);
+:root{--bg:#faf6ef;--bg2:#f0ebe2;--bg3:#e6e0d5;--card:#fff;--ink:#181510;--ink2:#504b42;--dim:#928b7f;--dim2:#c4bdb0;
+  --primary:#bf5a1b;--primary2:#d9722f;--primary-soft:rgba(191,90,27,.07);
+  --green:#2b7d42;--green-soft:rgba(43,125,66,.07);
   --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px)}
 html,body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);
-  min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased;overflow:hidden}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes flip{0%{transform:rotateY(0)}100%{transform:rotateY(180deg)}}
-.screen{display:none;height:100vh;height:100dvh;flex-direction:column;overflow:hidden}.screen.active{display:flex}
+.screen{display:none;min-height:100vh;min-height:100dvh;flex-direction:column}.screen.active{display:flex}
 
-/* ═══ ONBOARDING ═══ */
+/* ═══ ONBOARD ═══ */
 #onboard{background:var(--bg);justify-content:center;align-items:center;text-align:center;padding:0 32px}
-.ob-mark{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--accent2));
-  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:22px;margin:0 auto 24px}
-#onboard h1{font-size:26px;font-weight:900;letter-spacing:-.03em;line-height:1.15;margin-bottom:8px}
-#onboard h1 em{font-style:normal;color:var(--accent)}
-#onboard p{font-size:14px;color:var(--dim);line-height:1.6;max-width:320px;margin:0 auto 28px}
-.ob-features{display:flex;flex-direction:column;gap:10px;max-width:320px;margin:0 auto 28px;text-align:left}
-.ob-f{display:flex;gap:10px;align-items:center;font-size:13px;color:var(--ink2)}
-.ob-f b{color:var(--ink)}
-.ob-f .oi{width:32px;height:32px;border-radius:10px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.btn{width:100%;max-width:320px;padding:16px;border-radius:14px;font-size:15px;font-weight:700;border:none;cursor:pointer}
-.btn:active{transform:scale(.97);opacity:.9}
-.btn-dark{background:var(--ink);color:var(--bg)}
-.btn-ghost{background:none;color:var(--dim);font-size:13px;margin-top:6px}
+#onboard .mark{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--primary),var(--primary2));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:18px;margin:0 auto 20px}
+#onboard h1{font-size:28px;font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-bottom:6px}
+#onboard h1 em{font-style:normal;color:var(--primary)}
+#onboard .sub{font-size:14px;color:var(--dim);line-height:1.6;max-width:300px;margin:0 auto 24px}
+.btn{width:100%;max-width:340px;padding:15px;border-radius:14px;font-size:15px;font-weight:700;border:none;cursor:pointer}
+.btn:active{transform:scale(.97)}.btn-dark{background:var(--ink);color:#fff}
+.btn-ghost{background:none;color:var(--dim);font-size:13px;margin-top:4px}
 
-/* ═══ MAIN — THE OFFER ═══ */
-#main{background:var(--bg)}
-.main-top{padding:14px 20px;padding-top:calc(14px + var(--safe-t));display:flex;justify-content:space-between;align-items:center}
-.mt-left{display:flex;align-items:center;gap:8px}
-.mt-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));
-  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:11px}
-.mt-text{font-size:14px;font-weight:700}.mt-text em{font-style:normal;color:var(--accent)}
-.mt-sub{font-size:11px;color:var(--dim)}
-.mt-right{display:flex;gap:6px;align-items:center}
-.mt-pill{font-size:10px;font-weight:700;padding:4px 10px;border-radius:99px;display:flex;align-items:center;gap:4px}
-.mt-pill.live{background:var(--green-soft);color:var(--green)}
-.mt-pill .dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite}
-
-/* Context strip */
-.ctx{padding:4px 20px 10px;display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch}.ctx::-webkit-scrollbar{display:none}
+/* ═══ MAIN ═══ */
+#main{background:var(--bg);padding-bottom:var(--safe-b)}
+.top{padding:12px 20px;padding-top:calc(12px + var(--safe-t));display:flex;justify-content:space-between;align-items:center}
+.top-l{display:flex;align-items:center;gap:8px}
+.top-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--primary2));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:10px}
+.top-name{font-size:15px;font-weight:700}.top-name em{font-style:normal;color:var(--primary)}
+.top-r{font-size:11px;color:var(--dim)}
+.ctx{padding:2px 20px 10px;display:flex;gap:5px;overflow-x:auto;-webkit-overflow-scrolling:touch}.ctx::-webkit-scrollbar{display:none}
 .chip{flex-shrink:0;font-size:10px;font-weight:600;padding:5px 10px;border-radius:8px;background:var(--card);border:1px solid var(--bg2);color:var(--dim)}
-.chip.hot{background:var(--accent-soft);color:var(--accent);border-color:rgba(194,90,30,.12)}
+.chip.hot{background:var(--primary-soft);color:var(--primary);border-color:transparent}
 
-/* ═══ THE CARD ═══ (the entire app is this one card) */
-.offer-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:0 20px;perspective:1000px}
-.offer-card{width:100%;max-width:380px;border-radius:24px;overflow:hidden;background:var(--card);
-  box-shadow:0 8px 40px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.03);
-  transition:transform .6s;transform-style:preserve-3d;position:relative;cursor:pointer}
-.offer-card.flipped{transform:rotateY(180deg)}
-.offer-front,.offer-back{backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.offer-back{position:absolute;inset:0;transform:rotateY(180deg);background:var(--card);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+/* THE OFFER CARD */
+.offer-section{padding:0 20px}
+.ocard{background:var(--card);border-radius:20px;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,.04);border:1px solid var(--bg2);animation:fadeUp .4s both}
+.oc-hero{position:relative;padding:22px 22px 18px;color:#fff;min-height:160px;display:flex;flex-direction:column;justify-content:flex-end}
+.oc-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,.7) 100%)}
+.oc-hero *{position:relative;z-index:1}
+.oc-tag{display:inline-block;font-size:9px;font-weight:700;padding:3px 9px;border-radius:6px;background:rgba(255,255,255,.2);backdrop-filter:blur(6px);margin-bottom:6px;letter-spacing:.03em;text-transform:uppercase}
+.oc-h{font-size:22px;font-weight:900;line-height:1.1;letter-spacing:-.02em}
+.oc-s{font-size:12px;opacity:.85;margin-top:3px;line-height:1.4}
+.oc-body{padding:16px 22px}
+.oc-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bg2)}
+.oc-row:last-child{border-bottom:none}
+.oc-k{font-size:12px;color:var(--dim)}.oc-v{font-size:13px;font-weight:700}
+.oc-v.strike{text-decoration:line-through;color:var(--dim);font-weight:400;margin-right:6px}
+.oc-v.green{color:var(--green)}.oc-v.primary{color:var(--primary)}
+.oc-why{padding:12px 22px;background:var(--primary-soft);font-size:11px;color:var(--primary);line-height:1.5}
+.oc-cta{padding:14px 22px}
+.oc-cta button{width:100%;padding:15px;border-radius:14px;font-size:16px;font-weight:800;border:none;cursor:pointer;
+  background:var(--green);color:#fff;box-shadow:0 3px 12px rgba(43,125,66,.15)}
+.oc-cta button:active{transform:scale(.97)}
 
-/* Front */
-.of-hero{position:relative;height:180px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px 22px;color:#fff}
-.of-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 20%,rgba(0,0,0,.75) 100%)}
-.of-emoji{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);font-size:72px;opacity:.15}
-.of-content{position:relative;z-index:1}
-.of-tag{display:inline-block;font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;
-  background:rgba(255,255,255,.2);backdrop-filter:blur(8px);margin-bottom:6px;letter-spacing:.02em}
-.of-h{font-size:22px;font-weight:900;line-height:1.12;letter-spacing:-.02em}
-.of-s{font-size:12px;opacity:.8;margin-top:3px}
-
-.of-body{padding:18px 22px}
-.of-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg2)}
-.of-row:last-child{border-bottom:none}
-.of-k{font-size:12px;color:var(--dim);font-weight:600}.of-v{font-size:13px;font-weight:700}
-.of-v.accent{color:var(--accent)}.of-v.green{color:var(--green)}
-
-.of-why{padding:12px 22px;background:var(--accent-soft);font-size:11px;color:var(--accent);line-height:1.5;font-weight:500}
-
-.of-cta{padding:16px 22px}
-.of-cta button{width:100%;padding:15px;border-radius:14px;background:var(--ink);color:var(--bg);
-  font-size:15px;font-weight:700;border:none;cursor:pointer}
-.of-cta button:active{opacity:.85}
-
-/* Back (QR) */
-.ob-merchant{font-size:20px;font-weight:800;margin-bottom:2px}
-.ob-item{font-size:14px;color:var(--accent);font-weight:700;margin-bottom:16px}
-.qr-box{width:210px;height:210px;border-radius:16px;overflow:hidden;background:var(--bg2);margin-bottom:12px;display:flex;align-items:center;justify-content:center}
-.qr-box img{width:100%;height:100%}
-.qr-code{font-family:monospace;font-size:20px;font-weight:900;letter-spacing:.08em;margin-bottom:4px}
-.qr-hint{font-size:12px;color:var(--dim);margin-bottom:16px}
-.qr-status{font-size:13px;font-weight:700;padding:8px 16px;border-radius:8px}
-.qr-status.ready{background:var(--accent-soft);color:var(--accent)}
-.qr-status.done{background:var(--green-soft);color:var(--green)}
+/* I'M HERE confirmation */
+.arrived{padding:16px 22px;background:var(--green-soft);text-align:center;display:none}
+.arrived.show{display:block}
+.arrived .check{font-size:36px;margin-bottom:4px}
+.arrived .msg{font-size:15px;font-weight:700;color:var(--green)}
+.arrived .detail{font-size:12px;color:var(--dim);margin-top:4px}
 
 /* Empty state */
-.empty{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px}
-.empty .icon{font-size:48px;margin-bottom:16px;opacity:.6}
-.empty h2{font-size:18px;font-weight:700;margin-bottom:6px}
-.empty p{font-size:13px;color:var(--dim);line-height:1.5;max-width:280px}
+.empty{padding:60px 32px;text-align:center}
+.empty .icon{font-size:44px;margin-bottom:12px;opacity:.5}
+.empty h2{font-size:18px;font-weight:700;margin-bottom:4px}
+.empty p{font-size:13px;color:var(--dim);line-height:1.5}
 
-/* Bottom: savings pill */
-.bottom-bar{padding:12px 20px;padding-bottom:calc(12px + var(--safe-b));display:flex;justify-content:space-between;align-items:center;
-  background:var(--card);border-top:1px solid var(--bg2)}
-.bb-saved{display:flex;align-items:center;gap:8px}
-.bb-saved .amt{font-size:18px;font-weight:900;color:var(--green)}
-.bb-saved .label{font-size:11px;color:var(--dim)}
-.bb-link{font-size:12px;font-weight:700;color:var(--accent);cursor:pointer;text-decoration:none}
+/* ACTIVITY FEED */
+.feed-section{padding:16px 20px}
+.feed-title{font-size:12px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;justify-content:space-between}
+.feed-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border-radius:12px;margin-bottom:6px;border:1px solid var(--bg2)}
+.fi-avatar{width:32px;height:32px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--dim);flex-shrink:0}
+.fi-body{flex:1;min-width:0}
+.fi-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fi-detail{font-size:11px;color:var(--dim)}
+.fi-saved{font-size:13px;font-weight:700;color:var(--green);flex-shrink:0}
 
-/* ═══ SAVINGS SHEET ═══ */
-.sheet{position:fixed;inset:0;z-index:200;display:none;flex-direction:column}
-.sheet.open{display:flex}
-.sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.3)}
-.sheet-body{margin-top:auto;background:var(--bg);border-radius:20px 20px 0 0;padding:20px;
-  padding-bottom:calc(20px + var(--safe-b));max-height:70vh;overflow-y:auto;position:relative;animation:slideUp .3s ease}
-.sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--dim2);margin:0 auto 16px}
-.sheet-body h2{font-size:18px;font-weight:800;margin-bottom:4px}
-.s-total{font-size:36px;font-weight:900;color:var(--green);margin-bottom:16px}
-.s-item{background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:6px;display:flex;justify-content:space-between;
-  align-items:center;border:1px solid var(--bg2)}
-.s-item .l b{font-size:13px;display:block}.s-item .l span{font-size:11px;color:var(--dim)}
-.s-item .r{font-size:15px;font-weight:800;color:var(--green)}
+/* SAVINGS BAR */
+.sav-bar{padding:12px 20px;padding-bottom:calc(12px + var(--safe-b));background:var(--card);border-top:1px solid var(--bg2);
+  display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0}
+.sav-bar .amt{font-size:18px;font-weight:900;color:var(--green)}
+.sav-bar .lbl{font-size:11px;color:var(--dim)}
+.sav-bar a{font-size:12px;font-weight:700;color:var(--primary);text-decoration:none}
 
-/* Toast */
-.toast{position:fixed;top:0;left:0;right:0;z-index:300;padding:14px 20px;
-  padding-top:calc(14px + var(--safe-t));background:var(--card);border-bottom:1px solid var(--bg2);
-  box-shadow:0 4px 20px rgba(0,0,0,.06);display:flex;align-items:center;gap:12px;
-  transform:translateY(-100%);transition:transform .3s ease;cursor:pointer}
+/* TOAST */
+.toast{position:fixed;top:0;left:0;right:0;z-index:300;padding:14px 20px;padding-top:calc(14px + var(--safe-t));
+  background:var(--card);border-bottom:1px solid var(--bg2);box-shadow:0 4px 20px rgba(0,0,0,.06);
+  display:flex;align-items:center;gap:10px;transform:translateY(-100%);transition:transform .3s;cursor:pointer}
 .toast.show{transform:translateY(0)}
-.toast .td{width:36px;height:36px;border-radius:10px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:18px}
+.toast .td{width:34px;height:34px;border-radius:10px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:16px}
 .toast .tb{flex:1}.toast .th{font-size:13px;font-weight:700}.toast .ts{font-size:11px;color:var(--dim)}
-.toast .ta{font-size:11px;font-weight:700;color:var(--accent)}
+.toast .ta{font-size:11px;font-weight:700;color:var(--primary)}
+
+.spinner{width:28px;height:28px;border:3px solid var(--bg2);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
 </style>
 </head>
 <body>
 
-<!-- ONBOARDING (once) -->
 <div id="onboard" class="screen active">
-  <div class="ob-mark">TM</div>
-  <h1>The <em>Time Market</em></h1>
-  <p>Cafes sell their quiet hours. The AI buys them for you. One perfect offer, delivered to your lock screen.</p>
-  <div class="ob-features">
-    <div class="ob-f"><div class="oi">🧠</div><b>AI picks you</b> — out of everyone nearby, you got this offer</div>
-    <div class="ob-f"><div class="oi">📍</div><b>Location-aware</b> — only offers you can walk to</div>
-    <div class="ob-f"><div class="oi">🔒</div><b>Private</b> — your data stays on your phone</div>
-  </div>
+  <div class="mark">CW</div>
+  <h1>City <em>Wallet</em></h1>
+  <div class="sub">Local cafes fill their quiet hours with deals for you. The AI picks what, how much off, and sends it to your phone. You just walk in.</div>
   <button class="btn btn-dark" onclick="start()">Get started</button>
   <button class="btn btn-ghost" onclick="start()">How it works</button>
 </div>
 
-<!-- MAIN APP -->
 <div id="main" class="screen">
-  <div class="main-top">
-    <div class="mt-left">
-      <div class="mt-mark">TM</div>
-      <div><div class="mt-text">The <em>Time Market</em></div><div class="mt-sub" id="hSub">Loading...</div></div>
-    </div>
-    <div class="mt-right"><div class="mt-pill live"><span class="dot"></span>Live</div></div>
+  <div class="top">
+    <div class="top-l"><div class="top-mark">CW</div><div class="top-name">City <em>Wallet</em></div></div>
+    <div class="top-r" id="topR">Loading...</div>
   </div>
   <div class="ctx" id="ctx"></div>
-  <div class="offer-wrap" id="offerWrap">
-    <div style="text-align:center;padding:40px;color:var(--dim)"><div style="width:32px;height:32px;border:3px solid var(--bg2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px"></div>Finding your offer...</div>
+
+  <div class="offer-section" id="offerSection">
+    <div style="text-align:center;padding:40px"><div class="spinner"></div><div style="font-size:13px;color:var(--dim)">Finding offers near you...</div></div>
   </div>
-  <div class="bottom-bar">
-    <div class="bb-saved"><div class="amt" id="bbAmt">€0.00</div><div class="label">saved</div></div>
-    <a class="bb-link" onclick="openSheet()">View savings →</a>
+
+  <div class="feed-section" id="feedSection"></div>
+
+  <div class="sav-bar">
+    <div><div class="amt" id="savAmt">€0.00</div><div class="lbl">saved with City Wallet</div></div>
+    <a href="/merchant.html">Merchant app →</a>
   </div>
 </div>
 
-<!-- SAVINGS SHEET -->
-<div class="sheet" id="sheet">
-  <div class="sheet-bg" onclick="closeSheet()"></div>
-  <div class="sheet-body">
-    <div class="sheet-handle"></div>
-    <h2>Your savings</h2>
-    <div class="s-total" id="sTotal">€0.00</div>
-    <div id="sList"><div style="text-align:center;padding:16px;color:var(--dim);font-size:13px">No redemptions yet</div></div>
-  </div>
-</div>
-
-<!-- TOAST -->
 <div class="toast" id="toast" onclick="onToast()">
   <div class="td" id="tD">☕</div>
   <div class="tb"><div class="th" id="tH"></div><div class="ts" id="tS"></div></div>
@@ -195,169 +146,145 @@ html,body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:
 
 <script>
 const API=window.location.origin;
-let offer=null,lat=48.1351,lng=11.582,flipped=false;
-const uid=localStorage.getItem('tm_u')||(()=>{const u='u-'+Math.random().toString(36).slice(2,8);localStorage.setItem('tm_u',u);return u})();
-
+let offer=null,lat=48.1351,lng=11.582;
+const uid=localStorage.getItem('cw_u')||(()=>{const u='u-'+Math.random().toString(36).slice(2,8);localStorage.setItem('cw_u',u);return u})();
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
 function urlB64(b){const p='='.repeat((4-b.length%4)%4);return Uint8Array.from(atob(b.replace(/-/g,'+').replace(/_/g,'/')+p),c=>c.charCodeAt(0))}
 
+setTimeout(()=>{if(localStorage.getItem('cw_ok'))boot()},600);
+
 async function start(){
   if('Notification' in window&&Notification.permission==='default')await Notification.requestPermission();
-  navigator.geolocation?.getCurrentPosition(()=>{},()=>{},{timeout:5000});
-  localStorage.setItem('tm_ok','1');boot();
+  localStorage.setItem('cw_ok','1');boot();
 }
-
-setTimeout(()=>localStorage.getItem('tm_ok')?boot():null,800);
 
 async function boot(){
   showScreen('main');
   try{const p=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{enableHighAccuracy:true,timeout:10000}));lat=p.coords.latitude;lng=p.coords.longitude}catch(e){}
 
-  // SW + push
   if('serviceWorker' in navigator){
     const reg=await navigator.serviceWorker.register('/sw.js').catch(()=>null);
-    if(reg){
-      await navigator.serviceWorker.ready;
-      if(Notification.permission==='granted'){
-        try{
-          const vr=await fetch(API+'/api/vapid-public');const{publicKey}=await vr.json();
-          const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64(publicKey)});
-          await fetch(API+'/api/push/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({subscription:sub.toJSON(),lat,lng})});
-        }catch(e){console.log('Push failed:',e)}
-      }
+    if(reg&&Notification.permission==='granted'){
+      try{await navigator.serviceWorker.ready;
+        const vr=await fetch(API+'/api/vapid-public');const{publicKey}=await vr.json();
+        const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64(publicKey)});
+        await fetch(API+'/api/push/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:sub.toJSON(),lat,lng})});
+      }catch(e){console.log('Push:',e)}
     }
     navigator.serviceWorker.addEventListener('message',e=>{
-      if(e.data?.type==='OPEN_OFFER'){
-        const aid=e.data.auctionId||e.data.offerId;
-        if(aid)fetch(API+'/api/auction/'+aid).then(r=>r.json()).then(a=>{if(a&&a.code){offer=a;renderOffer();flipToQR()}}).catch(()=>{});
-      }
+      if(e.data?.type==='OPEN_OFFER'){loadOffer()}
     });
   }
 
   await loadOffer();
-  setInterval(loadOffer,20000); // refresh every 20s
-  loadSavingsBar();
-
-  // Deep link
-  if(location.hash.startsWith('#offer=')){
-    const aid=location.hash.slice(7);
-    fetch(API+'/api/auction/'+aid).then(r=>r.json()).then(a=>{if(a&&a.code){offer=a;renderOffer();flipToQR()}}).catch(()=>{});
-  }
+  await loadActivity();
+  setInterval(loadOffer,20000);
+  setInterval(loadActivity,30000);
+  if(location.hash.startsWith('#fill='))loadOffer();
+  setTimeout(()=>{if(offer)showToast(offer)},3000);
 }
+
+const GRADS=['linear-gradient(135deg,#3a2010 0%,#7a4020 50%,#a05530 100%)','linear-gradient(135deg,#1a2a3a,#2a5070,#3a7090)','linear-gradient(135deg,#2a1a2e,#5a3060,#804080)','linear-gradient(135deg,#1a2a1a,#2a5030,#3a7040)'];
 
 async function loadOffer(){
   try{
-    const r=await fetch(`${API}/api/myoffer?lat=${lat}&lng=${lng}`);
-    const d=await r.json();
-    if(d.has_offer){offer=d.offer;renderOffer();renderCtx()}
-    else{renderEmpty();renderCtx()}
-    document.getElementById('hSub').textContent=`${offer?.temp||'--'}° · ${offer?.weather||''}`;
+    const r=await fetch(`${API}/api/offer?lat=${lat}&lng=${lng}`);const d=await r.json();
+    if(d.has_offer){offer=d.offer;renderOffer()}else{renderEmpty()}
+    document.getElementById('topR').textContent=`${offer?.temp||'--'}° · ${offer?.weather||''}`;
+    renderCtx();
   }catch(e){renderEmpty()}
 }
 
 function renderCtx(){
   if(!offer)return;
   const chips=[
-    {t:`${offer.temp||'--'}° ${offer.weather||''}`,hot:true},
-    {t:`${offer.distance_m||'?'}m away`},
-    {t:`${offer.discount_pct||'?'}% AI-priced`,hot:true},
-    {t:'🔒 On-device'},
+    {t:`${offer.temp||'--'}° ${offer.weather||''}`,hot:!!offer.temp},
+    {t:`${offer.distance_m||'?'}m away`,hot:true},
+    {t:`${offer.discount_pct||'?'}% AI-set`,hot:true},
+    {t:`${offer.arrivals?.length||0} went in`},
   ];
   document.getElementById('ctx').innerHTML=chips.map(c=>`<div class="chip ${c.hot?'hot':''}">${c.t}</div>`).join('');
 }
 
-const GRADS=['linear-gradient(135deg,#2a1810,#5c3317,#8b5a2b)','linear-gradient(135deg,#1a2a3a,#2a4a6a,#3a6a8a)',
-  'linear-gradient(135deg,#2a1a2a,#5a2a4a,#8a4a6a)','linear-gradient(135deg,#1a2a1a,#2a4a2a,#4a6a4a)'];
-
 function renderOffer(){
   if(!offer)return;
-  flipped=false;
-  const g=GRADS[Math.abs(hashCode(offer.merchant_name||''))%GRADS.length];
-  const emoji=offer.frame==='shelter'?'☔':offer.frame==='warmth'?'🔥':offer.frame==='hunger'?'🍽':'✨';
-  document.getElementById('offerWrap').innerHTML=`
-    <div class="offer-card" id="offerCard" onclick="flipCard()">
-      <div class="offer-front">
-        <div class="of-hero" style="background:${g}">
-          <div class="of-emoji">${emoji}</div>
-          <div class="of-content">
-            <div class="of-tag">${offer.discount_pct||'?'}% off · AI-allocated to you</div>
-            <div class="of-h">${offer.headline||offer.merchant_name||'Offer'}</div>
-            <div class="of-s">${offer.subline||''}</div>
-          </div>
-        </div>
-        <div class="of-body">
-          <div class="of-row"><span class="of-k">Merchant</span><span class="of-v">${offer.merchant_name||'Cafe'}</span></div>
-          <div class="of-row"><span class="of-k">Item</span><span class="of-v">${offer.item||'Special'}</span></div>
-          <div class="of-row"><span class="of-k">Distance</span><span class="of-v accent">${offer.distance_m||'?'}m · ${offer.walk_min||'?'} min walk</span></div>
-          <div class="of-row"><span class="of-k">Cashback</span><span class="of-v green">€${offer.cashback||'?'}</span></div>
-        </div>
-        ${offer.why?`<div class="of-why">🧠 ${offer.why}</div>`:''}
-        <div class="of-cta"><button>Tap to reveal your QR code</button></div>
-      </div>
-      <div class="offer-back">
-        <div class="ob-merchant">${offer.merchant_name||'Cafe'}</div>
-        <div class="ob-item">${offer.discount_pct||'?'}% off ${offer.item||''}</div>
-        <div class="qr-box"><img src="${API}/api/qr?text=${encodeURIComponent(offer.code||'')}" alt="QR"></div>
-        <div class="qr-code">${offer.code||''}</div>
-        <div class="qr-hint">Show this to the barista</div>
-        <div class="qr-status ready" id="qrSt">Ready to redeem</div>
-      </div>
+  const g=GRADS[Math.abs(hash(offer.merchant_name||''))%GRADS.length];
+  document.getElementById('offerSection').innerHTML=`
+  <div class="ocard">
+    <div class="oc-hero" style="background:${g}">
+      <div class="oc-tag">AI-generated · just for you</div>
+      <div class="oc-h">${offer.notification_text||offer.merchant_name||'Offer'}</div>
+      <div class="oc-s">${offer.merchant_name||''} · ${offer.distance_m||'?'}m · ${offer.walk_min||'?'} min walk</div>
     </div>
-    <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--dim)">${flipped?'Tap card to go back':'Tap card to see QR code'}</div>
-    ${offer.maps_url?`<a href="${offer.maps_url}" target="_blank" style="display:block;text-align:center;margin-top:8px;font-size:12px;color:var(--accent);font-weight:600;text-decoration:none">📍 Get directions</a>`:''}`;
-}
-
-function flipCard(){
-  const card=document.getElementById('offerCard');
-  if(!card)return;
-  flipped=!flipped;
-  card.classList.toggle('flipped');
-  if(navigator.vibrate)navigator.vibrate(30);
-}
-function flipToQR(){
-  setTimeout(()=>{const card=document.getElementById('offerCard');if(card&&!flipped){flipped=true;card.classList.add('flipped')}},300);
+    <div class="oc-body">
+      <div class="oc-row"><span class="oc-k">Item</span><span class="oc-v">${offer.item||'Special'}</span></div>
+      <div class="oc-row"><span class="oc-k">Price</span><span><span class="oc-v strike">€${offer.original_price||'?'}</span><span class="oc-v primary">€${offer.discount_price||'?'}</span></span></div>
+      <div class="oc-row"><span class="oc-k">You save</span><span class="oc-v green">€${offer.cashback||'?'}</span></div>
+      <div class="oc-row"><span class="oc-k">Distance</span><span class="oc-v">${offer.distance_m||'?'}m · ${offer.walk_min||'?'} min</span></div>
+      ${offer.arrivals?.length?`<div class="oc-row"><span class="oc-k">Already went in</span><span class="oc-v green">${offer.arrivals.length} people</span></div>`:''}
+    </div>
+    ${offer.reasoning?`<div class="oc-why">🧠 ${offer.reasoning}</div>`:''}
+    <div class="oc-cta"><button onclick="imHere()">I'm here — redeem €${offer.cashback||'?'} cashback</button></div>
+    <div class="arrived" id="arrivedMsg">
+      <div class="check">✅</div>
+      <div class="msg">You're in! €${offer.cashback||'?'} saved.</div>
+      <div class="detail">Show this screen to the barista. Enjoy your ${offer.item||'drink'}!</div>
+    </div>
+  </div>
+  ${offer.maps_url?`<a href="${offer.maps_url}" target="_blank" style="display:block;text-align:center;margin-top:10px;font-size:12px;color:var(--primary);font-weight:600;text-decoration:none">📍 Get walking directions</a>`:''}`;
 }
 
 function renderEmpty(){
-  document.getElementById('offerWrap').innerHTML=`
-    <div class="empty">
-      <div class="icon">🌤</div>
-      <h2>No offers right now</h2>
-      <p>The AI is waiting for the right moment — when a cafe near you is quiet and the context is right. We'll notify you.</p>
-    </div>`;
+  document.getElementById('offerSection').innerHTML=`<div class="empty"><div class="icon">☀️</div><h2>Nothing right now</h2><p>When a cafe near you has empty seats, the AI will send you a deal. Keep walking — we'll buzz you.</p></div>`;
 }
 
-function hashCode(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i);return h}
+async function imHere(){
+  if(!offer)return;
+  const fid=offer.id||'';
+  await fetch(API+'/api/arrive',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({fill_id:fid,user_id:uid,user_name:'You'})}).catch(()=>{});
+  document.getElementById('arrivedMsg').classList.add('show');
+  document.querySelector('.oc-cta button').style.display='none';
+  navigator.vibrate?.([50,30,80]);
+  // Update savings
+  loadSavings();
+}
 
-// Savings
-async function loadSavingsBar(){
+async function loadSavings(){
   try{const r=await fetch(API+'/api/savings?user_id='+uid);const d=await r.json();
-    document.getElementById('bbAmt').textContent='€'+d.total_saved.toFixed(2)}catch(e){}}
+    document.getElementById('savAmt').textContent='€'+d.total.toFixed(2)}catch(e){}}
 
-function openSheet(){document.getElementById('sheet').classList.add('open');loadSavingsSheet()}
-function closeSheet(){document.getElementById('sheet').classList.remove('open')}
-async function loadSavingsSheet(){
-  try{const r=await fetch(API+'/api/savings?user_id='+uid);const d=await r.json();
-    document.getElementById('sTotal').textContent='€'+d.total_saved.toFixed(2);
-    document.getElementById('sList').innerHTML=d.history.length?d.history.reverse().map(h=>
-      `<div class="s-item"><div class="l"><b>${h.merchant||h.item||'Cafe'}</b><span>${h.ts}</span></div><div class="r">-€${h.cashback?.toFixed(2)||'?'}</div></div>`
-    ).join(''):'<div style="text-align:center;padding:16px;color:var(--dim);font-size:13px">No redemptions yet</div>'
-  }catch(e){}}
+async function loadActivity(){
+  try{
+    const r=await fetch(API+'/api/activity');const d=await r.json();
+    const items=d.activity||[];
+    if(!items.length){document.getElementById('feedSection').innerHTML='';return}
+    document.getElementById('feedSection').innerHTML=`
+      <div class="feed-title"><span>People using City Wallet nearby</span><span>${items.length} recent</span></div>
+      ${items.slice(0,8).map(a=>`
+        <div class="feed-item">
+          <div class="fi-avatar">${(a.user||'?')[0]}</div>
+          <div class="fi-body"><div class="fi-name">${a.user} went to ${a.cafe}</div><div class="fi-detail">${a.item} · ${a.ts}</div></div>
+          <div class="fi-saved">-€${(a.saved||0).toFixed(2)}</div>
+        </div>`).join('')}`;
+  }catch(e){}
+}
 
-// Notifications
+function hash(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i);return h}
+
 let toastOffer=null;
 function showToast(o){
   toastOffer=o;document.getElementById('tD').textContent='☕';
-  document.getElementById('tH').textContent=(o.merchant_name||'Cafe')+' · '+(o.discount_pct||'?')+'% off';
+  document.getElementById('tH').textContent=o.notification_text||o.merchant_name||'New offer';
   document.getElementById('tS').textContent=(o.distance_m||'?')+'m away';
   document.getElementById('toast').classList.add('show');
-  navigator.vibrate?.([60,40,60]);setTimeout(()=>document.getElementById('toast').classList.remove('show'),6000);
+  navigator.vibrate?.([60,40,60]);
+  setTimeout(()=>document.getElementById('toast').classList.remove('show'),6000);
 }
-function onToast(){document.getElementById('toast').classList.remove('show');if(toastOffer){offer=toastOffer;renderOffer();flipToQR()}}
+function onToast(){document.getElementById('toast').classList.remove('show');
+  document.getElementById('offerSection').scrollIntoView({behavior:'smooth'})}
 
-// Show toast for first offer after load
-setTimeout(()=>{if(offer)showToast(offer)},3000);
+loadSavings();
 </script>
 </body>
 </html>
