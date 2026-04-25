@@ -2,348 +2,360 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#0a0a0a">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#070707">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/manifest.json">
 <title>City Wallet</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#0a0a0a;--card:#141414;--card2:#1a1a1a;
-  --ink:#f5f5f5;--dim:rgba(255,255,255,.45);--dim2:rgba(255,255,255,.2);
-  --accent:#ff6b35;--accent2:#ffd23f;--green:#00c853;--red:#ff1744;
-  --radius:16px;
+  --bg:#070707;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;
+  --ink:#fff;--ink2:#ccc;--dim:#666;--dim2:#333;
+  --accent:#ff5722;--accent-g:linear-gradient(135deg,#ff5722,#ff9800);
+  --blue:#2196f3;--blue-g:linear-gradient(135deg,#2196f3,#00bcd4);
+  --purple:#9c27b0;--purple-g:linear-gradient(135deg,#9c27b0,#e91e63);
+  --green:#4caf50;--green-g:linear-gradient(135deg,#4caf50,#8bc34a);
+  --r:20px;--r2:14px;
+  --safe-b:env(safe-area-inset-bottom,0px);
 }
 html,body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);
-  min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  overscroll-behavior-y:contain}
 
-/* ── Screens ─────────────────── */
-.screen{display:none;min-height:100vh;min-height:100dvh;flex-direction:column}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(255,87,34,.2)}50%{box-shadow:0 0 40px rgba(255,87,34,.4)}}
+
+.screen{display:none;min-height:100vh;min-height:100dvh;flex-direction:column;position:relative}
 .screen.active{display:flex}
 
-/* ── Onboarding ──────────────── */
-#onboard{justify-content:center;align-items:center;padding:32px 24px;text-align:center;
-  background:radial-gradient(circle at 50% 30%,#1a1200 0%,#0a0a0a 70%)}
-.ob-badge{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
-  font-weight:700;margin-bottom:32px;display:flex;align-items:center;justify-content:center;gap:8px}
-.ob-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.4s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-#onboard h1{font-size:34px;font-weight:800;line-height:1.1;letter-spacing:-.03em;
-  margin-bottom:12px;max-width:300px}
-#onboard h1 em{font-style:normal;color:var(--accent)}
-#onboard p{font-size:15px;color:var(--dim);line-height:1.6;max-width:320px;margin-bottom:32px}
-.privacy-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:32px}
-.pp{font-size:11px;padding:6px 12px;border-radius:99px;background:rgba(255,255,255,.06);
-  color:var(--dim);border:1px solid rgba(255,255,255,.08)}
-.pp strong{color:var(--accent)}
-.btn-main{background:var(--accent);color:#fff;border:none;border-radius:14px;
-  padding:16px 48px;font-size:16px;font-weight:700;cursor:pointer;
-  transition:transform .1s,box-shadow .2s;box-shadow:0 4px 24px rgba(255,107,53,.25)}
-.btn-main:active{transform:scale(.97)}
-.btn-skip{background:none;border:none;color:var(--dim);font-size:13px;margin-top:16px;cursor:pointer}
+/* ═══ SPLASH ═══ */
+#splash{justify-content:center;align-items:center;
+  background:radial-gradient(ellipse at 50% 40%,#1a0a00 0%,#070707 70%)}
+.logo-ring{width:100px;height:100px;border-radius:50%;background:var(--accent-g);
+  display:flex;align-items:center;justify-content:center;animation:glow 2s ease infinite;margin-bottom:40px}
+.logo-inner{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#1a1a1a,#070707);
+  display:flex;align-items:center;justify-content:center}
+.logo-inner span{background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:32px;font-weight:900}
+#splash h1{font-size:28px;font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
+#splash h1 em{font-style:normal;background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+#splash .tag{font-size:13px;color:var(--dim);margin-bottom:48px}
+.loader{width:48px;height:48px;border:3px solid var(--dim2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 
-/* ── Wallet ──────────────────── */
-#wallet{background:var(--bg)}
-.wallet-top{padding:16px 20px 12px;display:flex;justify-content:space-between;align-items:center;
-  position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid rgba(255,255,255,.06)}
-.wt-brand{font-size:14px;font-weight:700;letter-spacing:-.01em}
-.wt-brand em{color:var(--accent);font-style:normal}
-.wt-status{font-size:11px;color:var(--dim);display:flex;align-items:center;gap:6px}
-.wt-status .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+/* ═══ PERMISSIONS ═══ */
+#perms{padding:0 24px;justify-content:center;align-items:center;text-align:center;
+  background:radial-gradient(ellipse at 50% 30%,#0d0d1a 0%,#070707 70%)}
+.perm-card{width:100%;max-width:380px;animation:fadeUp .6s ease both}
+.perm-icon{font-size:64px;margin-bottom:20px}
+.perm-card h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
+.perm-card p{font-size:15px;color:var(--dim);line-height:1.6;margin-bottom:28px}
+.perm-features{display:flex;flex-direction:column;gap:12px;margin-bottom:32px;text-align:left}
+.perm-feat{display:flex;gap:12px;align-items:center;padding:14px 16px;background:var(--bg3);border-radius:var(--r2);border:1px solid var(--dim2)}
+.perm-feat .icon{font-size:24px;flex-shrink:0}
+.perm-feat .text{font-size:13px;line-height:1.4}
+.perm-feat .text strong{color:var(--ink);display:block;font-size:14px;margin-bottom:2px}
+.perm-feat .text span{color:var(--dim)}
+.btn{padding:16px 32px;border-radius:var(--r2);font-size:16px;font-weight:700;border:none;cursor:pointer;transition:all .15s;width:100%}
+.btn:active{transform:scale(.97)}
+.btn-accent{background:var(--accent-g);color:#fff;box-shadow:0 4px 20px rgba(255,87,34,.3)}
+.btn-ghost{background:transparent;color:var(--dim);margin-top:8px}
 
-/* ── Context bar ─────────────── */
-.ctx-bar{padding:12px 20px;display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.ctx-bar::-webkit-scrollbar{display:none}
-.ctx-chip{flex-shrink:0;font-size:11px;padding:6px 12px;border-radius:99px;
-  background:rgba(255,255,255,.05);color:var(--dim);display:flex;align-items:center;gap:5px;
-  border:1px solid rgba(255,255,255,.06);white-space:nowrap}
-.ctx-chip .icon{font-size:14px}
-.ctx-chip.active{background:rgba(255,107,53,.1);color:var(--accent);border-color:rgba(255,107,53,.2)}
+/* ═══ WALLET ═══ */
+#wallet{background:var(--bg);padding-bottom:calc(72px + var(--safe-b))}
+.app-header{padding:16px 20px 12px;display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;z-index:50;background:rgba(7,7,7,.85);backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.04)}
+.ah-brand{display:flex;align-items:center;gap:10px}
+.ah-logo{width:32px;height:32px;border-radius:10px;background:var(--accent-g);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#fff}
+.ah-name{font-size:16px;font-weight:700}
+.ah-name em{font-style:normal;color:var(--accent)}
+.ah-right{display:flex;align-items:center;gap:12px}
+.ah-pill{font-size:10px;padding:5px 10px;border-radius:99px;font-weight:700;letter-spacing:.04em;display:flex;align-items:center;gap:5px}
+.ah-pill.live{background:rgba(76,175,80,.15);color:var(--green)}
+.ah-pill .dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite}
+.notif-btn{width:36px;height:36px;border-radius:50%;background:var(--bg3);border:1px solid var(--dim2);
+  display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;position:relative}
+.notif-btn .badge{position:absolute;top:-2px;right:-2px;min-width:14px;height:14px;border-radius:50%;
+  background:var(--accent);font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center;
+  color:#fff;border:2px solid var(--bg)}
 
-/* ── Offers area ─────────────── */
-.offers{flex:1;padding:16px 20px 100px;display:flex;flex-direction:column;gap:16px}
-.loading-state{text-align:center;padding:48px 20px;color:var(--dim)}
-.loading-state .spinner{width:32px;height:32px;border:3px solid var(--dim2);
-  border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
-@keyframes spin{to{transform:rotate(360deg)}}
+.ctx-section{padding:16px 20px 8px}
+.ctx-label{font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ctx-chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.ctx-chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:12px;
+  font-size:12px;font-weight:600;background:var(--bg3);border:1px solid var(--dim2);color:var(--ink2)}
+.chip.hot{background:rgba(255,87,34,.1);border-color:rgba(255,87,34,.2);color:var(--accent)}
+.chip .ci{font-size:15px}
 
-/* ── Offer card (GenUI) ──────── */
-.offer-card{border-radius:var(--radius);overflow:hidden;position:relative;
-  box-shadow:0 4px 24px rgba(0,0,0,.3);transition:transform .2s}
-.oc-bg{padding:24px 22px 18px;position:relative;min-height:180px;
-  display:flex;flex-direction:column;justify-content:flex-end}
-.oc-bg::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.7) 100%)}
-.oc-badge{position:absolute;top:14px;left:14px;font-size:10px;font-weight:700;
-  letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:6px;
-  background:rgba(0,0,0,.5);backdrop-filter:blur(8px);color:#fff;z-index:1;
-  display:flex;align-items:center;gap:5px}
-.oc-badge .pulse{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite}
-.oc-expiry{position:absolute;top:14px;right:14px;font-size:10px;font-weight:600;
-  padding:4px 10px;border-radius:6px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);
-  color:var(--accent2);z-index:1}
-.oc-icon{font-size:48px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  opacity:.15;z-index:0}
-.oc-content{position:relative;z-index:1}
-.oc-headline{font-size:22px;font-weight:800;line-height:1.15;letter-spacing:-.02em;margin-bottom:4px}
-.oc-subline{font-size:13px;color:rgba(255,255,255,.75);line-height:1.4}
+.sec-head{padding:20px 20px 12px;display:flex;justify-content:space-between;align-items:center}
+.sec-head h2{font-size:18px;font-weight:800;letter-spacing:-.01em}
+.sec-head .count{font-size:12px;color:var(--dim);font-weight:600}
 
-.oc-details{background:var(--card);padding:16px 22px;display:flex;gap:16px;
-  border-top:1px solid rgba(255,255,255,.06)}
-.oc-detail{display:flex;flex-direction:column;gap:2px}
-.oc-detail .label{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
-.oc-detail .value{font-size:14px;font-weight:700}
-.oc-detail .value.discount{color:var(--accent)}
+/* ═══ OFFER CARDS ═══ */
+.offers{padding:0 20px;display:flex;flex-direction:column;gap:16px;padding-bottom:20px}
+.card{border-radius:var(--r);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4);
+  animation:fadeUp .5s ease both;transition:transform .2s}
+.card:nth-child(1){animation-delay:.1s}.card:nth-child(2){animation-delay:.2s}.card:nth-child(3){animation-delay:.3s}
+.card-hero{position:relative;padding:28px 24px 22px;min-height:200px;display:flex;flex-direction:column;justify-content:flex-end}
+.card-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 20%,rgba(0,0,0,.75) 100%)}
+.card-badges{position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;z-index:2}
+.card-badge{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;
+  border-radius:8px;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);color:#fff;display:flex;align-items:center;gap:5px}
+.card-badge .dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite}
+.card-timer{color:var(--accent);background:rgba(0,0,0,.55);backdrop-filter:blur(10px);padding:5px 10px;
+  border-radius:8px;font-size:10px;font-weight:700}
+.card-emoji{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:80px;opacity:.12;z-index:0}
+.card-content{position:relative;z-index:2}
+.card-discount{display:inline-block;font-size:13px;font-weight:800;padding:4px 12px;border-radius:8px;margin-bottom:10px;color:#fff}
+.card-h{font-size:22px;font-weight:800;line-height:1.15;letter-spacing:-.02em;margin-bottom:6px;text-shadow:0 2px 8px rgba(0,0,0,.4)}
+.card-sub{font-size:13px;color:rgba(255,255,255,.7);line-height:1.4;text-shadow:0 1px 4px rgba(0,0,0,.4)}
+.card-info{background:var(--bg2);padding:14px 24px;display:flex;border-top:1px solid rgba(255,255,255,.04)}
+.card-info-item{flex:1;display:flex;flex-direction:column;gap:2px}
+.card-info-item .l{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.card-info-item .v{font-size:13px;font-weight:700}
+.card-actions{background:var(--bg2);padding:14px 20px;display:flex;gap:10px;border-top:1px solid rgba(255,255,255,.04)}
+.card-actions .btn{flex:1;padding:14px;border-radius:14px;font-size:15px;font-weight:700}
+.btn-grab{color:#fff;box-shadow:0 4px 16px rgba(255,87,34,.25)}
+.btn-nah{background:var(--bg3);color:var(--dim);border:1px solid var(--dim2)!important}
 
-.oc-actions{background:var(--card);padding:12px 22px 16px;display:flex;gap:10px}
-.oc-actions button{flex:1;padding:14px;border-radius:12px;font-size:15px;font-weight:700;
-  border:none;cursor:pointer;transition:transform .1s}
-.oc-actions button:active{transform:scale(.97)}
-.btn-accept{background:var(--accent);color:#fff;box-shadow:0 2px 12px rgba(255,107,53,.3)}
-.btn-decline{background:rgba(255,255,255,.06);color:var(--dim);border:1px solid rgba(255,255,255,.08)!important}
+/* ═══ QR PASS ═══ */
+#qrpass{background:var(--bg);justify-content:center;align-items:center;padding:24px;
+  padding-bottom:calc(72px + var(--safe-b))}
+.qr-card{width:100%;max-width:360px;border-radius:24px;overflow:hidden;
+  box-shadow:0 16px 64px rgba(0,0,0,.6);animation:fadeUp .4s ease both}
+.qr-top{padding:28px 24px 20px;text-align:center;color:#fff}
+.qr-top .qtag{font-size:11px;text-transform:uppercase;letter-spacing:.14em;opacity:.6}
+.qr-top .amount{font-size:36px;font-weight:900;margin-top:4px}
+.qr-top .merchant{font-size:16px;font-weight:600;margin-top:4px;opacity:.8}
+.qr-body{background:#fff;padding:28px;text-align:center}
+.qr-img{width:200px;height:200px;margin:0 auto 16px;border-radius:16px;overflow:hidden;background:#f5f5f5;display:flex;align-items:center;justify-content:center}
+.qr-img img{width:100%;height:100%}
+.qr-code{font-family:monospace;font-size:22px;font-weight:900;letter-spacing:.1em;color:#000;margin-bottom:6px}
+.qr-hint{font-size:13px;color:#888}
+.qr-footer{padding:16px 24px;text-align:center;font-size:14px;font-weight:700}
+.qr-footer.ready{background:#fff3e0;color:#ff5722}
+.qr-footer.done{background:#e8f5e9;color:#4caf50}
 
-/* ── Trigger explainer ───────── */
-.trigger-bar{background:var(--card);margin:0 20px;border-radius:12px;padding:12px 16px;
-  font-size:12px;color:var(--dim);display:flex;align-items:center;gap:8px;
-  border:1px solid rgba(255,255,255,.06)}
-.trigger-bar strong{color:var(--accent)}
+/* ═══ NAV ═══ */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(17,17,17,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid rgba(255,255,255,.06);padding:8px 16px;
+  padding-bottom:calc(8px + var(--safe-b));display:flex;justify-content:space-around}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;
+  font-size:10px;color:var(--dim);font-weight:600;padding:6px 12px;border-radius:12px;cursor:pointer}
+.nav-item .ni{font-size:22px;line-height:1}
+.nav-item.active{color:var(--accent)}
 
-/* ── Pass (after accept) ─────── */
-#pass{background:var(--bg);justify-content:center;align-items:center;padding:24px}
-.pass-card{width:100%;max-width:360px;border-radius:20px;overflow:hidden;
-  box-shadow:0 12px 48px rgba(0,0,0,.5)}
-.pass-top{padding:28px 24px 20px;text-align:center;color:#fff}
-.pass-top .label{font-size:11px;text-transform:uppercase;letter-spacing:.14em;opacity:.7}
-.pass-top .headline{font-size:26px;font-weight:800;margin-top:6px;letter-spacing:-.02em}
-.pass-merchant{font-size:16px;font-weight:600;margin-top:4px;opacity:.85}
-.pass-body{background:#fff;color:#000;padding:24px;text-align:center}
-.pass-qr{width:180px;height:180px;margin:0 auto 16px;display:flex;align-items:center;
-  justify-content:center;background:#f5f5f5;border-radius:12px;overflow:hidden}
-.pass-qr img{width:100%;height:100%;object-fit:contain}
-.pass-code{font-family:monospace;font-size:22px;font-weight:800;letter-spacing:.08em;margin-bottom:8px}
-.pass-hint{font-size:13px;color:#666}
-.pass-footer{background:#f5f5f5;padding:16px 24px;text-align:center;
-  font-size:13px;font-weight:600;color:#333}
-.pass-footer.redeemed{background:#e8f5e9;color:#2e7d32}
-.btn-back{background:none;border:none;color:var(--dim);font-size:14px;margin-top:20px;cursor:pointer}
+/* ═══ TOAST ═══ */
+.toast{position:fixed;top:0;left:0;right:0;z-index:200;padding:12px 16px;
+  padding-top:calc(12px + env(safe-area-inset-top,0px));
+  background:rgba(17,17,17,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;
+  transform:translateY(-100%);transition:transform .3s ease;cursor:pointer}
+.toast.show{transform:translateY(0)}
+.toast .t-icon{font-size:32px;flex-shrink:0}
+.toast .t-body{flex:1}
+.toast .t-title{font-size:13px;font-weight:700;margin-bottom:2px}
+.toast .t-msg{font-size:12px;color:var(--dim);line-height:1.3}
+.toast .t-time{font-size:10px;color:var(--dim)}
 
-/* ── Nav bar ─────────────────── */
-.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);
-  border-top:1px solid rgba(255,255,255,.06);padding:10px 20px;padding-bottom:max(10px,env(safe-area-inset-bottom));
-  display:flex;justify-content:space-around;z-index:20;backdrop-filter:blur(12px)}
-.nav a{display:flex;flex-direction:column;align-items:center;gap:3px;
-  text-decoration:none;font-size:10px;color:var(--dim);font-weight:600}
-.nav a .icon{font-size:20px}
-.nav a.active{color:var(--accent)}
+.loading-wrap{padding:60px 20px;text-align:center}
+.loading-wrap .spinner{width:40px;height:40px;border:3px solid var(--dim2);border-top-color:var(--accent);
+  border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+.loading-wrap p{font-size:14px;color:var(--dim)}
+@media(min-width:600px){.offers,.ctx-section,.sec-head{max-width:480px;margin-left:auto;margin-right:auto}}
 </style>
 </head>
 <body>
 
-<!-- ══ ONBOARDING ══ -->
-<div id="onboard" class="screen active">
-  <div class="ob-badge"><span class="dot"></span> City Wallet</div>
-  <h1>The right offer.<br><em>Right now.</em></h1>
-  <p>Hyper-personalized deals from local shops around you — generated for this weather, this moment, this place.</p>
-  <div class="privacy-pills">
-    <div class="pp"><strong>Live weather</strong> context</div>
-    <div class="pp"><strong>On-device</strong> location</div>
-    <div class="pp"><strong>No tracking</strong> ever</div>
-    <div class="pp"><strong>GDPR</strong> compliant</div>
-  </div>
-  <button class="btn-main" onclick="startWallet()">Find offers near me</button>
-  <button class="btn-skip" onclick="startWallet()">How does this work?</button>
+<div id="splash" class="screen active">
+  <div class="logo-ring"><div class="logo-inner"><span>CW</span></div></div>
+  <h1>City <em>Wallet</em></h1>
+  <div class="tag">Hyper-personalized local offers</div>
+  <div class="loader"></div>
 </div>
 
-<!-- ══ WALLET ══ -->
+<div id="perms" class="screen">
+  <div class="perm-card">
+    <div class="perm-icon">📍</div>
+    <h2>Find offers near you</h2>
+    <p>City Wallet uses your location and real-time signals to generate offers from local merchants — made for this weather, this moment, this place.</p>
+    <div class="perm-features">
+      <div class="perm-feat"><div class="icon">🔔</div><div class="text"><strong>Smart notifications</strong><span>Get alerted when a perfect offer appears nearby</span></div></div>
+      <div class="perm-feat"><div class="icon">📍</div><div class="text"><strong>Location matching</strong><span>Find deals within walking distance of you</span></div></div>
+      <div class="perm-feat"><div class="icon">🔒</div><div class="text"><strong>Private by design</strong><span>Location processed on-device only. Never shared.</span></div></div>
+    </div>
+    <button class="btn btn-accent" onclick="requestPermissions()">Enable & continue</button>
+    <button class="btn btn-ghost" onclick="skipPerms()">Maybe later</button>
+  </div>
+</div>
+
 <div id="wallet" class="screen">
-  <div class="wallet-top">
-    <div class="wt-brand"><em>City</em> Wallet</div>
-    <div class="wt-status"><span class="dot"></span><span id="statusText">Sensing...</span></div>
-  </div>
-
-  <div class="ctx-bar" id="ctxBar"></div>
-
-  <div class="trigger-bar" id="triggerBar" style="display:none">
-    <span>🎯</span> <span id="triggerText"></span>
-  </div>
-
-  <div class="offers" id="offersArea">
-    <div class="loading-state">
-      <div class="spinner"></div>
-      <p>Reading weather, location, and merchant signals...</p>
+  <div class="app-header">
+    <div class="ah-brand"><div class="ah-logo">CW</div><div class="ah-name">City <em>Wallet</em></div></div>
+    <div class="ah-right">
+      <div class="ah-pill live"><span class="dot"></span>Live</div>
+      <div class="notif-btn" onclick="fireNotif()">🔔<div class="badge" id="nBadge">0</div></div>
     </div>
   </div>
-
+  <div class="ctx-section"><div class="ctx-label">Live context signals</div><div class="ctx-chips" id="ctxChips"></div></div>
+  <div class="sec-head"><h2>For you right now</h2><span class="count" id="offerCount"></span></div>
+  <div class="offers" id="offersList"><div class="loading-wrap"><div class="spinner"></div><p>Sensing context & generating offers...</p></div></div>
   <div class="nav">
-    <a href="#" class="active" onclick="showScreen('wallet')"><span class="icon">🏠</span>Wallet</a>
-    <a href="/merchant.html"><span class="icon">🏪</span>Merchants</a>
-    <a href="/ledger.html"><span class="icon">📊</span>Ledger</a>
+    <div class="nav-item active"><span class="ni">🏠</span>Wallet</div>
+    <a class="nav-item" href="/merchant.html"><span class="ni">🏪</span>Merchants</a>
+    <a class="nav-item" href="/ledger.html"><span class="ni">📊</span>Ledger</a>
   </div>
 </div>
 
-<!-- ══ PASS (after accept) ══ -->
-<div id="pass" class="screen">
-  <div class="pass-card">
-    <div class="pass-top" id="passTop">
-      <div class="label">YOUR OFFER</div>
-      <div class="headline" id="passHeadline"></div>
-      <div class="pass-merchant" id="passMerchant"></div>
-    </div>
-    <div class="pass-body">
-      <div class="pass-qr" id="passQr"></div>
-      <div class="pass-code" id="passCode"></div>
-      <div class="pass-hint">Show this to the cashier</div>
-    </div>
-    <div class="pass-footer" id="passFooter">READY TO REDEEM</div>
+<div id="qrpass" class="screen">
+  <div class="qr-card">
+    <div class="qr-top" id="qrTop"><div class="qtag">YOUR OFFER</div><div class="amount" id="qrAmt"></div><div class="merchant" id="qrMer"></div></div>
+    <div class="qr-body"><div class="qr-img" id="qrImg"></div><div class="qr-code" id="qrCode"></div><div class="qr-hint">Show this QR code to the cashier</div></div>
+    <div class="qr-footer ready" id="qrFoot">READY TO REDEEM</div>
   </div>
-  <button class="btn-back" onclick="showScreen('wallet')">← Back to offers</button>
+  <button class="btn btn-ghost" style="margin-top:16px;color:var(--dim)" onclick="showScreen('wallet')">← Back to offers</button>
+  <div class="nav">
+    <div class="nav-item" onclick="showScreen('wallet')"><span class="ni">🏠</span>Wallet</div>
+    <a class="nav-item" href="/merchant.html"><span class="ni">🏪</span>Merchants</a>
+    <a class="nav-item" href="/ledger.html"><span class="ni">📊</span>Ledger</a>
+  </div>
+</div>
+
+<div class="toast" id="toast" onclick="onToast()">
+  <div class="t-icon" id="tIcon">☕</div>
+  <div class="t-body"><div class="t-title" id="tTitle"></div><div class="t-msg" id="tMsg"></div></div>
+  <div class="t-time">now</div>
 </div>
 
 <script>
-const API = window.location.origin;
-let context = null;
-let offers = [];
-let userId = localStorage.getItem('cw_uid');
-if(!userId){userId='u-'+Math.random().toString(36).slice(2,10);localStorage.setItem('cw_uid',userId)}
+const API=window.location.origin;
+let ctx=null,offers=[],nCount=0;
+let uid=localStorage.getItem('cw_uid');
+if(!uid){uid='u-'+Math.random().toString(36).slice(2,10);localStorage.setItem('cw_uid',uid)}
 
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+
+// ── SPLASH ────────────────────────────────
+setTimeout(()=>{localStorage.getItem('cw_perms')?startApp():showScreen('perms')},1800);
+
+// ── PERMISSIONS ───────────────────────────
+async function requestPermissions(){
+  if('Notification' in window && Notification.permission==='default') await Notification.requestPermission();
+  if(navigator.geolocation) navigator.geolocation.getCurrentPosition(()=>{},()=>{},{timeout:5000});
+  localStorage.setItem('cw_perms','1');
+  startApp();
 }
+function skipPerms(){localStorage.setItem('cw_perms','1');startApp()}
 
-// ── Start ──────────────────────────────────────────────
-async function startWallet(){
+// ── START ─────────────────────────────────
+async function startApp(){
   showScreen('wallet');
-  // Register opt-in
-  fetch(API+'/api/optin',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({user_id:userId})}).catch(()=>{});
+  fetch(API+'/api/optin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:uid})}).catch(()=>{});
+  if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
 
-  // Get location
-  let lat=48.1351, lng=11.5820; // Munich default
-  try{
-    const pos=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{timeout:8000}));
-    lat=pos.coords.latitude; lng=pos.coords.longitude;
-  }catch(e){}
+  let lat=48.1351,lng=11.582;
+  try{const p=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{enableHighAccuracy:true,timeout:8000}));lat=p.coords.latitude;lng=p.coords.longitude}catch(e){}
 
-  // Fetch context from API (real weather + signals)
-  document.getElementById('statusText').textContent='Fetching context...';
-  try{
-    const resp=await fetch(API+'/api/context?lat='+lat+'&lng='+lng);
-    context=await resp.json();
-  }catch(e){
-    context={weather:{temperature_c:11,is_cold:true,is_rainy:false,description:'Overcast',source:'offline'},
-      time:{hour:new Date().getHours(),minute:new Date().getMinutes(),day_of_week:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()],
-        is_lunch:new Date().getHours()>=11&&new Date().getHours()<=14,is_afternoon:new Date().getHours()>=14&&new Date().getHours()<=17},
-      composite:{signals:['offline_mode'],trigger_score:30,should_generate:true,description:'offline_mode',urgency:'medium'},
-      payone:{},events:[],location:{lat,lng}};
-  }
+  try{const r=await fetch(API+'/api/context?lat='+lat+'&lng='+lng);ctx=await r.json()}
+  catch(e){ctx={weather:{temperature_c:14,is_cold:true,description:'Partly cloudy',source:'fallback'},
+    time:{hour:new Date().getHours(),minute:new Date().getMinutes(),day_of_week:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()],is_lunch:new Date().getHours()>=11&&new Date().getHours()<=14,is_afternoon:new Date().getHours()>=14},
+    composite:{signals:['offline'],trigger_score:30,should_generate:true,description:'offline',urgency:'medium'},payone:{},events:[],location:{lat,lng}}}
+  renderChips();
 
-  renderContext();
-
-  // Generate offers
-  document.getElementById('statusText').textContent='Generating offers...';
-  try{
-    const resp=await fetch(API+'/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({context,user_signals:{lat,lng}})});
-    const data=await resp.json();
-    offers=data.offers||[];
-  }catch(e){offers=[];}
-
-  document.getElementById('statusText').textContent=offers.length+' offers generated';
+  try{const r2=await fetch(API+'/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({context:ctx,user_signals:{lat,lng}})});const d=await r2.json();offers=d.offers||[]}catch(e){offers=[]}
   renderOffers();
+  setTimeout(()=>{if(offers.length){showToast(offers[0]);sendPush(offers[0])}},3000);
 }
 
-// ── Render context chips ───────────────────────────────
-function renderContext(){
-  if(!context)return;
-  const w=context.weather||{};
-  const t=context.time||{};
-  const c=context.composite||{};
-  const bar=document.getElementById('ctxBar');
-  let chips=[];
-  chips.push({icon:w.is_rainy?'🌧️':w.is_cold?'❄️':w.is_hot?'☀️':'⛅',
-    text:`${w.temperature_c||'--'}°C · ${w.description||'--'}`,active:w.is_cold||w.is_rainy||w.is_hot});
-  chips.push({icon:'🕐',text:`${t.hour||'--'}:${String(t.minute||0).padStart(2,'0')} · ${t.day_of_week||'--'}`,
-    active:t.is_lunch||t.is_afternoon});
-  chips.push({icon:'📍',text:`${context.location?.lat?.toFixed(2)||'--'}, ${context.location?.lng?.toFixed(2)||'--'}`,active:true});
-
-  // Payone signals
-  const lowDemand=Object.values(context.payone||{}).filter(p=>p.demand_state==='low');
-  if(lowDemand.length>0)
-    chips.push({icon:'📉',text:`${lowDemand.length} quiet merchant${lowDemand.length>1?'s':''}`,active:true});
-
-  if((context.events||[]).length>0)
-    chips.push({icon:'🎉',text:context.events[0].name,active:true});
-
-  bar.innerHTML=chips.map(c=>`<div class="ctx-chip ${c.active?'active':''}">`+
-    `<span class="icon">${c.icon}</span>${c.text}</div>`).join('');
-
-  // Trigger bar
-  if(c.should_generate){
-    document.getElementById('triggerBar').style.display='flex';
-    document.getElementById('triggerText').innerHTML=
-      `<strong>Context trigger:</strong> ${c.description} → generating ${c.urgency}-urgency offers`;
-  }
+// ── CHIPS ─────────────────────────────────
+function renderChips(){
+  if(!ctx)return;const w=ctx.weather||{},t=ctx.time||{};
+  const chips=[
+    {i:w.is_rainy?'🌧️':w.is_cold?'🥶':w.is_hot?'🔥':'⛅',t:`${w.temperature_c||'--'}° · ${w.description||''}`,h:w.is_cold||w.is_rainy||w.is_hot},
+    {i:'🕐',t:`${t.day_of_week||''} ${t.hour||''}:${String(t.minute||0).padStart(2,'0')}`,h:t.is_lunch||t.is_afternoon},
+    {i:'📍',t:'Munich area',h:true},
+  ];
+  const low=Object.values(ctx.payone||{}).filter(p=>p.demand_state==='low');
+  if(low.length)chips.push({i:'📉',t:`${low.length} quiet shops`,h:true});
+  if((ctx.events||[]).length)chips.push({i:'🎪',t:ctx.events[0].name.split(' ').slice(0,3).join(' '),h:false});
+  chips.push({i:'🔒',t:'On-device',h:false});
+  document.getElementById('ctxChips').innerHTML=chips.map(c=>`<div class="chip ${c.h?'hot':''}"><span class="ci">${c.i}</span>${c.t}</div>`).join('');
 }
 
-// ── Render offer cards (GenUI) ─────────────────────────
+// ── OFFERS ─────────────────────────────────
+const GR=['linear-gradient(135deg,#1a0a00,#4a1500,#1a0a00)','linear-gradient(135deg,#001a2c,#003366,#001a2c)','linear-gradient(135deg,#1a001a,#4a0033,#1a001a)','linear-gradient(135deg,#001a00,#003300,#001a00)'];
+const DG=['var(--accent-g)','var(--blue-g)','var(--purple-g)','var(--green-g)'];
+const AC=['#ff5722','#2196f3','#9c27b0','#4caf50'];
+
 function renderOffers(){
-  const area=document.getElementById('offersArea');
-  if(offers.length===0){
-    area.innerHTML='<div class="loading-state"><p>No offers available for your current context. Try moving to a different location.</p></div>';
-    return;
-  }
-  area.innerHTML=offers.map((o,i)=>{
-    const countdown=o.expiry_minutes||30;
-    return`
-    <div class="offer-card" id="offer-${o.id}">
-      <div class="oc-bg" style="background:${o.bg_gradient}">
-        <div class="oc-badge"><span class="pulse"></span> Generated now</div>
-        <div class="oc-expiry">⏱ ${countdown}min left</div>
-        <div class="oc-icon">${o.icon||'✨'}</div>
-        <div class="oc-content">
-          <div class="oc-headline">${o.headline}</div>
-          <div class="oc-subline">${o.subline}</div>
-        </div>
+  const el=document.getElementById('offersList');
+  document.getElementById('offerCount').textContent=offers.length+' generated';
+  if(!offers.length){el.innerHTML='<div class="loading-wrap"><p>No offers for your current context.</p></div>';return}
+  el.innerHTML=offers.map((o,i)=>{const g=i%GR.length;return`
+  <div class="card" id="c-${o.id}">
+    <div class="card-hero" style="background:${GR[g]}">
+      <div class="card-badges"><div class="card-badge"><span class="dot"></span>Generated now</div><div class="card-timer">⏱ ${o.expiry_minutes}min</div></div>
+      <div class="card-emoji">${o.icon||'✨'}</div>
+      <div class="card-content">
+        <div class="card-discount" style="background:${DG[g]}">${o.discount_label}</div>
+        <div class="card-h">${o.headline}</div>
+        <div class="card-sub">${o.subline}</div>
       </div>
-      <div class="oc-details">
-        <div class="oc-detail"><span class="label">Discount</span><span class="value discount">${o.discount_label}</span></div>
-        <div class="oc-detail"><span class="label">Where</span><span class="value">${o.merchant_name}</span></div>
-        <div class="oc-detail"><span class="label">Area</span><span class="value">${o.merchant_area}</span></div>
-        <div class="oc-detail"><span class="label">Mood</span><span class="value">${o.mood||'--'}</span></div>
-      </div>
-      <div class="oc-actions">
-        <button class="btn-accept" onclick="acceptOffer('${o.id}')">
-          ${o.cta||'Accept offer'}
-        </button>
-        <button class="btn-decline" onclick="declineOffer('${o.id}')">Not now</button>
-      </div>
-    </div>`;
-  }).join('');
+    </div>
+    <div class="card-info">
+      <div class="card-info-item"><span class="l">Where</span><span class="v">${o.merchant_name}</span></div>
+      <div class="card-info-item"><span class="l">Area</span><span class="v">${o.merchant_area}</span></div>
+      <div class="card-info-item"><span class="l">Mood</span><span class="v" style="color:${AC[g]}">${o.mood||'inviting'}</span></div>
+      <div class="card-info-item"><span class="l">Vibe</span><span class="v">${o.emotional_frame||'--'}</span></div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-grab" style="background:${DG[g]}" onclick="grab('${o.id}',${g})">${o.cta||'Grab this deal'}</button>
+      <button class="btn btn-nah" onclick="dismiss('${o.id}')">Pass</button>
+    </div>
+  </div>`}).join('');
 }
 
-// ── Accept / Decline ───────────────────────────────────
-function acceptOffer(id){
-  const offer=offers.find(o=>o.id===id);
-  if(!offer)return;
-  // Show pass
-  document.getElementById('passTop').style.background=offer.bg_gradient;
-  document.getElementById('passHeadline').textContent=offer.discount_label;
-  document.getElementById('passMerchant').textContent=offer.merchant_name+' · '+offer.merchant_area;
-  document.getElementById('passCode').textContent=offer.code;
-  document.getElementById('passFooter').textContent='READY TO REDEEM';
-  document.getElementById('passFooter').className='pass-footer';
-  // Generate real QR
-  const qrUrl=API+'/api/qr?text='+encodeURIComponent(offer.code);
-  document.getElementById('passQr').innerHTML=`<img src="${qrUrl}" alt="QR Code">`;
-  showScreen('pass');
+function grab(id,g){
+  const o=offers.find(x=>x.id===id);if(!o)return;
+  document.getElementById('qrTop').style.background=DG[g];
+  document.getElementById('qrAmt').textContent=o.discount_label;
+  document.getElementById('qrMer').textContent=o.merchant_name+' · '+o.merchant_area;
+  document.getElementById('qrCode').textContent=o.code;
+  document.getElementById('qrFoot').textContent='READY TO REDEEM';document.getElementById('qrFoot').className='qr-footer ready';
+  document.getElementById('qrImg').innerHTML=`<img src="${API}/api/qr?text=${encodeURIComponent(o.code)}">`;
+  showScreen('qrpass');
+  if(navigator.vibrate)navigator.vibrate(50);
+}
+function dismiss(id){
+  const el=document.getElementById('c-'+id);if(!el)return;
+  el.style.transition='all .3s';el.style.transform='translateX(120%) rotate(5deg)';el.style.opacity='0';
+  setTimeout(()=>el.remove(),350);if(navigator.vibrate)navigator.vibrate(20);
 }
 
-function declineOffer(id){
-  const card=document.getElementById('offer-'+id);
-  if(card){card.style.opacity='0';card.style.transform='translateX(100px)';
-    card.style.transition='all .3s';setTimeout(()=>card.remove(),300);}
+// ── NOTIFICATIONS ─────────────────────────
+function showToast(o){
+  if(!o)return;nCount++;document.getElementById('nBadge').textContent=nCount;
+  document.getElementById('tIcon').textContent=o.icon||'☕';
+  document.getElementById('tTitle').textContent=o.merchant_name+' — '+o.discount_label;
+  document.getElementById('tMsg').textContent=o.headline;
+  document.getElementById('toast').classList.add('show');
+  if(navigator.vibrate)navigator.vibrate([100,50,100]);
+  setTimeout(()=>document.getElementById('toast').classList.remove('show'),5000);
+}
+function onToast(){document.getElementById('toast').classList.remove('show');if(offers.length)grab(offers[0].id,0)}
+function fireNotif(){if(offers.length)showToast(offers[Math.floor(Math.random()*offers.length)])}
+function sendPush(o){
+  if(!o||!('Notification' in window)||Notification.permission!=='granted')return;
+  new Notification('City Wallet — '+o.merchant_name,{body:o.headline+' — '+o.discount_label,icon:'/icon-192.png',vibrate:[100,50,100],tag:'cw-'+o.id});
 }
 </script>
 </body>
