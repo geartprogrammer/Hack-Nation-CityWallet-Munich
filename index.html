@@ -160,14 +160,49 @@ html,body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);
 .r-pricing b{color:var(--success);font-size:18px}
 .r-pricing s{color:var(--ink5)}
 
+/* ═══ REDEEM SCREEN — rich deal page ═══ */
+.r-hero{border-radius:var(--radius);overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow-md)}
+.r-hero-bg{position:relative;height:140px;display:flex;flex-direction:column;justify-content:flex-end;padding:18px 22px;color:#fff}
+.r-hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.65) 100%)}
+.r-hero-bg>*{position:relative;z-index:1}
+.r-hero-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);
+  display:inline-flex;align-items:center;gap:5px;width:fit-content;margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em}
+.r-hero-name{font-family:var(--font-serif);font-size:24px;font-weight:500;letter-spacing:-.02em}
+.r-hero-sub{font-size:12px;opacity:.8;margin-top:2px}
+
+.r-price-card{background:var(--surface);border-radius:var(--radius);padding:20px;margin-bottom:14px;border:1px solid rgba(0,0,0,.04);box-shadow:var(--shadow-sm);text-align:center}
+.r-price-item{font-size:16px;font-weight:700;margin-bottom:8px}
+.r-price-row{display:flex;justify-content:center;align-items:baseline;gap:12px}
+.r-price-old{font-size:18px;color:var(--ink5);text-decoration:line-through}
+.r-price-new{font-size:32px;font-weight:800;color:var(--brand);letter-spacing:-.02em}
+.r-price-save{margin-top:6px;font-size:13px;color:var(--success);font-weight:600;display:inline-flex;align-items:center;gap:4px;
+  padding:4px 12px;border-radius:99px;background:var(--success-soft)}
+
+.r-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.r-stat{background:var(--surface);border-radius:var(--radius-sm);padding:14px 8px;text-align:center;border:1px solid rgba(0,0,0,.04)}
+.r-stat .rs-icon{font-size:18px;margin-bottom:4px}
+.r-stat .rs-val{font-size:16px;font-weight:800}
+.r-stat .rs-lbl{font-size:9px;color:var(--ink4);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+
+.r-ai{background:var(--brand-soft);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start}
+.r-ai-icon{width:28px;height:28px;border-radius:8px;background:var(--brand-med);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.r-ai-text{font-size:12px;color:var(--brand);line-height:1.5;font-weight:500}
+
+.r-map{display:block;padding:12px 16px;background:var(--surface);border-radius:var(--radius-sm);border:1px solid rgba(0,0,0,.04);
+  margin-bottom:20px;text-decoration:none;color:var(--ink);font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:10px}
+.r-map-icon{font-size:18px}
+.r-map-text{flex:1}.r-map-text span{display:block;font-size:11px;color:var(--ink4);font-weight:500}
+.r-map-arrow{color:var(--brand);font-size:16px}
+
 /* Location */
-.loc{padding:14px 18px;border-radius:var(--radius-sm);margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600}
+.loc{padding:14px 18px;border-radius:var(--radius-sm);margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600}
 .loc.near{background:var(--success-soft);color:var(--success)}
 .loc.far{background:var(--warn-soft);color:var(--warn)}
 .loc.checking{background:var(--bg2);color:var(--ink4)}
 
 /* Swipe */
-.swipe{position:relative;width:100%;height:64px;border-radius:32px;background:var(--bg2);overflow:hidden;margin-bottom:16px;touch-action:none;user-select:none}
+.swipe{position:relative;width:100%;height:64px;border-radius:32px;background:var(--bg2);overflow:hidden;margin-bottom:12px;touch-action:none;user-select:none}
 .swipe-fill{position:absolute;top:0;left:0;bottom:0;width:0;background:var(--success);border-radius:32px;transition:none}
 .swipe-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--ink5);letter-spacing:.01em}
 .swipe-thumb{position:absolute;top:4px;left:4px;width:56px;height:56px;border-radius:50%;background:var(--surface);
@@ -175,7 +210,7 @@ html,body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);
 .swipe-thumb:active{cursor:grabbing}
 .swipe.done .swipe-fill{width:100%!important;transition:width .3s}.swipe.done .swipe-thumb{left:calc(100% - 60px)!important;transition:left .3s}
 .swipe.done .swipe-label{color:#fff}
-.swipe-hint{font-size:11px;color:var(--ink5);margin-bottom:16px}
+.swipe-hint{font-size:11px;color:var(--ink5)}
 
 /* Success */
 .r-success{display:none;text-align:center;animation:pop .4s both}
@@ -246,13 +281,46 @@ html,body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);
 </div>
 
 <!-- ═══ REDEEM ═══ -->
-<div id="redeem" class="screen">
+<div id="redeem" class="screen" style="padding:20px;padding-top:calc(20px + var(--safe-t));padding-bottom:calc(20px + var(--safe-b));overflow-y:auto">
   <button class="r-back" onclick="showScreen('main')">←</button>
-  <div class="r-card" id="rCard">
-    <div class="r-merchant" id="rcName"></div>
-    <div class="r-item" id="rcItem"></div>
-    <div class="r-pricing" id="rcPrice"></div>
+  <div id="rCard" style="max-width:400px;margin:0 auto;width:100%;animation:fadeUp .35s both">
+    <!-- Hero -->
+    <div class="r-hero">
+      <div class="r-hero-bg" id="rHeroBg">
+        <div class="r-hero-badge"><span style="width:5px;height:5px;border-radius:50%;background:#4ade80;animation:pulse 1.4s infinite"></span> AI-generated offer</div>
+        <div class="r-hero-name" id="rcName"></div>
+        <div class="r-hero-sub" id="rcSub"></div>
+      </div>
+    </div>
+    <!-- Price card -->
+    <div class="r-price-card">
+      <div class="r-price-item" id="rcItem"></div>
+      <div class="r-price-row">
+        <div class="r-price-old" id="rcOld"></div>
+        <div class="r-price-new" id="rcNew"></div>
+      </div>
+      <div class="r-price-save" id="rcSave"></div>
+    </div>
+    <!-- Stats -->
+    <div class="r-stats">
+      <div class="r-stat"><div class="rs-icon">📍</div><div class="rs-val" id="rDist">--</div><div class="rs-lbl">Distance</div></div>
+      <div class="r-stat"><div class="rs-icon">🚶</div><div class="rs-val" id="rWalk">--</div><div class="rs-lbl">Walk</div></div>
+      <div class="r-stat"><div class="rs-icon">⏱</div><div class="rs-val" id="rTime">--</div><div class="rs-lbl">Expires</div></div>
+    </div>
+    <!-- AI reasoning -->
+    <div class="r-ai" id="rAiBox" style="display:none">
+      <div class="r-ai-icon">🧠</div>
+      <div class="r-ai-text" id="rAiText"></div>
+    </div>
+    <!-- Map link -->
+    <a class="r-map" id="rMapLink" href="#" target="_blank" rel="noopener">
+      <div class="r-map-icon">📍</div>
+      <div class="r-map-text">Get walking directions<span id="rMapAddr"></span></div>
+      <div class="r-map-arrow">→</div>
+    </a>
+    <!-- Location check -->
     <div class="loc checking" id="locBox"><span id="locText">Checking location...</span></div>
+    <!-- Swipe -->
     <div class="swipe" id="swipeBox">
       <div class="swipe-fill" id="swipeFill"></div>
       <div class="swipe-label" id="swipeLabel">Swipe to confirm you're here →</div>
@@ -260,7 +328,7 @@ html,body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);
     </div>
     <div class="swipe-hint" id="swipeHint">Slide right to verify arrival and redeem cashback</div>
   </div>
-  <div class="r-success" id="rOk">
+  <div class="r-success" id="rOk" style="max-width:400px;margin:0 auto;width:100%">
     <div class="check">✅</div>
     <div class="msg" id="rsMsg"></div>
     <div class="detail" id="rsDetail"></div>
@@ -388,9 +456,28 @@ function renderEmpty(){
 let redeemDone=false;
 function openRedeem(){
   if(!offer)return;redeemDone=false;
+  const bg=HEROS[Math.abs(hashStr(offer.merchant_name||''))%HEROS.length];
+  // Hero
+  document.getElementById('rHeroBg').style.background=bg;
   document.getElementById('rcName').textContent=offer.merchant_name||'Cafe';
+  document.getElementById('rcSub').textContent=offer.notification_text||'';
+  // Price card
   document.getElementById('rcItem').textContent=offer.item||'Special';
-  document.getElementById('rcPrice').innerHTML=`<s>€${offer.original_price||'?'}</s> → <b>€${offer.discount_price||'?'}</b> (save €${offer.cashback||'?'})`;
+  document.getElementById('rcOld').textContent='€'+(offer.original_price||'?');
+  document.getElementById('rcNew').textContent='€'+(offer.discount_price||'?');
+  document.getElementById('rcSave').textContent='You save €'+(offer.cashback||'?');
+  // Stats
+  document.getElementById('rDist').textContent=(offer.distance_m||'?')+'m';
+  document.getElementById('rWalk').textContent=(offer.walk_min||'?')+' min';
+  document.getElementById('rTime').textContent=(offer.expiry_min||'20')+' min';
+  // AI reasoning
+  if(offer.reasoning){document.getElementById('rAiBox').style.display='flex';document.getElementById('rAiText').textContent=offer.reasoning}
+  else{document.getElementById('rAiBox').style.display='none'}
+  // Map
+  if(offer.maps_url){document.getElementById('rMapLink').href=offer.maps_url;document.getElementById('rMapLink').style.display='flex';
+    document.getElementById('rMapAddr').textContent=offer.merchant_name||''}
+  else{document.getElementById('rMapLink').style.display='none'}
+  // Reset swipe
   document.getElementById('rCard').style.display='block';document.getElementById('rOk').classList.remove('show');
   document.getElementById('swipeBox').className='swipe';document.getElementById('swipeFill').style.width='0';
   document.getElementById('swipeThumb').style.left='4px';document.getElementById('swipeHint').style.display='block';
