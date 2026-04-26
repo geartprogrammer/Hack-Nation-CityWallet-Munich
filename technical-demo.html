@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>City Wallet — Technical Deep Dive</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08080a;--surface:#111114;--surface2:#18181c;--border:rgba(255,255,255,.08);
+  --ink:#f0eff4;--dim:rgba(255,255,255,.45);--dim2:rgba(255,255,255,.2);
+  --orange:#ff6b35;--orange-glow:rgba(255,107,53,.15);--orange-dim:rgba(255,107,53,.08);
+  --green:#00c853;--green-glow:rgba(0,200,83,.12);
+  --blue:#4e9af5;--blue-glow:rgba(78,154,245,.12);
+  --purple:#b07aff;--purple-glow:rgba(176,122,255,.12);
+  --gold:#ffd23f;--gold-glow:rgba(255,210,63,.1);
+  --red:#ff4757;
+  --radius:12px;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Inter',system-ui,sans-serif;
+}
+html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
+  min-height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── Slide container ─────────────────── */
+.deck{position:relative;width:100vw;height:100vh}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;
+  opacity:0;pointer-events:none;transition:opacity .5s ease,transform .5s ease;
+  transform:translateX(40px);padding:48px 64px}
+.slide.active{opacity:1;pointer-events:auto;transform:translateX(0)}
+.slide.exit{opacity:0;transform:translateX(-40px)}
+
+/* ── Progress bar ────────────────────── */
+.progress{position:fixed;top:0;left:0;height:3px;background:var(--orange);
+  transition:width .4s ease;z-index:100;border-radius:0 2px 2px 0;
+  box-shadow:0 0 12px rgba(255,107,53,.4)}
+
+/* ── Top bar ─────────────────────────── */
+.topbar{position:fixed;top:12px;left:64px;right:64px;display:flex;
+  justify-content:space-between;align-items:center;z-index:50}
+.topbar .brand{font-size:13px;font-weight:700;color:var(--dim);letter-spacing:.02em}
+.topbar .brand em{color:var(--orange);font-style:normal}
+.topbar .slide-num{font-family:var(--mono);font-size:12px;color:var(--dim2);
+  background:var(--surface);border:1px solid var(--border);padding:4px 12px;border-radius:6px}
+
+/* ── Speaker cue bar ─────────────────── */
+.cue-bar{position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:linear-gradient(180deg,transparent,rgba(8,8,10,.95) 30%);padding:16px 64px 24px}
+.cue-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:16px 24px;display:flex;gap:16px;align-items:flex-start;max-width:900px;margin:0 auto}
+.cue-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--orange);white-space:nowrap;padding-top:2px;flex-shrink:0}
+.cue-text{font-size:14px;color:var(--ink);line-height:1.65;opacity:.85}
+.cue-text strong{color:var(--orange);font-weight:600}
+.cue-nav{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
+.cue-nav span{font-family:var(--mono);font-size:11px;color:var(--dim2)}
+.key-hint{font-family:var(--mono);font-size:10px;color:var(--dim2);padding:3px 8px;
+  border:1px solid var(--border);border-radius:4px;background:var(--surface2)}
+
+/* ── Typography ──────────────────────── */
+.slide-title{font-size:42px;font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-bottom:8px}
+.slide-title .accent{color:var(--orange)}
+.slide-subtitle{font-size:16px;color:var(--dim);font-weight:500;margin-bottom:40px;line-height:1.5}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--orange);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-label::before{content:'';width:20px;height:1px;background:var(--orange)}
+
+/* ── Architecture diagram ────────────── */
+.arch-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;max-width:960px;margin-top:8px}
+.arch-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:24px;position:relative;overflow:hidden;
+  opacity:0;transform:translateY(16px);transition:all .5s ease}
+.arch-box.show{opacity:1;transform:translateY(0)}
+.arch-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.arch-box.orange::before{background:var(--orange)}
+.arch-box.green::before{background:var(--green)}
+.arch-box.blue::before{background:var(--blue)}
+.arch-box.purple::before{background:var(--purple)}
+.arch-box.gold::before{background:var(--gold)}
+.arch-box .box-icon{font-size:28px;margin-bottom:12px}
+.arch-box .box-title{font-size:15px;font-weight:700;margin-bottom:6px}
+.arch-box .box-desc{font-size:12px;color:var(--dim);line-height:1.6}
+.arch-box .box-tech{font-family:var(--mono);font-size:10px;color:var(--orange);
+  margin-top:10px;padding:4px 8px;background:var(--orange-dim);
+  border-radius:4px;display:inline-block}
+
+/* ── Connector arrows ────────────────── */
+.arch-connectors{display:flex;justify-content:center;gap:80px;padding:8px 0;
+  opacity:0;transition:opacity .5s ease .6s}
+.arch-connectors.show{opacity:1}
+.connector{display:flex;flex-direction:column;align-items:center;gap:2px}
+.connector .arrow{width:2px;height:20px;background:var(--border);position:relative}
+.connector .arrow::after{content:'';position:absolute;bottom:-4px;left:-3px;
+  border-left:4px solid transparent;border-right:4px solid transparent;
+  border-top:5px solid var(--dim2)}
+.connector .label{font-family:var(--mono);font-size:9px;color:var(--dim2);letter-spacing:.04em}
+
+/* ── Sensor cards ────────────────────── */
+.sensor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:780px}
+.sensor{background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:18px;display:flex;gap:14px;align-items:flex-start;
+  opacity:0;transform:translateX(-12px);transition:all .4s ease}
+.sensor.show{opacity:1;transform:translateX(0)}
+.sensor .s-icon{font-size:22px;flex-shrink:0;width:36px;height:36px;
+  display:flex;align-items:center;justify-content:center;border-radius:8px}
+.sensor .s-icon.loc{background:var(--orange-glow)}
+.sensor .s-icon.motion{background:var(--green-glow)}
+.sensor .s-icon.light{background:var(--gold-glow)}
+.sensor .s-icon.battery{background:var(--blue-glow)}
+.sensor .s-icon.weather{background:var(--purple-glow)}
+.sensor .s-icon.history{background:rgba(255,71,87,.1)}
+.sensor .s-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.sensor .s-detail{font-size:11px;color:var(--dim);line-height:1.5}
+.sensor .s-signal{font-family:var(--mono);font-size:10px;color:var(--green);margin-top:4px}
+
+/* ── Pipeline ────────────────────────── */
+.pipeline{display:flex;flex-direction:column;gap:0;max-width:820px}
+.pipe-step{display:flex;gap:20px;align-items:flex-start;position:relative;
+  padding:14px 0;opacity:0;transform:translateX(-16px);transition:all .4s ease}
+.pipe-step.show{opacity:1;transform:translateX(0)}
+.pipe-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-family:var(--mono);font-size:14px;font-weight:700;
+  flex-shrink:0;border:2px solid var(--border);color:var(--dim);position:relative;z-index:2}
+.pipe-step.show .pipe-num{border-color:var(--orange);color:var(--orange);
+  box-shadow:0 0 16px var(--orange-glow)}
+.pipe-line{position:absolute;left:81px;top:50px;width:2px;height:calc(100% - 22px);
+  background:var(--border)}
+.pipe-step:last-child .pipe-line{display:none}
+.pipe-content{flex:1}
+.pipe-title{font-size:14px;font-weight:700;margin-bottom:2px}
+.pipe-desc{font-size:12px;color:var(--dim);line-height:1.5}
+.pipe-tag{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:4px;
+  display:inline-block;margin-top:6px}
+.pipe-tag.api{background:var(--orange-dim);color:var(--orange)}
+.pipe-tag.ai{background:var(--purple-glow);color:var(--purple)}
+.pipe-tag.push{background:var(--green-glow);color:var(--green)}
+.pipe-tag.vision{background:var(--blue-glow);color:var(--blue)}
+
+/* ── Split layout ────────────────────── */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:960px}
+.split-block{display:flex;flex-direction:column;gap:16px}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;opacity:0;transform:translateY(12px);transition:all .5s ease}
+.feature-card.show{opacity:1;transform:translateY(0)}
+.feature-card .fc-head{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.feature-card .fc-icon{font-size:24px}
+.feature-card .fc-title{font-size:15px;font-weight:700}
+.feature-card .fc-body{font-size:12px;color:var(--dim);line-height:1.65}
+.feature-card .fc-code{font-family:var(--mono);font-size:11px;color:var(--blue);
+  margin-top:8px;background:var(--blue-glow);padding:8px 12px;border-radius:6px;
+  border:1px solid rgba(78,154,245,.1)}
+
+/* ── Stack summary ───────────────────── */
+.stack-table{max-width:720px}
+.stack-row{display:grid;grid-template-columns:160px 1fr;gap:0;
+  border-bottom:1px solid var(--border);
+  opacity:0;transform:translateY(8px);transition:all .35s ease}
+.stack-row.show{opacity:1;transform:translateY(0)}
+.stack-row .sr-label{font-size:12px;font-weight:700;color:var(--dim);
+  text-transform:uppercase;letter-spacing:.06em;padding:14px 0;
+  border-right:1px solid var(--border);padding-right:20px}
+.stack-row .sr-value{font-size:14px;font-weight:500;padding:14px 0 14px 20px;
+  display:flex;align-items:center;gap:8px}
+.stack-row .sr-value .tag{font-family:var(--mono);font-size:10px;padding:2px 7px;
+  border-radius:4px;font-weight:600}
+.tag.t-orange{background:var(--orange-dim);color:var(--orange)}
+.tag.t-green{background:var(--green-glow);color:var(--green)}
+.tag.t-blue{background:var(--blue-glow);color:var(--blue)}
+.tag.t-purple{background:var(--purple-glow);color:var(--purple)}
+.tag.t-gold{background:var(--gold-glow);color:var(--gold)}
+
+/* ── Final CTA ───────────────────────── */
+.final-center{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center}
+.final-logo{font-size:56px;font-weight:900;letter-spacing:-.04em;margin-bottom:8px}
+.final-logo em{color:var(--orange);font-style:normal}
+.final-tagline{font-size:20px;color:var(--dim);font-weight:500;margin-bottom:40px}
+.final-stats{display:flex;gap:40px;margin-bottom:32px}
+.final-stat{text-align:center}
+.final-stat .fs-val{font-size:32px;font-weight:900;color:var(--orange)}
+.final-stat .fs-label{font-size:11px;color:var(--dim);text-transform:uppercase;
+  letter-spacing:.08em;margin-top:4px}
+.privacy-badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;
+  font-weight:600;color:var(--green);background:var(--green-glow);
+  padding:10px 20px;border-radius:99px;border:1px solid rgba(0,200,83,.15)}
+
+/* ── Animations ──────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.pulse{animation:pulse 2s infinite}
+
+/* ── Mobile ──────────────────────────── */
+@media(max-width:900px){
+  .slide{padding:32px 24px}
+  .topbar{left:24px;right:24px}
+  .cue-bar{padding:12px 24px 20px}
+  .slide-title{font-size:28px}
+  .arch-grid{grid-template-columns:1fr;gap:12px}
+  .sensor-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .split{grid-template-columns:1fr;gap:24px}
+  .pipeline{gap:0}
+  .final-stats{gap:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div class="progress" id="progress"></div>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="brand"><em>City</em> Wallet &middot; Technical Deep Dive</div>
+  <div class="slide-num" id="slideNum">1 / 5</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SLIDE 1: Architecture Overview
+     ══════════════════════════════════════════════════════════════════ -->
+<div class="slide active" data-cue="<strong>Start here.</strong> &quot;City Wallet is a Progressive Web App. No app store, no install. Let me walk you through the architecture.&quot; &mdash; Pause, let the boxes animate in, then say: &quot;The user's phone runs the scoring engine locally. The Flask API on Vercel handles merchant ops and AI generation. And we integrate three AI services plus real-time weather.&quot;">
+  <div class="section-label">Scene 1 of 5</div>
+  <div class="slide-title">How it's <span class="accent">built</span></div>
+  <div class="slide-subtitle">Full architecture &mdash; from the user's phone to the AI backend</div>
+
+  <div class="arch-grid" id="archGrid">
+    <div class="arch-box orange" data-delay="0">
+      <div class="box-icon">&#128241;</div>
+      <div class="box-title">User PWA</div>
+      <div class="box-desc">Progressive Web App with Service Worker. Offline-first caching, push notifications, installable on home screen. No app store needed.</div>
+      <div class="box-tech">HTML + JS + Service Worker</div>
+    </div>
+    <div class="arch-box green" data-delay="150">
+      <div class="box-icon">&#9881;&#65039;</div>
+      <div class="box-title">Flask API</div>
+      <div class="box-desc">Serverless Python backend on Vercel. Handles merchant auth, offer generation, push delivery, QR codes, and wallet pass creation.</div>
+      <div class="box-tech">Flask + Vercel Serverless</div>
+    </div>
+    <div class="arch-box purple" data-delay="300">
+      <div class="box-icon">&#129302;</div>
+      <div class="box-title">AI Layer</div>
+      <div class="box-desc">Groq Llama 3.3 70B for offer generation. OpenAI GPT-4o Vision for menu parsing. On-device scoring for privacy.</div>
+      <div class="box-tech">Groq + OpenAI + On-device</div>
+    </div>
+  </div>
+
+  <div class="arch-connectors" id="archConn">
+    <div class="connector"><div class="arrow"></div><div class="label">HTTPS</div></div>
+    <div class="connector"><div class="arrow"></div><div class="label">REST</div></div>
+  </div>
+
+  <div class="arch-grid" id="archGrid2" style="margin-top:0">
+    <div class="arch-box blue" data-delay="500">
+      <div class="box-icon">&#127782;&#65039;</div>
+      <div class="box-title">Open-Meteo</div>
+      <div class="box-desc">Free real-time weather API. Temperature, precipitation, wind, UV index. Drives offer relevance.</div>
+      <div class="box-tech">open-meteo.com/v1/forecast</div>
+    </div>
+    <div class="arch-box gold" data-delay="650">
+      <div class="box-icon">&#128276;</div>
+      <div class="box-title">Web Push (VAPID)</div>
+      <div class="box-desc">Server-sent push notifications via the Web Push protocol. VAPID keys for auth. No Firebase dependency.</div>
+      <div class="box-tech">pywebpush + VAPID</div>
+    </div>
+    <div class="arch-box orange" data-delay="800">
+      <div class="box-icon">&#128179;</div>
+      <div class="box-title">Native Wallet Passes</div>
+      <div class="box-desc">Apple Wallet .pkpass (signed ZIP with geofence). Google Wallet JWT save links. Lock-screen notifications on proximity.</div>
+      <div class="box-tech">.pkpass + JWT + Geofence</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SLIDE 2: On-Device Scoring
+     ══════════════════════════════════════════════════════════════════ -->
+<div class="slide" data-cue="<strong>Key privacy point.</strong> &quot;The scoring engine runs entirely on the user's phone. It reads six sensor signals, scores every nearby merchant, and never sends personal data to our server. The catalog downloads once, then goes dark.&quot; &mdash; Point at each sensor as you explain: GPS for distance, accelerometer to know if they're walking, ambient light to know if they're outdoors, battery so we don't send far-away offers on low battery, weather for drink relevance, and local history so we learn from past accepts and declines.">
+  <div class="section-label">Scene 2 of 5</div>
+  <div class="slide-title">On-device <span class="accent">scoring</span></div>
+  <div class="slide-subtitle">6 sensors, zero tracking &mdash; all intelligence runs on the phone</div>
+
+  <div class="sensor-grid" id="sensorGrid">
+    <div class="sensor" data-delay="0">
+      <div class="s-icon loc">&#128205;</div>
+      <div>
+        <div class="s-name">GPS + Haversine</div>
+        <div class="s-detail">Calculates distance to every merchant. Filters &gt;2km. Scores by proximity bands.</div>
+        <div class="s-signal">+40 pts if &lt;100m</div>
+      </div>
+    </div>
+    <div class="sensor" data-delay="100">
+      <div class="s-icon motion">&#127939;</div>
+      <div>
+        <div class="s-name">Accelerometer</div>
+        <div class="s-detail">Detects still / walking / vehicle from motion variance over 20 samples.</div>
+        <div class="s-signal">+20 pts if standing nearby</div>
+      </div>
+    </div>
+    <div class="sensor" data-delay="200">
+      <div class="s-icon light">&#9728;&#65039;</div>
+      <div>
+        <div class="s-name">Ambient Light</div>
+        <div class="s-detail">Reads lux level to detect outdoor vs indoor. Outdoor users are more likely to walk in.</div>
+        <div class="s-signal">+10 pts if outdoors</div>
+      </div>
+    </div>
+    <div class="sensor" data-delay="300">
+      <div class="s-icon battery">&#128267;</div>
+      <div>
+        <div class="s-name">Battery Level</div>
+        <div class="s-detail">Low battery + far distance = bad time to suggest a walk. Penalizes far offers.</div>
+        <div class="s-signal">-30 pts if &lt;10% + far</div>
+      </div>
+    </div>
+    <div class="sensor" data-delay="400">
+      <div class="s-icon weather">&#127782;&#65039;</div>
+      <div>
+        <div class="s-name">Weather Context</div>
+        <div class="s-detail">Cached weather estimate. Cold day + hot drink offer = high match. Hot day + iced drink.</div>
+        <div class="s-signal">+15 pts weather match</div>
+      </div>
+    </div>
+    <div class="sensor" data-delay="500">
+      <div class="s-icon history">&#128338;</div>
+      <div>
+        <div class="s-name">Local History</div>
+        <div class="s-detail">Accept/decline history in localStorage. Boosts liked merchants, suppresses declined ones.</div>
+        <div class="s-signal">+15 / -20 pts from history</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SLIDE 3: Fill My Seats Pipeline
+     ══════════════════════════════════════════════════════════════════ -->
+<div class="slide" data-cue="<strong>This is the core.</strong> &quot;When the merchant taps 'Fill My Seats', one API call triggers this entire pipeline.&quot; &mdash; Walk through each step top to bottom: &quot;We hit the weather API, count nearby subscribers by Haversine distance, then call Llama 3.3 on Groq. The AI picks the best menu item for the current weather, sets the discount based on urgency signals, generates the notification copy, and we push it out via VAPID. All under two seconds.&quot;">
+  <div class="section-label">Scene 3 of 5</div>
+  <div class="slide-title">"Fill my seats" <span class="accent">pipeline</span></div>
+  <div class="slide-subtitle">One button triggers: weather + user count + AI analysis + push delivery</div>
+
+  <div class="pipeline" id="pipeline">
+    <div class="pipe-step" data-delay="0">
+      <div class="pipe-num">1</div>
+      <div class="pipe-content">
+        <div class="pipe-title">Merchant taps "Fill My Seats"</div>
+        <div class="pipe-desc">Single POST to /api/fill with merchant auth token. That's the only human input.</div>
+        <div class="pipe-tag api">POST /api/fill</div>
+      </div>
+      <div class="pipe-line"></div>
+    </div>
+    <div class="pipe-step" data-delay="100">
+      <div class="pipe-num">2</div>
+      <div class="pipe-content">
+        <div class="pipe-title">Fetch real-time weather</div>
+        <div class="pipe-desc">Calls Open-Meteo API with merchant's lat/lng. Returns temp, precipitation, wind, UV, weather code.</div>
+        <div class="pipe-tag api">open-meteo.com</div>
+      </div>
+      <div class="pipe-line"></div>
+    </div>
+    <div class="pipe-step" data-delay="200">
+      <div class="pipe-num">3</div>
+      <div class="pipe-content">
+        <div class="pipe-title">Count nearby subscribers</div>
+        <div class="pipe-desc">Haversine distance filter across all push subscribers. Calculates who's within walking distance.</div>
+        <div class="pipe-tag api">Haversine filter</div>
+      </div>
+      <div class="pipe-line"></div>
+    </div>
+    <div class="pipe-step" data-delay="300">
+      <div class="pipe-num">4</div>
+      <div class="pipe-content">
+        <div class="pipe-title">AI picks the best menu item</div>
+        <div class="pipe-desc">Llama 3.3 70B scores the merchant's menu against weather. Cold + rainy = hot drinks score highest. Hot day = iced drinks.</div>
+        <div class="pipe-tag ai">Groq Llama 3.3 70B</div>
+      </div>
+      <div class="pipe-line"></div>
+    </div>
+    <div class="pipe-step" data-delay="400">
+      <div class="pipe-num">5</div>
+      <div class="pipe-content">
+        <div class="pipe-title">AI sets optimal discount</div>
+        <div class="pipe-desc">Urgency scoring: rain +8%, cold +5%, dead hours +5%, few users +5%. Capped at merchant's max discount.</div>
+        <div class="pipe-tag ai">Dynamic pricing</div>
+      </div>
+      <div class="pipe-line"></div>
+    </div>
+    <div class="pipe-step" data-delay="500">
+      <div class="pipe-num">6</div>
+      <div class="pipe-content">
+        <div class="pipe-title">AI writes the push notification</div>
+        <div class="pipe-desc">Groq generates a 12-word personal message. "Sound like a friend, not a brand." Falls back to weather-aware templates.</div>
+        <div class="pipe-tag ai">Groq LLM &middot; 12 words max</div>
+      </div>
+      <div class="pipe-line"></div>
+    </div>
+    <div class="pipe-step" data-delay="600">
+      <div class="pipe-num">7</div>
+      <div class="pipe-content">
+        <div class="pipe-title">Push to all nearby users</div>
+        <div class="pipe-desc">Web Push via VAPID protocol. Each notification carries the full offer payload: item, price, discount, merchant location, reasoning.</div>
+        <div class="pipe-tag push">pywebpush + VAPID</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SLIDE 4: Menu Parsing + Wallet Passes
+     ══════════════════════════════════════════════════════════════════ -->
+<div class="slide" data-cue="<strong>Two more technical highlights.</strong> &quot;For merchant onboarding, they just take a photo of their menu. We send it to GPT-4o Vision, which extracts every item and price as structured JSON. The menu populates automatically.&quot; &mdash; Then point right: &quot;And offers aren't just QR codes in a web page. We generate real Apple Wallet .pkpass files &mdash; signed ZIP archives with geofence coordinates. When the user walks near the cafe, it pops up on their lock screen. Same for Google Wallet with JWT-encoded passes.&quot;">
+  <div class="section-label">Scene 4 of 5</div>
+  <div class="slide-title">Vision AI + <span class="accent">wallet passes</span></div>
+  <div class="slide-subtitle">AI-powered onboarding and native pass delivery</div>
+
+  <div class="split">
+    <div class="split-block">
+      <div class="feature-card" data-delay="0" id="fc1">
+        <div class="fc-head">
+          <div class="fc-icon">&#128247;</div>
+          <div class="fc-title">Menu Parsing &mdash; GPT-4o Vision</div>
+        </div>
+        <div class="fc-body">
+          Merchant takes a photo of their printed menu. Image is sent as base64 to GPT-4o Vision.
+          The model extracts every item name and price, returning clean structured JSON.
+          Menu populates the merchant profile automatically &mdash; zero manual data entry.
+        </div>
+        <div class="fc-code">POST /api/merchant/parse-menu<br>{ "image": "base64..." }<br>&rarr; [{"name":"Cappuccino","price":3.50}, ...]</div>
+      </div>
+      <div class="feature-card" data-delay="200" id="fc2">
+        <div class="fc-head">
+          <div class="fc-icon">&#127776;</div>
+          <div class="fc-title">AI Offer Reasoning</div>
+        </div>
+        <div class="fc-body">
+          Every generated offer includes full AI reasoning visible to the merchant:
+          why this item, why this discount %, what signals drove the decision.
+          Complete transparency into the AI's logic.
+        </div>
+        <div class="fc-code" style="color:var(--purple);background:var(--purple-glow);border-color:rgba(176,122,255,.1)">"Picked Hot Chocolate because it's cold and<br>rainy. Set 28% off: rain + dead hours =<br>maximum incentive needed."</div>
+      </div>
+    </div>
+    <div class="split-block">
+      <div class="feature-card" data-delay="100" id="fc3">
+        <div class="fc-head">
+          <div class="fc-icon">&#63743;</div>
+          <div class="fc-title">Apple Wallet .pkpass</div>
+        </div>
+        <div class="fc-body">
+          Real .pkpass files: signed ZIP archives containing pass.json, manifest, icons, and a CMS signature.
+          Includes geofence locations &mdash; iOS shows the pass on the lock screen when the user is near the cafe.
+          Supports Apple's webServiceURL protocol for live updates.
+        </div>
+        <div class="fc-code" style="color:var(--green);background:var(--green-glow);border-color:rgba(0,200,83,.1)">Content-Type: application/vnd.apple.pkpass<br>"locations": [{"lat":48.16,"lng":11.58}]<br>&rarr; Lock-screen notification at ~100m</div>
+      </div>
+      <div class="feature-card" data-delay="300" id="fc4">
+        <div class="fc-head">
+          <div class="fc-icon">&#129302;</div>
+          <div class="fc-title">Google Wallet JWT</div>
+        </div>
+        <div class="fc-body">
+          Google Wallet passes are encoded as JWTs containing the full offer object.
+          User taps "Save to Google Wallet" &mdash; no file download needed.
+          Android surfaces the pass when the user is near the merchant's coordinates.
+        </div>
+        <div class="fc-code" style="color:var(--gold);background:var(--gold-glow);border-color:rgba(255,210,63,.08)">JWT { "genericObjects": [{ ... }] }<br>&rarr; pay.google.com/gp/v/save/{jwt}<br>&rarr; Android lock-screen at geofence</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SLIDE 5: Stack Summary + Close
+     ══════════════════════════════════════════════════════════════════ -->
+<div class="slide" data-cue="<strong>Wrap up.</strong> Let the rows animate in, then read them off: &quot;PWA frontend, on-device scoring with six sensors and zero tracking, Groq Llama and GPT-4o for the AI, Open-Meteo for weather, Web Push for delivery, native wallet passes with geofencing, Flask on Vercel for the backend, and GDPR by design &mdash; we never store personal data.&quot; &mdash; End with: &quot;Zero tracking. Real AI. Real wallet passes. City Wallet.&quot;">
+  <div class="section-label">Scene 5 of 5</div>
+  <div class="slide-title">The full <span class="accent">stack</span></div>
+  <div class="slide-subtitle">Everything that powers City Wallet</div>
+
+  <div class="stack-table" id="stackTable">
+    <div class="stack-row" data-delay="0">
+      <div class="sr-label">Frontend</div>
+      <div class="sr-value">PWA + Service Worker <span class="tag t-orange">offline-first</span></div>
+    </div>
+    <div class="stack-row" data-delay="80">
+      <div class="sr-label">Scoring</div>
+      <div class="sr-value">100% on-device, 6 sensors <span class="tag t-green">zero tracking</span></div>
+    </div>
+    <div class="stack-row" data-delay="160">
+      <div class="sr-label">Offer AI</div>
+      <div class="sr-value">Groq Llama 3.3 70B <span class="tag t-purple">item + discount + copy</span></div>
+    </div>
+    <div class="stack-row" data-delay="240">
+      <div class="sr-label">Vision AI</div>
+      <div class="sr-value">OpenAI GPT-4o Vision <span class="tag t-blue">menu parsing</span></div>
+    </div>
+    <div class="stack-row" data-delay="320">
+      <div class="sr-label">Weather</div>
+      <div class="sr-value">Open-Meteo API <span class="tag t-gold">real-time, free</span></div>
+    </div>
+    <div class="stack-row" data-delay="400">
+      <div class="sr-label">Push</div>
+      <div class="sr-value">Web Push API + VAPID <span class="tag t-green">no Firebase</span></div>
+    </div>
+    <div class="stack-row" data-delay="480">
+      <div class="sr-label">Passes</div>
+      <div class="sr-value">Apple .pkpass + Google JWT <span class="tag t-orange">geofenced</span></div>
+    </div>
+    <div class="stack-row" data-delay="560">
+      <div class="sr-label">Backend</div>
+      <div class="sr-value">Flask on Vercel <span class="tag t-purple">serverless</span></div>
+    </div>
+    <div class="stack-row" data-delay="640">
+      <div class="sr-label">Privacy</div>
+      <div class="sr-value">GDPR by design <span class="tag t-green">no PII stored</span></div>
+    </div>
+  </div>
+
+  <div style="margin-top:32px;opacity:0;transition:opacity .5s ease 1.2s" id="finalBadge">
+    <div class="privacy-badge">Zero tracking &middot; Real AI &middot; Real wallet passes &middot; City Wallet</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+
+<!-- Speaker cue bar -->
+<div class="cue-bar">
+  <div class="cue-box">
+    <div class="cue-label">Say this</div>
+    <div class="cue-text" id="cueText">Loading...</div>
+    <div class="cue-nav">
+      <span class="key-hint">&larr;</span>
+      <span class="key-hint">&rarr;</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const progress = document.getElementById('progress');
+const slideNum = document.getElementById('slideNum');
+const cueText = document.getElementById('cueText');
+let current = 0;
+
+function goto(n) {
+  if (n < 0 || n >= slides.length) return;
+  // Exit current
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit');
+  // Enter new
+  current = n;
+  slides[current].classList.remove('exit');
+  slides[current].classList.add('active');
+  // Update chrome
+  progress.style.width = ((current + 1) / slides.length * 100) + '%';
+  slideNum.textContent = (current + 1) + ' / ' + slides.length;
+  cueText.innerHTML = slides[current].dataset.cue || '';
+  // Trigger animations
+  animateSlide(current);
+}
+
+function animateSlide(idx) {
+  const slide = slides[idx];
+  // Animate all elements with data-delay
+  const els = slide.querySelectorAll('[data-delay]');
+  els.forEach(el => {
+    el.classList.remove('show');
+    const delay = parseInt(el.dataset.delay) || 0;
+    setTimeout(() => el.classList.add('show'), 150 + delay);
+  });
+  // Connectors
+  const conn = slide.querySelector('.arch-connectors');
+  if (conn) { conn.classList.remove('show'); setTimeout(() => conn.classList.add('show'), 600); }
+  // Final badge
+  const fb = document.getElementById('finalBadge');
+  if (slide.contains(fb)) { setTimeout(() => fb.style.opacity = '1', 1200); }
+}
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goto(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goto(current - 1); }
+  if (e.key === 'Home') { e.preventDefault(); goto(0); }
+  if (e.key === 'End') { e.preventDefault(); goto(slides.length - 1); }
+});
+
+// Click left/right halves
+document.addEventListener('click', e => {
+  if (e.target.closest('.cue-bar')) return;
+  if (e.clientX > window.innerWidth / 2) goto(current + 1);
+  else goto(current - 1);
+});
+
+// Touch swipe
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 50) {
+    if (dx < 0) goto(current + 1);
+    else goto(current - 1);
+  }
+});
+
+// Init
+goto(0);
+</script>
+</body>
+</html>
