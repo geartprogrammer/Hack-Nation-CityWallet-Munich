@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>City Wallet — Pitch</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08080a;--surface:#111114;--surface2:#1a1a1f;--border:rgba(255,255,255,.07);
+  --ink:#f0eff4;--dim:rgba(255,255,255,.4);--dim2:rgba(255,255,255,.18);
+  --orange:#ff6b35;--og:rgba(255,107,53,.12);--od:rgba(255,107,53,.06);
+  --green:#00c853;--gg:rgba(0,200,83,.1);
+  --blue:#4e9af5;--bg2:rgba(78,154,245,.1);
+  --purple:#b07aff;--pg:rgba(176,122,255,.1);
+  --gold:#ffd23f;--gog:rgba(255,210,63,.08);
+  --red:#ff4757;
+  --mono:'JetBrains Mono',monospace;--sans:'Inter',system-ui,sans-serif;
+}
+html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
+  height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── Slides ──────────────────────── */
+.slide{position:absolute;inset:0;display:grid;grid-template-columns:320px 1fr;
+  opacity:0;pointer-events:none;transition:opacity .5s,transform .5s;transform:translateX(30px)}
+.slide.active{opacity:1;pointer-events:auto;transform:none}
+.slide.exit{opacity:0;transform:translateX(-30px)}
+
+.s-left{display:flex;flex-direction:column;justify-content:center;
+  padding:40px 28px 90px;border-right:1px solid var(--border);
+  background:linear-gradient(180deg,rgba(255,107,53,.02) 0%,transparent 60%)}
+.s-time{font-family:var(--mono);font-size:11px;color:var(--dim2);
+  padding:4px 10px;background:var(--surface);border:1px solid var(--border);
+  border-radius:6px;display:inline-block;margin-bottom:14px}
+.s-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--orange);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.s-label::before{content:'';width:16px;height:1px;background:var(--orange)}
+.s-title{font-size:28px;font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-bottom:6px}
+.s-title .a{color:var(--orange)}
+.s-sub{font-size:12px;color:var(--dim);line-height:1.5;margin-bottom:16px}
+
+/* Script area */
+.script{border-top:1px solid var(--border);padding-top:12px;margin-top:auto;
+  max-height:340px;overflow-y:auto}
+.script::-webkit-scrollbar{width:3px}
+.script::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.line{font-size:12px;line-height:1.7;color:rgba(255,255,255,.6);margin-bottom:6px}
+.line b{color:var(--orange);font-weight:600}
+.line em{color:var(--ink);font-style:normal;font-weight:500}
+.pause{font-family:var(--mono);font-size:9px;color:var(--dim2);letter-spacing:.08em;
+  text-transform:uppercase;margin:8px 0;display:block}
+
+.s-right{display:flex;align-items:center;justify-content:center;padding:32px 48px 80px;overflow:hidden}
+
+/* ── Progress + timer ────────────── */
+.progress{position:fixed;top:0;left:0;height:3px;background:var(--orange);
+  transition:width .4s;z-index:100;box-shadow:0 0 12px rgba(255,107,53,.4)}
+.topbar{position:fixed;top:10px;right:24px;display:flex;gap:10px;align-items:center;z-index:100}
+.tb{font-family:var(--mono);font-size:11px;color:var(--dim2);
+  background:var(--surface);border:1px solid var(--border);padding:4px 10px;border-radius:6px}
+.timer{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:100;
+  display:flex;align-items:center;gap:12px}
+.timer-bar{width:400px;height:4px;background:var(--surface2);border-radius:99px;
+  overflow:hidden;border:1px solid var(--border)}
+.timer-fill{height:100%;background:var(--orange);border-radius:99px;transition:width .3s;width:0}
+.timer-label{font-family:var(--mono);font-size:11px;color:var(--dim2);white-space:nowrap}
+.timer-btn{background:var(--surface);border:1px solid var(--border);color:var(--dim);
+  font-family:var(--mono);font-size:10px;padding:4px 10px;border-radius:6px;cursor:pointer}
+.timer-btn:hover{color:var(--orange);border-color:rgba(255,107,53,.2)}
+.nav-h{position:fixed;bottom:14px;right:24px;display:flex;gap:4px;z-index:100}
+.kh{font-family:var(--mono);font-size:10px;color:var(--dim2);padding:4px 8px;
+  border:1px solid var(--border);border-radius:4px;background:var(--surface)}
+
+/* ── Visual content styles ───────── */
+
+/* Slide 1: Problem - big stats */
+.big-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:560px}
+.big-stat{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:32px;text-align:center;opacity:0;transform:scale(.95);transition:all .5s}
+.big-stat.show{opacity:1;transform:none}
+.big-stat .num{font-size:52px;font-weight:900;letter-spacing:-.04em;line-height:1}
+.big-stat .num.red{color:var(--red)}.big-stat .num.orange{color:var(--orange)}
+.big-stat .num.dim{color:var(--dim)}
+.big-stat .lbl{font-size:12px;color:var(--dim);margin-top:8px;line-height:1.4}
+.big-stat .sub{font-family:var(--mono);font-size:10px;color:var(--dim2);margin-top:6px}
+
+/* Slide 2: Solution - hero card */
+.hero-card{max-width:520px;width:100%}
+.hc-main{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:36px;text-align:center;margin-bottom:16px;
+  opacity:0;transform:translateY(12px);transition:all .5s}
+.hc-main.show{opacity:1;transform:none}
+.hc-main .hc-icon{font-size:48px;margin-bottom:16px}
+.hc-main .hc-headline{font-size:28px;font-weight:900;letter-spacing:-.03em;margin-bottom:8px}
+.hc-main .hc-headline .a{color:var(--orange)}
+.hc-main .hc-sub{font-size:14px;color:var(--dim);line-height:1.5}
+.hc-pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.pill{background:var(--surface);border:1px solid var(--border);border-radius:99px;
+  padding:8px 16px;font-size:12px;font-weight:600;
+  opacity:0;transform:translateY(8px);transition:all .4s}
+.pill.show{opacity:1;transform:none}
+.pill .pi{margin-right:6px}
+.pill.p-o{color:var(--orange);border-color:rgba(255,107,53,.15)}
+.pill.p-g{color:var(--green);border-color:rgba(0,200,83,.12)}
+.pill.p-b{color:var(--blue);border-color:rgba(78,154,245,.12)}
+.pill.p-p{color:var(--purple);border-color:rgba(176,122,255,.12)}
+
+/* Slide 3: How - flow steps */
+.flow{display:flex;flex-direction:column;gap:6px;max-width:520px;width:100%}
+.flow-step{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:center;
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;
+  opacity:0;transform:translateX(-14px);transition:all .4s}
+.flow-step.show{opacity:1;transform:none}
+.flow-icon{font-size:24px;text-align:center}
+.flow-t{font-size:14px;font-weight:700}
+.flow-d{font-size:11px;color:var(--dim)}
+.flow-arrow{text-align:center;font-size:16px;color:var(--dim2);
+  opacity:0;transition:opacity .3s}
+.flow-arrow.show{opacity:1}
+
+/* Slide 4: Vision - numbers */
+.vision-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;max-width:600px;
+  margin-bottom:20px}
+.v-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:24px;text-align:center;opacity:0;transform:translateY(10px);transition:all .45s}
+.v-card.show{opacity:1;transform:none}
+.v-card .v-num{font-size:36px;font-weight:900;color:var(--orange);letter-spacing:-.03em}
+.v-card .v-lbl{font-size:11px;color:var(--dim);margin-top:4px}
+.v-text{font-size:14px;color:var(--dim);text-align:center;max-width:500px;line-height:1.6;
+  opacity:0;transition:opacity .5s .5s}
+.v-text.show{opacity:1}
+.v-text strong{color:var(--ink)}
+
+/* Slide 5: Why Us / Close */
+.slide.s-full{grid-template-columns:1fr;justify-items:center}
+.s-full .s-left{display:none}
+.s-full .s-right{flex-direction:column;gap:0;padding:40px 48px 80px}
+.close-head{text-align:center;margin-bottom:28px}
+.close-head .s-title{font-size:34px}
+.why-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;max-width:700px;
+  margin-bottom:24px}
+.why-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:20px;text-align:center;opacity:0;transform:translateY(10px);transition:all .45s}
+.why-card.show{opacity:1;transform:none}
+.why-card .wc-icon{font-size:28px;margin-bottom:10px}
+.why-card .wc-title{font-size:14px;font-weight:800;margin-bottom:4px}
+.why-card .wc-desc{font-size:11px;color:var(--dim);line-height:1.5}
+.close-logo{font-size:44px;font-weight:900;letter-spacing:-.04em;text-align:center}
+.close-logo em{color:var(--orange);font-style:normal}
+.close-tag{font-size:14px;color:var(--dim);text-align:center;margin-top:6px}
+.close-cue{font-size:12px;color:rgba(255,255,255,.5);text-align:center;
+  border-top:1px solid var(--border);padding-top:12px;margin-top:16px;max-width:500px}
+.close-cue b{color:var(--orange);font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="topbar"><div class="tb" id="slideNum">1 / 5</div></div>
+<div class="timer">
+  <div class="timer-btn" id="timerBtn" onclick="toggleTimer()">START</div>
+  <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+  <div class="timer-label" id="timerLabel">0:00 / 3:00</div>
+</div>
+<div class="nav-h"><div class="kh">&larr;</div><div class="kh">&rarr;</div></div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 1 — THE PROBLEM (0:00 – 0:30)
+     ═══════════════════════════════════════════════════════ -->
+<div class="slide active" id="sl1">
+  <div class="s-left">
+    <div class="s-time">0:00 &ndash; 0:30</div>
+    <div class="s-label">The Problem</div>
+    <div class="s-title">Empty seats <span class="a">cost money</span></div>
+    <div class="s-sub">Every quiet hour is lost revenue</div>
+    <div class="script">
+      <div class="line"><em>It's 2pm in Munich.</em></div>
+      <div class="line"><em>A cafe owner looks around. Eight tables. All empty.</em></div>
+      <div class="pause">pause</div>
+      <div class="line">This isn't a bad cafe. <em>The coffee's great.</em></div>
+      <div class="line">The problem is <b>timing.</b></div>
+      <div class="pause">beat</div>
+      <div class="line">Every day, between lunch and dinner, <em>cafes bleed money.</em></div>
+      <div class="line"><b>30% of their operating hours</b> &mdash; near-empty.</div>
+      <div class="line"><b>63% of small food businesses</b> say quiet hours are their biggest cost.</div>
+      <div class="pause">beat</div>
+      <div class="line">Meanwhile &mdash; <em>outside, people walk past.</em></div>
+      <div class="line">They don't know the deal. They don't know the place.</div>
+      <div class="line"><em>They keep walking.</em></div>
+    </div>
+  </div>
+  <div class="s-right">
+    <div class="big-stat-grid">
+      <div class="big-stat" data-delay="0">
+        <div class="num red">30%</div>
+        <div class="lbl">of operating hours are quiet</div>
+        <div class="sub">14:00 &ndash; 17:00 daily</div>
+      </div>
+      <div class="big-stat" data-delay="150">
+        <div class="num orange">63%</div>
+        <div class="lbl">say quiet hours are their #1 cost</div>
+        <div class="sub">Small food businesses, EU</div>
+      </div>
+      <div class="big-stat" data-delay="300">
+        <div class="num dim">0</div>
+        <div class="lbl">tools exist to fill those seats in real-time</div>
+        <div class="sub">Not coupons. Not loyalty cards.</div>
+      </div>
+      <div class="big-stat" data-delay="450">
+        <div class="num orange">&#8734;</div>
+        <div class="lbl">people walk by every day</div>
+        <div class="sub">They just don't know</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 2 — THE SOLUTION (0:30 – 1:00)
+     ═══════════════════════════════════════════════════════ -->
+<div class="slide" id="sl2">
+  <div class="s-left">
+    <div class="s-time">0:30 &ndash; 1:00</div>
+    <div class="s-label">The Solution</div>
+    <div class="s-title"><span class="a">City Wallet</span></div>
+    <div class="s-sub">AI fills your empty seats</div>
+    <div class="script">
+      <div class="line"><em>We built City Wallet.</em></div>
+      <div class="pause">let it land</div>
+      <div class="line">One button: <b>"Fill my seats."</b></div>
+      <div class="line">The merchant taps it. That's it.</div>
+      <div class="pause">beat</div>
+      <div class="line">Our AI checks the <b>weather.</b></div>
+      <div class="line">Checks the <b>time.</b></div>
+      <div class="line">Reads the <b>menu.</b></div>
+      <div class="line">Picks the <b>best item.</b> Sets the <b>right discount.</b></div>
+      <div class="line">Writes a <b>personal notification.</b></div>
+      <div class="line">And pushes it to <em>everyone walking nearby.</em></div>
+      <div class="pause">beat</div>
+      <div class="line">It's raining? <em>"Warm up &mdash; hot chocolate, 20% off."</em></div>
+      <div class="line">It's 35 degrees? <em>"Cool down &mdash; iced latte, on us."</em></div>
+      <div class="pause">beat</div>
+      <div class="line">The right offer. <b>Right now.</b> To the right person.</div>
+    </div>
+  </div>
+  <div class="s-right">
+    <div class="hero-card">
+      <div class="hc-main" data-delay="0">
+        <div class="hc-icon">&#9749;</div>
+        <div class="hc-headline">One button: <span class="a">"Fill my seats"</span></div>
+        <div class="hc-sub">AI picks the item, sets the discount, writes the message, and pushes it to nearby people. All under 2 seconds.</div>
+      </div>
+      <div class="hc-pills">
+        <div class="pill p-o" data-delay="200"><span class="pi">&#127782;&#65039;</span>Weather-aware</div>
+        <div class="pill p-p" data-delay="280"><span class="pi">&#129302;</span>AI-generated</div>
+        <div class="pill p-g" data-delay="360"><span class="pi">&#128274;</span>Privacy-first</div>
+        <div class="pill p-b" data-delay="440"><span class="pi">&#128179;</span>Native wallet</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 3 — HOW IT WORKS (1:00 – 1:45)
+     ═══════════════════════════════════════════════════════ -->
+<div class="slide" id="sl3">
+  <div class="s-left">
+    <div class="s-time">1:00 &ndash; 1:45</div>
+    <div class="s-label">How It Works</div>
+    <div class="s-title">Three <span class="a">steps</span></div>
+    <div class="s-sub">Merchant to customer in seconds</div>
+    <div class="script">
+      <div class="line"><em>Here's how simple it is.</em></div>
+      <div class="pause">beat</div>
+      <div class="line"><b>Step one:</b> the merchant signs up.</div>
+      <div class="line">Takes a photo of the menu. Our AI reads it instantly.</div>
+      <div class="line">Sets their rules &mdash; max discount, quiet hours, goal.</div>
+      <div class="line"><em>Two minutes. Done.</em></div>
+      <div class="pause">beat</div>
+      <div class="line"><b>Step two:</b> they tap "Fill my seats."</div>
+      <div class="line">AI generates a personalized offer based on weather, time, and demand.</div>
+      <div class="line">Pushes it to every phone nearby.</div>
+      <div class="pause">beat</div>
+      <div class="line"><b>Step three:</b> someone walking in the cold gets a notification.</div>
+      <div class="line"><em>"Warm up &mdash; 20% off hot chocolate at Cafe Murnau."</em></div>
+      <div class="line">They tap. QR code. Walk in. Scan. Done.</div>
+      <div class="pause">beat</div>
+      <div class="line">The offer lands in their <b>Apple or Google Wallet.</b></div>
+      <div class="line">With <b>geofencing</b> &mdash; when they walk near the cafe, it pops up on the lock screen.</div>
+      <div class="line"><em>We don't need them to open an app.</em></div>
+    </div>
+  </div>
+  <div class="s-right">
+    <div class="flow">
+      <div class="flow-step" data-delay="0">
+        <div class="flow-icon">&#128247;</div>
+        <div>
+          <div class="flow-t">Merchant signs up</div>
+          <div class="flow-d">Photo of menu &rarr; AI reads it. Set rules. 2 minutes.</div>
+        </div>
+      </div>
+      <div class="flow-arrow" data-delay="120">&#8595;</div>
+      <div class="flow-step" data-delay="180">
+        <div class="flow-icon">&#128171;</div>
+        <div>
+          <div class="flow-t">Tap "Fill my seats"</div>
+          <div class="flow-d">AI picks item + discount + copy. Pushes to nearby phones.</div>
+        </div>
+      </div>
+      <div class="flow-arrow" data-delay="300">&#8595;</div>
+      <div class="flow-step" data-delay="360">
+        <div class="flow-icon">&#128244;</div>
+        <div>
+          <div class="flow-t">Customer gets notification</div>
+          <div class="flow-d">Weather-matched offer. Tap &rarr; QR code &rarr; walk in &rarr; redeem.</div>
+        </div>
+      </div>
+      <div class="flow-arrow" data-delay="480">&#8595;</div>
+      <div class="flow-step" data-delay="540">
+        <div class="flow-icon">&#128179;</div>
+        <div>
+          <div class="flow-t">Saved to Wallet</div>
+          <div class="flow-d">Apple .pkpass / Google JWT. Geofenced lock-screen popup.</div>
+        </div>
+      </div>
+      <div class="flow-arrow" data-delay="660">&#8595;</div>
+      <div class="flow-step" data-delay="720">
+        <div class="flow-icon">&#128200;</div>
+        <div>
+          <div class="flow-t">Merchant sees results</div>
+          <div class="flow-d">Live dashboard: walk-ins, revenue, redemptions.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 4 — VISION (1:45 – 2:20)
+     ═══════════════════════════════════════════════════════ -->
+<div class="slide" id="sl4">
+  <div class="s-left">
+    <div class="s-time">1:45 &ndash; 2:20</div>
+    <div class="s-label">The Vision</div>
+    <div class="s-title">Where this <span class="a">goes</span></div>
+    <div class="s-sub">From Munich to every city</div>
+    <div class="script">
+      <div class="line"><em>We started with cafes in Munich.</em></div>
+      <div class="line">But this problem is everywhere.</div>
+      <div class="pause">beat</div>
+      <div class="line"><em>Every restaurant has quiet hours.</em></div>
+      <div class="line"><em>Every bakery has unsold pastries at 4pm.</em></div>
+      <div class="line"><em>Every gym is empty at 2pm.</em></div>
+      <div class="pause">beat</div>
+      <div class="line">There are <b>8 million</b> small food businesses in Europe.</div>
+      <div class="line">If 1% used City Wallet &mdash; that's <b>80,000 merchants.</b></div>
+      <div class="pause">beat</div>
+      <div class="line">Our model: <b>small commission per redemption.</b></div>
+      <div class="line">Merchant pays nothing to sign up. Nothing to list.</div>
+      <div class="line">They only pay when <em>someone walks in.</em></div>
+      <div class="pause">beat</div>
+      <div class="line">We reduce food waste. We fill seats. We save customers money.</div>
+      <div class="line"><em>Everybody wins.</em></div>
+    </div>
+  </div>
+  <div class="s-right">
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="vision-grid">
+        <div class="v-card" data-delay="0">
+          <div class="v-num">8M</div>
+          <div class="v-lbl">Small food businesses in Europe</div>
+        </div>
+        <div class="v-card" data-delay="150">
+          <div class="v-num">80K</div>
+          <div class="v-lbl">At just 1% adoption</div>
+        </div>
+        <div class="v-card" data-delay="300">
+          <div class="v-num">&euro;0</div>
+          <div class="v-lbl">To sign up. Pay per walk-in.</div>
+        </div>
+      </div>
+      <div class="v-text" data-delay="0" id="vtext">
+        Cafes. Bakeries. Restaurants. Gyms.<br>
+        <strong>Every business with quiet hours is our customer.</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 5 — WHY US + CLOSE (2:20 – 3:00)
+     ═══════════════════════════════════════════════════════ -->
+<div class="slide s-full" id="sl5">
+  <div class="s-left"></div>
+  <div class="s-right">
+    <div class="close-head">
+      <div class="s-time" style="margin-bottom:10px">2:20 &ndash; 3:00</div>
+      <div class="s-label" style="justify-content:center">Why Us</div>
+      <div class="s-title">Why <span class="a">City Wallet</span> wins</div>
+    </div>
+    <div class="why-grid">
+      <div class="why-card" data-delay="0">
+        <div class="wc-icon">&#129302;</div>
+        <div class="wc-title">Real AI</div>
+        <div class="wc-desc">Not rules. Not coupons. Llama 3.3 + GPT-4o generate every offer from live context.</div>
+      </div>
+      <div class="why-card" data-delay="120">
+        <div class="wc-icon">&#128274;</div>
+        <div class="wc-title">Privacy-first</div>
+        <div class="wc-desc">Scoring runs on-device. No tracking. No profiles. GDPR by design.</div>
+      </div>
+      <div class="why-card" data-delay="240">
+        <div class="wc-icon">&#128179;</div>
+        <div class="wc-title">Native passes</div>
+        <div class="wc-desc">Real Apple + Google Wallet passes. Geofenced. Lock-screen. No app download.</div>
+      </div>
+      <div class="why-card" data-delay="360">
+        <div class="wc-icon">&#9889;</div>
+        <div class="wc-title">One button</div>
+        <div class="wc-desc">Merchant taps once. AI does everything. 2 seconds end to end.</div>
+      </div>
+      <div class="why-card" data-delay="480">
+        <div class="wc-icon">&#127782;&#65039;</div>
+        <div class="wc-title">Context-aware</div>
+        <div class="wc-desc">Weather, time, demand, location. Every offer is unique to the moment.</div>
+      </div>
+      <div class="why-card" data-delay="600">
+        <div class="wc-icon">&#129309;</div>
+        <div class="wc-title">Win-win</div>
+        <div class="wc-desc">Merchants fill seats. Customers save money. Less food waste.</div>
+      </div>
+    </div>
+    <div class="close-logo"><em>City</em> Wallet</div>
+    <div class="close-tag">The right offer. Right now.</div>
+    <div class="close-cue">
+      <b>Say:</b> "We're not building another coupon app. We're building the bridge between empty seats and the people walking past them. That bridge is AI, context, and perfect timing. That bridge is City Wallet. Thank you."
+    </div>
+  </div>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide');
+const progress=document.getElementById('progress');
+const slideNum=document.getElementById('slideNum');
+let current=0;
+
+function go(n){
+  if(n<0||n>=slides.length)return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit');
+  current=n;
+  slides[current].classList.remove('exit');
+  slides[current].classList.add('active');
+  progress.style.width=((current+1)/slides.length*100)+'%';
+  slideNum.textContent=(current+1)+' / '+slides.length;
+  anim(current);
+}
+function anim(i){
+  const s=slides[i];
+  s.querySelectorAll('[data-delay]').forEach(el=>{
+    el.classList.remove('show');
+    setTimeout(()=>el.classList.add('show'),100+parseInt(el.dataset.delay||0));
+  });
+  const vt=document.getElementById('vtext');
+  if(s.contains(vt)){vt.classList.remove('show');setTimeout(()=>vt.classList.add('show'),500);}
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(current+1);}
+  if(e.key==='ArrowLeft'){e.preventDefault();go(current-1);}
+});
+document.addEventListener('click',e=>{
+  if(e.target.closest('.timer-btn')||e.target.closest('.nav-h'))return;
+  if(e.clientX>window.innerWidth*0.5)go(current+1);else go(current-1);
+});
+let tx=0;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;});
+document.addEventListener('touchend',e=>{
+  const d=e.changedTouches[0].clientX-tx;
+  if(Math.abs(d)>50){d<0?go(current+1):go(current-1);}
+});
+
+// 3-minute timer
+let timerOn=false,timerStart=0,timerRAF=null;
+const fill=document.getElementById('timerFill');
+const label=document.getElementById('timerLabel');
+const btn=document.getElementById('timerBtn');
+const TOTAL=180;
+function toggleTimer(){
+  if(!timerOn){timerOn=true;timerStart=Date.now();btn.textContent='RESET';tick();}
+  else{timerOn=false;cancelAnimationFrame(timerRAF);fill.style.width='0';
+    label.textContent='0:00 / 3:00';btn.textContent='START';}
+}
+function tick(){
+  if(!timerOn)return;
+  const el=(Date.now()-timerStart)/1000;
+  const pct=Math.min(el/TOTAL*100,100);
+  fill.style.width=pct+'%';
+  const m=Math.floor(el/60),s=Math.floor(el%60);
+  label.textContent=`${m}:${String(s).padStart(2,'0')} / 3:00`;
+  if(el>=TOTAL){fill.style.background='var(--green)';label.textContent='3:00 / 3:00';
+    btn.textContent='RESET';timerOn=false;return;}
+  fill.style.background=el>150?'var(--gold)':el>160?'var(--red)':'var(--orange)';
+  timerRAF=requestAnimationFrame(tick);
+}
+go(0);
+</script>
+</body>
+</html>

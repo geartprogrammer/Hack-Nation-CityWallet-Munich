@@ -11,6 +11,7 @@
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/index.py" },
     { "src": "/technical-demo", "dest": "/technical-demo.html" },
+    { "src": "/pitch", "dest": "/pitch-deck.html" },
     { "src": "/(.*)", "dest": "/$1" }
   ]
 }
