@@ -273,32 +273,44 @@ function enterApp(){
 }
 
 // ═══ MENU PHOTO UPLOAD ═══
+// Resize image to max 1200px and compress as JPEG to keep under Vercel's body limit
+function resizeImage(file,maxW=1200){
+  return new Promise(ok=>{
+    const img=new Image();const reader=new FileReader();
+    reader.onload=e=>{img.src=e.target.result};
+    img.onload=()=>{
+      const scale=Math.min(1,maxW/Math.max(img.width,img.height));
+      const c=document.createElement('canvas');
+      c.width=img.width*scale;c.height=img.height*scale;
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      ok(c.toDataURL('image/jpeg',0.7));
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 async function onMenuPhoto(input){
   const file=input.files[0];if(!file)return;
-  // Show preview
-  const reader=new FileReader();
-  reader.onload=async(e)=>{
-    const b64=e.target.result;
-    document.getElementById('uploadZone').innerHTML=`<img src="${b64}">`;
-    document.getElementById('parseStatus').style.display='block';
-    document.getElementById('parseStatus').innerHTML='<span class="spinner-sm"></span> AI is reading your menu...';
-    // Send to API
-    const raw=b64.split(',')[1];
-    try{
-      const r=await fetch(API+'/api/merchant/parse-menu',{method:'POST',headers:ah(),body:JSON.stringify({image:raw})});
-      const d=await r.json();
-      if(d.items&&d.items.length){
-        parsedMenu=d.items;
-        document.getElementById('parseStatus').innerHTML=`✅ Found <b>${d.count}</b> items`;
-        document.getElementById('parsedList').style.display='block';
-        document.getElementById('parsedList').innerHTML=d.items.map(i=>`<div class="parsed-item"><b>${i.name}</b><span>€${i.price.toFixed(2)}</span></div>`).join('');
-        document.getElementById('menuNextBtn').style.display='block';
-      }else{
-        document.getElementById('parseStatus').innerHTML='⚠️ '+(d.error||'Could not read menu. Try a clearer photo.');
-      }
-    }catch(e){document.getElementById('parseStatus').innerHTML='⚠️ Network error. Try again.'}
-  };
-  reader.readAsDataURL(file);
+  document.getElementById('parseStatus').style.display='block';
+  document.getElementById('parseStatus').innerHTML='<span class="spinner-sm"></span> Preparing image...';
+  // Resize to keep request small
+  const b64=await resizeImage(file);
+  document.getElementById('uploadZone').innerHTML=`<img src="${b64}">`;
+  document.getElementById('parseStatus').innerHTML='<span class="spinner-sm"></span> AI is reading your menu...';
+  const raw=b64.split(',')[1];
+  try{
+    const r=await fetch(API+'/api/merchant/parse-menu',{method:'POST',headers:ah(),body:JSON.stringify({image:raw})});
+    const d=await r.json();
+    if(d.items&&d.items.length){
+      parsedMenu=d.items;
+      document.getElementById('parseStatus').innerHTML=`✅ Found <b>${d.count}</b> items`;
+      document.getElementById('parsedList').style.display='block';
+      document.getElementById('parsedList').innerHTML=d.items.map(i=>`<div class="parsed-item"><b>${i.name}</b><span>€${i.price.toFixed(2)}</span></div>`).join('');
+      document.getElementById('menuNextBtn').style.display='block';
+    }else{
+      document.getElementById('parseStatus').innerHTML='⚠️ '+(d.error||'Could not read menu. Try a clearer photo.');
+    }
+  }catch(e){document.getElementById('parseStatus').innerHTML='⚠️ Error: '+e.message}
 }
 
 function skipMenu(){parsedMenu=[];goToPrefs()}
@@ -325,17 +337,16 @@ async function finishOnboarding(){
 async function rescanMenu(input){
   const file=input.files[0];if(!file)return;
   const el=document.getElementById('rescanStatus');el.style.display='block';
-  el.innerHTML='<span class="spinner-sm"></span> Reading menu...';
-  const reader=new FileReader();
-  reader.onload=async(e)=>{
-    const raw=e.target.result.split(',')[1];
-    try{
-      const r=await fetch(API+'/api/merchant/parse-menu',{method:'POST',headers:ah(),body:JSON.stringify({image:raw})});
-      const d=await r.json();
-      if(d.items?.length){el.innerHTML=`✅ Found ${d.count} items — saved!`;loadSettings()}
-      else{el.innerHTML='⚠️ '+(d.error||'Could not read')}
-    }catch(e){el.innerHTML='⚠️ Error'}
-  };
+  el.innerHTML='<span class="spinner-sm"></span> Resizing and reading...';
+  const b64=await resizeImage(file);
+  el.innerHTML='<span class="spinner-sm"></span> AI is reading your menu...';
+  const raw=b64.split(',')[1];
+  try{
+    const r=await fetch(API+'/api/merchant/parse-menu',{method:'POST',headers:ah(),body:JSON.stringify({image:raw})});
+    const d=await r.json();
+    if(d.items?.length){el.innerHTML=`✅ Found ${d.count} items — saved!`;loadSettings()}
+    else{el.innerHTML='⚠️ '+(d.error||'Could not read')}
+  }catch(e){el.innerHTML='⚠️ '+e.message}
   reader.readAsDataURL(file);
 }
 

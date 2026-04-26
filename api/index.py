@@ -266,8 +266,15 @@ def parse_menu():
                 ],
                 "max_tokens":1000,
                 "temperature":0.1
-            }, timeout=30)
-        result = resp.json()
+            }, timeout=60)
+        if resp.status_code != 200:
+            try: err = resp.json()
+            except: err = resp.text[:200]
+            return jsonify({"error": f"OpenAI returned {resp.status_code}: {err}"}), 400
+        try:
+            result = resp.json()
+        except:
+            return jsonify({"error": f"OpenAI returned non-JSON: {resp.text[:200]}"}), 400
         if "error" in result:
             return jsonify({"error": result["error"].get("message", str(result["error"]))}), 400
         if "choices" not in result or not result["choices"]:
