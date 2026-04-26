@@ -197,7 +197,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
     <div class="s-title">How it's <span class="a">built</span></div>
     <div class="s-sub">Full architecture from phone to AI backend</div>
     <div class="s-cue">
-      <strong>Say:</strong> "City Wallet is a PWA &mdash; no app store, no install, instant. The phone runs scoring locally. The Flask API on Vercel handles AI and merchant ops. We plug into Groq, OpenAI, real-time weather, Web Push, and native wallet passes."
+      <strong>Say:</strong> "PWA &mdash; no app store. Scoring on-device. Flask on Vercel. Groq + OpenAI for AI. Real-time weather. Native wallet passes."
     </div>
   </div>
   <div class="s-right">
@@ -205,37 +205,37 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
       <div class="ab c-o" data-delay="0">
         <div class="ab-icon">&#128241;</div>
         <div class="ab-name">User PWA</div>
-        <div class="ab-desc">Offline-first, push notifications, installable. Service Worker caches everything.</div>
+        <div class="ab-desc">Offline-first. Push. Installable.</div>
         <div class="ab-tag">HTML + JS + SW</div>
       </div>
       <div class="ab c-g" data-delay="100">
         <div class="ab-icon">&#9881;&#65039;</div>
         <div class="ab-name">Flask API</div>
-        <div class="ab-desc">Serverless on Vercel. Auth, offer gen, push, QR, wallet passes.</div>
+        <div class="ab-desc">Serverless on Vercel. Auth, offers, push, passes.</div>
         <div class="ab-tag">Flask + Vercel</div>
       </div>
       <div class="ab c-p" data-delay="200">
         <div class="ab-icon">&#129302;</div>
         <div class="ab-name">AI Layer</div>
-        <div class="ab-desc">Groq Llama 3.3 70B for offers. GPT-4o Vision for menus. On-device scoring.</div>
+        <div class="ab-desc">Llama 3.3 for offers. GPT-4o for menus.</div>
         <div class="ab-tag">Groq + OpenAI</div>
       </div>
       <div class="ab c-b" data-delay="300">
         <div class="ab-icon">&#127782;&#65039;</div>
         <div class="ab-name">Open-Meteo</div>
-        <div class="ab-desc">Real-time weather: temp, rain, wind, UV. Drives offer relevance.</div>
+        <div class="ab-desc">Temp, rain, wind, UV. Drives offer relevance.</div>
         <div class="ab-tag">open-meteo.com</div>
       </div>
       <div class="ab c-y" data-delay="400">
         <div class="ab-icon">&#128276;</div>
         <div class="ab-name">Web Push</div>
-        <div class="ab-desc">VAPID protocol, no Firebase. Direct push to every subscriber.</div>
+        <div class="ab-desc">VAPID protocol. No Firebase.</div>
         <div class="ab-tag">pywebpush + VAPID</div>
       </div>
       <div class="ab c-o2" data-delay="500">
         <div class="ab-icon">&#128179;</div>
         <div class="ab-name">Wallet Passes</div>
-        <div class="ab-desc">Apple .pkpass (signed ZIP + geofence). Google JWT save links.</div>
+        <div class="ab-desc">Apple .pkpass + Google JWT. Geofenced.</div>
         <div class="ab-tag">.pkpass + JWT</div>
       </div>
     </div>
@@ -252,7 +252,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
     <div class="s-title">On-device <span class="a">scoring</span></div>
     <div class="s-sub">6 sensors, zero tracking &mdash; all on the phone</div>
     <div class="s-cue">
-      <strong>Say:</strong> "The scoring engine runs 100% on the phone. Six signals: GPS for distance, accelerometer to know if you're walking, ambient light for indoor vs outdoor, battery level, weather for drink matching, and your accept/decline history stored in localStorage. The catalog downloads once &mdash; then goes dark. No personal data ever leaves the device."
+      <strong>Say:</strong> "Scoring runs on the phone. Six signals: GPS, motion, light, battery, weather, history. Catalog downloads once, then goes dark. No data leaves the device."
     </div>
   </div>
   <div class="s-right">
@@ -261,7 +261,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
         <div class="sc-i i1">&#128205;</div>
         <div>
           <div class="sc-n">GPS + Haversine</div>
-          <div class="sc-d">Distance to every merchant. Filters &gt;2km. Bands: &lt;100m, 300m, 500m, 1km.</div>
+          <div class="sc-d">Haversine distance. Filters &gt;2km.</div>
           <div class="sc-s">+40 pts &lt;100m</div>
         </div>
       </div>
@@ -269,7 +269,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
         <div class="sc-i i2">&#127939;</div>
         <div>
           <div class="sc-n">Accelerometer</div>
-          <div class="sc-d">20-sample variance detects still, walking, or vehicle. Walking = high intent.</div>
+          <div class="sc-d">Still / walking / vehicle detection.</div>
           <div class="sc-s">+20 pts standing near</div>
         </div>
       </div>
@@ -277,7 +277,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
         <div class="sc-i i3">&#9728;&#65039;</div>
         <div>
           <div class="sc-n">Ambient Light</div>
-          <div class="sc-d">Lux sensor: outdoor bright, outdoor, indoor bright, indoor dim.</div>
+          <div class="sc-d">Outdoor vs indoor from lux level.</div>
           <div class="sc-s">+10 pts outdoors</div>
         </div>
       </div>
@@ -285,7 +285,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
         <div class="sc-i i4">&#128267;</div>
         <div>
           <div class="sc-n">Battery</div>
-          <div class="sc-d">Low battery + far = don't suggest a walk. Penalizes distant offers.</div>
+          <div class="sc-d">Low battery + far = skip offer.</div>
           <div class="sc-s">-30 pts &lt;10% + far</div>
         </div>
       </div>
@@ -293,7 +293,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
         <div class="sc-i i5">&#127782;&#65039;</div>
         <div>
           <div class="sc-n">Weather</div>
-          <div class="sc-d">Cold day + hot drink = match. Hot day + iced drink = match.</div>
+          <div class="sc-d">Cold = hot drinks. Hot = iced drinks.</div>
           <div class="sc-s">+15 pts match</div>
         </div>
       </div>
@@ -301,7 +301,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
         <div class="sc-i i6">&#128338;</div>
         <div>
           <div class="sc-n">Local History</div>
-          <div class="sc-d">Accept/decline in localStorage. Boosts liked, suppresses declined.</div>
+          <div class="sc-d">Boosts liked, suppresses declined.</div>
           <div class="sc-s">+15 / -20 pts</div>
         </div>
       </div>
@@ -319,7 +319,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
     <div class="s-title">"Fill my seats" <span class="a">pipeline</span></div>
     <div class="s-sub">One button &rarr; weather + users + AI + push</div>
     <div class="s-cue">
-      <strong>Say:</strong> "One API call triggers all of this. We fetch weather, count nearby subscribers with Haversine, then Llama 3.3 on Groq picks the best menu item, sets the discount from urgency signals &mdash; rain, cold, dead hours &mdash; writes a 12-word push notification, and delivers via VAPID. Under two seconds."
+      <strong>Say:</strong> "One button, seven steps, under two seconds. Weather, user count, AI picks item, sets discount, writes copy, pushes to nearby."
     </div>
   </div>
   <div class="s-right">
@@ -328,7 +328,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
         <div class="ps-n">1</div>
         <div class="ps-c">
           <div class="ps-t">Merchant taps button</div>
-          <div class="ps-d">Single POST /api/fill &mdash; only human input</div>
+          <div class="ps-d">POST /api/fill &mdash; only human input</div>
           <div class="ps-tag t-api">POST /api/fill</div>
         </div>
       </div>
@@ -336,7 +336,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
         <div class="ps-n">2</div>
         <div class="ps-c">
           <div class="ps-t">Fetch weather</div>
-          <div class="ps-d">Open-Meteo: temp, rain, wind, UV</div>
+          <div class="ps-d">Open-Meteo API</div>
           <div class="ps-tag t-api">open-meteo.com</div>
         </div>
       </div>
@@ -344,7 +344,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
         <div class="ps-n">3</div>
         <div class="ps-c">
           <div class="ps-t">Count nearby users</div>
-          <div class="ps-d">Haversine filter on push subscribers</div>
+          <div class="ps-d">Haversine on subscribers</div>
           <div class="ps-tag t-api">Haversine</div>
         </div>
       </div>
@@ -352,7 +352,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
         <div class="ps-n">4</div>
         <div class="ps-c">
           <div class="ps-t">AI picks menu item</div>
-          <div class="ps-d">Cold = hot drinks, hot = iced drinks</div>
+          <div class="ps-d">Weather-aware menu scoring</div>
           <div class="ps-tag t-ai">Llama 3.3 70B</div>
         </div>
       </div>
@@ -368,7 +368,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
         <div class="ps-n">6</div>
         <div class="ps-c">
           <div class="ps-t">AI writes notification</div>
-          <div class="ps-d">"Sound like a friend" &mdash; 12 words max</div>
+          <div class="ps-d">12 words, personal tone</div>
           <div class="ps-tag t-ai">Groq LLM</div>
         </div>
       </div>
@@ -376,7 +376,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
         <div class="ps-n">7</div>
         <div class="ps-c">
           <div class="ps-t">Push to all nearby</div>
-          <div class="ps-d">Full payload: item, price, discount, location</div>
+          <div class="ps-d">Full offer payload via VAPID</div>
           <div class="ps-tag t-push">VAPID push</div>
         </div>
       </div>
@@ -394,29 +394,29 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
     <div class="s-title">Vision AI + <span class="a">passes</span></div>
     <div class="s-sub">AI onboarding &amp; native wallet delivery</div>
     <div class="s-cue">
-      <strong>Say:</strong> "Merchants just photograph their menu &mdash; GPT-4o Vision extracts every item and price as structured JSON. And we don't just show a QR code &mdash; we generate real Apple Wallet .pkpass files with geofence coordinates. Walk near the cafe, it pops up on your lock screen. Same for Google Wallet via JWT."
+      <strong>Say:</strong> "Photo of menu &rarr; GPT-4o extracts items as JSON. Offers deliver as real Apple .pkpass and Google JWT with geofencing. Walk near the cafe, lock screen pops."
     </div>
   </div>
   <div class="s-right">
     <div class="feat">
       <div class="fc" data-delay="0">
         <div class="fc-h"><span>&#128247;</span><b>Menu Parsing</b></div>
-        <div class="fc-b">Photo of printed menu &rarr; GPT-4o Vision &rarr; structured JSON. Zero manual entry.</div>
+        <div class="fc-b">Photo &rarr; GPT-4o Vision &rarr; JSON. Zero manual entry.</div>
         <div class="fc-c c1">POST /api/merchant/parse-menu<br>&rarr; [{"name":"Cappuccino","price":3.50}]</div>
       </div>
       <div class="fc" data-delay="120">
         <div class="fc-h"><span>&#63743;</span><b>Apple Wallet .pkpass</b></div>
-        <div class="fc-b">Signed ZIP with pass.json, manifest, geofence locations. Lock-screen popup at ~100m.</div>
+        <div class="fc-b">Signed ZIP + geofence. Lock-screen at ~100m.</div>
         <div class="fc-c c3">"locations":[{"lat":48.16,"lng":11.58}]<br>&rarr; iOS lock-screen near cafe</div>
       </div>
       <div class="fc" data-delay="60">
         <div class="fc-h"><span>&#127776;</span><b>AI Reasoning</b></div>
-        <div class="fc-b">Every offer shows why: which item, why that discount, what signals. Full transparency.</div>
+        <div class="fc-b">Every offer explains why. Full transparency.</div>
         <div class="fc-c c2">"Picked Hot Chocolate: cold + rainy.<br>Set 28% off: dead hours + rain."</div>
       </div>
       <div class="fc" data-delay="180">
         <div class="fc-h"><span>&#129302;</span><b>Google Wallet JWT</b></div>
-        <div class="fc-b">JWT-encoded pass, no file download. Android surfaces it at the geofence location.</div>
+        <div class="fc-b">JWT pass, no download. Android surfaces at geofence.</div>
         <div class="fc-c c4">JWT &rarr; pay.google.com/gp/v/save/{jwt}<br>&rarr; Android lock-screen at geofence</div>
       </div>
     </div>
@@ -447,7 +447,7 @@ html,body{font-family:var(--sans);background:var(--bg);color:var(--ink);
     </div>
     <div class="s5-badge" id="badge">Zero tracking &middot; Real AI &middot; Real wallet passes &middot; City Wallet</div>
     <div class="s-cue" style="max-width:600px;text-align:center;margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
-      <strong>Say:</strong> "PWA, on-device scoring, Groq and GPT-4o, real weather, Web Push, native wallet passes, Flask on Vercel, GDPR by design. Zero tracking. Real AI. City Wallet."
+      <strong>Say:</strong> "Zero tracking. Real AI. Real wallet passes. GDPR by design. City Wallet."
     </div>
   </div>
 </div>
