@@ -268,6 +268,10 @@ def parse_menu():
                 "temperature":0.1
             }, timeout=30)
         result = resp.json()
+        if "error" in result:
+            return jsonify({"error": result["error"].get("message", str(result["error"]))}), 400
+        if "choices" not in result or not result["choices"]:
+            return jsonify({"error": "OpenAI returned no result. Try a clearer photo."}), 400
         text = result["choices"][0]["message"]["content"].strip()
         # Clean up: remove markdown code fences if present
         if text.startswith("```"): text = text.split("\n",1)[1] if "\n" in text else text[3:]
@@ -551,7 +555,8 @@ def qr():
 def health():
     return jsonify({"status":"ok","version":"8.0-quiet-hour-filler","cafes":len(RAW_CAFES),
         "subs":len(PUSH_SUBS),"merchants":len(MERCHANTS),"fills":len(FILLS),
-        "groq": "connected" if GROQ_KEY else "fallback"})
+        "groq": "connected" if GROQ_KEY else "fallback",
+        "openai": "configured" if OPENAI_KEY else "NOT SET"})
 
 @app.route("/api/optin",methods=["POST"])
 def optin():return jsonify({"ok":True})
