@@ -2,8 +2,12 @@ __pycache__/
 *.pyc
 .env
 node_modules/
-server/certs/*.pem
-server/certs/*.json
-server/passes/
 .vercel/
 *.pkpass
+server/
+public/
+REVIEW.md
+storyboard.md
+package.json
+ledger.html
+.claude/
