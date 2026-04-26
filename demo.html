@@ -3,221 +3,223 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>City Wallet · Interactive Demo</title>
+<title>City Wallet</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#F5F3EE;--surface:#fff;--ink:#111;--ink2:#444;--ink3:#777;--ink4:#aaa;--brand:#C4501C;--brand-soft:rgba(196,80,28,.07);
-  --green:#1A7A3D;--green-soft:rgba(26,122,61,.07);--border:#E8E5DE;--radius:16px;--shadow:0 4px 24px rgba(0,0,0,.06)}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+:root{--bg:#0A0A08;--surface:#151513;--surface2:#1E1E1B;--ink:#F5F4F0;--ink2:#B8B6AE;--ink3:#7A786F;
+  --brand:#C4501C;--brand2:#E06830;--brand-glow:rgba(196,80,28,.15);
+  --green:#2ECC71;--border:rgba(255,255,255,.06)}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* Subtle bg glow */
+body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:600px;
+  background:radial-gradient(ellipse,var(--brand-glow),transparent 70%);pointer-events:none;z-index:0}
+
+.wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 40px}
 
 /* Nav */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(245,243,238,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border);padding:14px 32px;display:flex;justify-content:space-between;align-items:center}
-.nav-brand{font-family:'Fraunces',serif;font-size:18px;font-weight:500}
+.nav{padding:20px 0;display:flex;justify-content:space-between;align-items:center}
+.nav-brand{font-family:'Fraunces',serif;font-size:18px;font-weight:500;color:var(--ink)}
 .nav-brand em{font-style:italic;color:var(--brand)}
-.nav-links{display:flex;gap:8px}
-.nav-links a{font-size:12px;font-weight:600;padding:8px 16px;border-radius:8px;text-decoration:none;color:var(--ink2);border:1px solid var(--border);background:var(--surface);transition:all .15s}
-.nav-links a:hover{border-color:var(--brand);color:var(--brand)}
-.nav-links a.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.nav-r{display:flex;gap:8px}
+.nav-r a{font-size:12px;font-weight:600;padding:8px 16px;border-radius:8px;text-decoration:none;
+  color:var(--ink2);border:1px solid var(--border);transition:all .15s}
+.nav-r a:hover{border-color:var(--brand);color:var(--brand)}
+.nav-r a.fill{background:var(--brand);color:#fff;border-color:var(--brand)}
 
 /* Hero */
-.hero{padding:100px 32px 60px;text-align:center;max-width:720px;margin:0 auto}
-.hero h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,52px);font-weight:500;letter-spacing:-.03em;line-height:1.1;margin-bottom:12px}
+.hero{padding:80px 0 48px;text-align:center}
+.hero-eyebrow{font-size:11px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.16em;margin-bottom:16px}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(36px,5.5vw,60px);font-weight:500;letter-spacing:-.04em;line-height:1.05;margin-bottom:14px}
 .hero h1 em{font-style:italic;color:var(--brand)}
-.hero p{font-size:17px;color:var(--ink3);line-height:1.6;max-width:520px;margin:0 auto 32px}
-.hero-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
-.hero-tag{font-size:12px;font-weight:600;padding:6px 14px;border-radius:99px;background:var(--surface);border:1px solid var(--border);color:var(--ink3)}
-.hero-tag.active{background:var(--brand-soft);border-color:transparent;color:var(--brand)}
+.hero p{font-size:17px;color:var(--ink3);line-height:1.65;max-width:480px;margin:0 auto}
 
-/* Steps */
-.steps{max-width:1100px;margin:0 auto;padding:0 32px 80px}
-.step{display:flex;gap:48px;align-items:center;padding:60px 0;border-bottom:1px solid var(--border)}
-.step:last-child{border-bottom:none}
-.step.reverse{flex-direction:row-reverse}
-.step-text{flex:1;min-width:0}
-.step-num{font-family:'Fraunces',serif;font-size:64px;font-weight:400;font-style:italic;color:var(--brand);opacity:.2;line-height:1;margin-bottom:8px}
-.step-title{font-family:'Fraunces',serif;font-size:28px;font-weight:500;letter-spacing:-.02em;margin-bottom:8px;line-height:1.2}
-.step-desc{font-size:15px;color:var(--ink3);line-height:1.65;margin-bottom:16px;max-width:400px}
-.step-detail{display:flex;flex-direction:column;gap:8px}
-.step-detail-item{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink2);line-height:1.5}
-.step-detail-item .sdi{width:24px;height:24px;border-radius:6px;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
-.step-phone{flex-shrink:0}
+/* The stage — both phones side by side */
+.stage{padding:56px 0;display:flex;justify-content:center;gap:32px;align-items:flex-start;position:relative}
+.stage::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:200px;height:200px;background:radial-gradient(circle,var(--brand-glow),transparent);pointer-events:none}
 
-/* Phone mockup */
-.phone{width:300px;height:610px;border-radius:40px;background:#111;padding:12px;
-  box-shadow:0 20px 60px rgba(0,0,0,.1),0 8px 20px rgba(0,0,0,.06),inset 0 0 0 1.5px #333;position:relative}
-.phone::before{content:'';position:absolute;top:12px;left:50%;transform:translateX(-50%);
-  width:80px;height:24px;background:#1a1a1a;border-radius:12px;z-index:10}
-.phone iframe{width:100%;height:100%;border:none;border-radius:30px;background:#FAFAF7}
+.phone-wrap{text-align:center}
+.phone-label{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+.phone{width:280px;height:580px;border-radius:36px;background:#111;padding:10px;
+  box-shadow:0 24px 80px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.06);position:relative;transition:transform .3s}
+.phone:hover{transform:translateY(-4px)}
+.phone::before{content:'';position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  width:72px;height:22px;background:#1a1a1a;border-radius:11px;z-index:10}
+.phone iframe{width:100%;height:100%;border:none;border-radius:28px;background:#FAFAF7}
 
-/* Section dividers */
-.section-divider{text-align:center;padding:48px 32px 24px}
-.sd-label{font-size:12px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px}
-.sd-title{font-family:'Fraunces',serif;font-size:32px;font-weight:500;letter-spacing:-.02em}
+/* Flow connector */
+.connector{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:0 16px;align-self:center}
+.connector .arrow{font-size:28px;color:var(--brand);animation:pulse 2s infinite}
+.connector .label{font-size:10px;color:var(--ink3);font-weight:600;text-transform:uppercase;letter-spacing:.08em;writing-mode:vertical-rl;text-orientation:mixed}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* Footer */
-.footer{text-align:center;padding:48px 32px;border-top:1px solid var(--border)}
-.footer p{font-size:13px;color:var(--ink4)}
-.footer a{color:var(--brand);text-decoration:none;font-weight:600}
+/* Story sections */
+.story{padding:48px 0;border-top:1px solid var(--border)}
+.story-label{font-size:11px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.14em;margin-bottom:20px}
+.story-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.story-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px 20px;transition:border-color .2s}
+.story-card:hover{border-color:rgba(196,80,28,.3)}
+.sc-num{font-family:'Fraunces',serif;font-size:40px;font-style:italic;font-weight:400;color:var(--brand);opacity:.25;line-height:1;margin-bottom:8px}
+.sc-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.sc-desc{font-size:13px;color:var(--ink3);line-height:1.55}
+.sc-tag{display:inline-block;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;margin-top:8px;
+  background:var(--brand-glow);color:var(--brand);text-transform:uppercase;letter-spacing:.04em}
+
+/* Formula */
+.formula{margin-top:48px;padding:32px 0;border-top:1px solid var(--border)}
+.formula-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:600px;margin:0 auto}
+.formula-box h3{font-family:'Fraunces',serif;font-size:20px;font-weight:500;margin-bottom:16px;text-align:center}
+.formula-code{font-family:'SF Mono','Fira Code',monospace;font-size:13px;line-height:2;color:var(--ink2);background:var(--surface2);
+  border-radius:10px;padding:20px 24px;border:1px solid var(--border)}
+.formula-code .op{color:var(--brand);font-weight:700}
+.formula-code .comment{color:var(--ink3);font-style:italic}
+.formula-examples{display:flex;gap:12px;margin-top:16px;justify-content:center}
+.formula-ex{background:var(--surface2);border-radius:8px;padding:12px 16px;text-align:center;flex:1}
+.formula-ex .val{font-size:22px;font-weight:800;color:var(--brand)}
+.formula-ex .ctx{font-size:11px;color:var(--ink3);margin-top:2px}
 
 /* Videos */
-.videos{max-width:800px;margin:0 auto;padding:0 32px 60px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
-.video-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;flex:1;min-width:200px;max-width:250px}
-.video-card .vc-icon{font-size:32px;margin-bottom:8px}
-.video-card .vc-title{font-size:14px;font-weight:700;margin-bottom:4px}
-.video-card .vc-link{font-size:12px;color:var(--brand);font-weight:600;text-decoration:none}
+.vids{padding:48px 0;border-top:1px solid var(--border);display:flex;gap:16px;justify-content:center}
+.vid{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 24px;text-align:center;flex:1;max-width:220px;transition:border-color .2s}
+.vid:hover{border-color:rgba(196,80,28,.3)}
+.vid .vi{font-size:28px;margin-bottom:6px}
+.vid .vt{font-size:13px;font-weight:700;margin-bottom:4px}
+.vid a{font-size:12px;color:var(--brand);font-weight:600;text-decoration:none}
 
-/* CTA */
-.cta-bar{text-align:center;padding:40px 32px 60px}
-.cta-bar a{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:700;padding:14px 32px;
-  border-radius:12px;text-decoration:none;transition:all .15s}
-.cta-bar a:active{transform:scale(.97)}
-.cta-primary{background:var(--ink);color:#fff;margin-right:12px}
-.cta-outline{background:var(--surface);color:var(--ink);border:1.5px solid var(--border)}
+/* Footer */
+.foot{padding:40px 0;text-align:center;border-top:1px solid var(--border);font-size:12px;color:var(--ink3)}
+.foot a{color:var(--brand);text-decoration:none;font-weight:600}
 
 @media(max-width:900px){
-  .step{flex-direction:column!important;gap:32px;text-align:center}
-  .step-desc{max-width:none}
-  .step-detail{align-items:center}
+  .wrap{padding:0 20px}
+  .stage{flex-direction:column;align-items:center;gap:24px}
+  .connector{flex-direction:row;writing-mode:horizontal-tb;padding:8px 0}
+  .connector .label{writing-mode:horizontal-tb}
   .phone{width:260px;height:530px}
-  .hero h1{font-size:32px}
-  .nav{padding:12px 16px}.nav-links a{font-size:11px;padding:6px 12px}
+  .story-grid{grid-template-columns:1fr}
+  .formula-examples{flex-direction:column}
+  .vids{flex-direction:column;align-items:center}
 }
 </style>
 </head>
 <body>
 
+<div class="wrap">
+
 <div class="nav">
   <div class="nav-brand">City <em>Wallet</em></div>
-  <div class="nav-links">
+  <div class="nav-r">
     <a href="https://github.com/geartprogrammer/HACKNATION" target="_blank">GitHub</a>
-    <a href="/src/client/app.html" class="primary" target="_blank">Try it ↗</a>
+    <a href="/src/client/app.html" target="_blank" class="fill">Open app ↗</a>
   </div>
 </div>
 
 <!-- HERO -->
 <div class="hero">
+  <div class="hero-eyebrow">HackNation 2026 · DSV Gruppe</div>
   <h1>The cafe is empty.<br>The AI <em>fills it.</em></h1>
-  <p>One button for the merchant. One notification for the customer. The AI decides what to sell, how much to discount, and who to send it to.</p>
-  <div class="hero-tags">
-    <div class="hero-tag active">Live weather</div>
-    <div class="hero-tag active">815 Munich cafes</div>
-    <div class="hero-tag active">Payone data</div>
-    <div class="hero-tag">GPT-4o Vision</div>
-    <div class="hero-tag">Web Push</div>
-    <div class="hero-tag">GDPR compliant</div>
+  <p>One button for the merchant. One notification for the customer. Everything in between is AI.</p>
+</div>
+
+<!-- THE STAGE: both phones live -->
+<div class="stage">
+  <div class="phone-wrap">
+    <div class="phone-label">Merchant taps one button</div>
+    <div class="phone"><iframe src="/src/client/merchant.html"></iframe></div>
+  </div>
+  <div class="connector">
+    <div class="label">AI</div>
+    <div class="arrow">→</div>
+    <div class="label">generates</div>
+  </div>
+  <div class="phone-wrap">
+    <div class="phone-label">Customer gets the deal</div>
+    <div class="phone"><iframe src="/src/client/app.html"></iframe></div>
   </div>
 </div>
 
-<!-- MERCHANT FLOW -->
-<div class="section-divider">
-  <div class="sd-label">Merchant side</div>
-  <div class="sd-title">Three steps. Then one button forever.</div>
-</div>
-
-<div class="steps">
-  <div class="step">
-    <div class="step-text">
-      <div class="step-num">01</div>
-      <div class="step-title">Photo your menu</div>
-      <div class="step-desc">Take a picture of your menu board or price list. GPT-4o Vision reads every item and price automatically. No typing.</div>
-      <div class="step-detail">
-        <div class="step-detail-item"><div class="sdi">📸</div>Snap a photo from the app</div>
-        <div class="step-detail-item"><div class="sdi">🧠</div>AI extracts items + prices in seconds</div>
-        <div class="step-detail-item"><div class="sdi">✓</div>Review and confirm — done</div>
-      </div>
+<!-- MERCHANT STORY -->
+<div class="story">
+  <div class="story-label">How the merchant sees it</div>
+  <div class="story-grid">
+    <div class="story-card">
+      <div class="sc-num">1</div>
+      <div class="sc-title">Photo your menu</div>
+      <div class="sc-desc">Take a picture. GPT-4o reads every item and price. No typing.</div>
+      <div class="sc-tag">GPT-4o Vision</div>
     </div>
-    <div class="step-phone"><div class="phone"><iframe src="/src/client/merchant.html"></iframe></div></div>
-  </div>
-
-  <div class="step reverse">
-    <div class="step-text">
-      <div class="step-num">02</div>
-      <div class="step-title">Set your limits</div>
-      <div class="step-desc">Daily budget, quiet hours, max discount. The AI will never exceed these. You stay in control, the AI handles execution.</div>
-      <div class="step-detail">
-        <div class="step-detail-item"><div class="sdi">💶</div>Budget: €20/day (you decide)</div>
-        <div class="step-detail-item"><div class="sdi">🕐</div>Quiet hours: 2pm–5pm</div>
-        <div class="step-detail-item"><div class="sdi">📊</div>Max discount: 30%</div>
-      </div>
+    <div class="story-card">
+      <div class="sc-num">2</div>
+      <div class="sc-title">Set your limits</div>
+      <div class="sc-desc">Daily budget €20. Quiet hours 2–5pm. Max discount 30%. Done.</div>
+      <div class="sc-tag">One-time setup</div>
     </div>
-    <div class="step-phone"><div class="phone"><iframe src="/src/client/merchant.html"></iframe></div></div>
-  </div>
-
-  <div class="step">
-    <div class="step-text">
-      <div class="step-num">03</div>
-      <div class="step-title">Tap "Fill my seats"</div>
-      <div class="step-desc">One tap. The AI checks the weather, counts nearby users, picks the best item, sets the discount, writes a personalized notification, and sends it. You watch customers walk in.</div>
-      <div class="step-detail">
-        <div class="step-detail-item"><div class="sdi">🌧</div>AI checks weather (Open-Meteo live)</div>
-        <div class="step-detail-item"><div class="sdi">📉</div>AI checks demand (Payone simulation)</div>
-        <div class="step-detail-item"><div class="sdi">☕</div>AI picks: Cappuccino, 22% off, €2.73</div>
-        <div class="step-detail-item"><div class="sdi">🔔</div>Notification sent to nearby users</div>
-      </div>
+    <div class="story-card">
+      <div class="sc-num">3</div>
+      <div class="sc-title">Tap "Fill my seats"</div>
+      <div class="sc-desc">AI picks the item, sets the price, writes the message, sends it. You watch customers walk in.</div>
+      <div class="sc-tag">One button</div>
     </div>
-    <div class="step-phone"><div class="phone"><iframe src="/src/client/merchant.html"></iframe></div></div>
   </div>
 </div>
 
-<!-- USER FLOW -->
-<div class="section-divider">
-  <div class="sd-label">User side</div>
-  <div class="sd-title">You do nothing. The deal finds you.</div>
+<!-- USER STORY -->
+<div class="story">
+  <div class="story-label">How the customer sees it</div>
+  <div class="story-grid">
+    <div class="story-card">
+      <div class="sc-num">1</div>
+      <div class="sc-title">Notification arrives</div>
+      <div class="sc-desc">"☕ Cappuccino €2.62 at Café Riese." Generated for this weather, this time, these empty seats.</div>
+      <div class="sc-tag">Push notification</div>
+    </div>
+    <div class="story-card">
+      <div class="sc-num">2</div>
+      <div class="sc-title">See the deal</div>
+      <div class="sc-desc">Original price crossed out. New price. Savings. Countdown timer. Map to the cafe.</div>
+      <div class="sc-tag">3-second comprehension</div>
+    </div>
+    <div class="story-card">
+      <div class="sc-num">3</div>
+      <div class="sc-title">Swipe. Done.</div>
+      <div class="sc-desc">Walk in. Swipe to confirm. Cashback credited. No QR codes. No scanning.</div>
+      <div class="sc-tag">Swipe to verify</div>
+    </div>
+  </div>
 </div>
 
-<div class="steps">
-  <div class="step reverse">
-    <div class="step-text">
-      <div class="step-num">04</div>
-      <div class="step-title">A notification arrives</div>
-      <div class="step-desc">Your phone buzzes. "☕ Cappuccino €2.62 at Café Riese." Not a generic coupon — this was generated for this weather, this time, this cafe's empty seats, and your location.</div>
-      <div class="step-detail">
-        <div class="step-detail-item"><div class="sdi">📍</div>You're within walking distance</div>
-        <div class="step-detail-item"><div class="sdi">🌡</div>It's cold — the AI picked a hot drink</div>
-        <div class="step-detail-item"><div class="sdi">⏱</div>Countdown starts — walk time + 2 min</div>
-      </div>
+<!-- FORMULA -->
+<div class="formula">
+  <div class="formula-box">
+    <h3>The AI decides the discount</h3>
+    <div class="formula-code">
+      base <span class="op">=</span> 12%<br>
+      <span class="op">+</span> rain &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="op">→</span> +6% &nbsp;<span class="comment">// Open-Meteo live</span><br>
+      <span class="op">+</span> cold &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="op">→</span> +4% &nbsp;<span class="comment">// temperature &lt; 12°C</span><br>
+      <span class="op">+</span> quiet &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="op">→</span> +5% &nbsp;<span class="comment">// Payone tx &lt; 6/hr</span><br>
+      <span class="op">+</span> dead hour &nbsp;<span class="op">→</span> +3% &nbsp;<span class="comment">// 2pm–5pm</span><br>
+      <span class="op">=</span> capped at merchant max
     </div>
-    <div class="step-phone"><div class="phone"><iframe src="/src/client/app.html"></iframe></div></div>
-  </div>
-
-  <div class="step">
-    <div class="step-text">
-      <div class="step-num">05</div>
-      <div class="step-title">Walk in. Swipe. Done.</div>
-      <div class="step-desc">Tap the notification. See the deal — original price crossed out, new price, savings, map directions. Walk to the cafe. Swipe to confirm you arrived. Cashback credited instantly.</div>
-      <div class="step-detail">
-        <div class="step-detail-item"><div class="sdi">💰</div>Cashback credited to your savings</div>
-        <div class="step-detail-item"><div class="sdi">🚫</div>No QR codes, no scanning</div>
-        <div class="step-detail-item"><div class="sdi">🔒</div>No account needed, no tracking</div>
-      </div>
+    <div class="formula-examples">
+      <div class="formula-ex"><div class="val">26%</div><div class="ctx">Rainy Tuesday 3pm, empty cafe</div></div>
+      <div class="formula-ex"><div class="val">12%</div><div class="ctx">Sunny Saturday, cafe is busy</div></div>
     </div>
-    <div class="step-phone"><div class="phone"><iframe src="/src/client/app.html"></iframe></div></div>
   </div>
 </div>
 
 <!-- VIDEOS -->
-<div class="section-divider">
-  <div class="sd-label">See it in action</div>
-  <div class="sd-title">Demo videos</div>
+<div class="vids">
+  <div class="vid"><div class="vi">🏪</div><div class="vt">Merchant</div><a href="#" id="vid1">Watch →</a></div>
+  <div class="vid"><div class="vi">📱</div><div class="vt">User</div><a href="#" id="vid2">Watch →</a></div>
+  <div class="vid"><div class="vi">🔄</div><div class="vt">End-to-end</div><a href="#" id="vid3">Watch →</a></div>
 </div>
 
-<div class="videos">
-  <div class="video-card"><div class="vc-icon">🏪</div><div class="vc-title">Merchant flow</div><a class="vc-link" href="#" id="vid1">Watch video →</a></div>
-  <div class="video-card"><div class="vc-icon">📱</div><div class="vc-title">User flow</div><a class="vc-link" href="#" id="vid2">Watch video →</a></div>
-  <div class="video-card"><div class="vc-icon">🔄</div><div class="vc-title">Full end-to-end</div><a class="vc-link" href="#" id="vid3">Watch video →</a></div>
+<div class="foot">
+  HackNation 2026 · DSV Gruppe Challenge 01 · 815 Munich cafes · Built in 24h · <a href="https://github.com/geartprogrammer/HACKNATION">GitHub</a>
 </div>
 
-<!-- CTA -->
-<div class="cta-bar">
-  <a href="/src/client/app.html" target="_blank" class="cta-primary">Try the user app ↗</a>
-  <a href="/src/client/merchant.html" target="_blank" class="cta-outline">Try the merchant app ↗</a>
 </div>
-
-<div class="footer">
-  <p>HackNation 2026 · DSV Gruppe Challenge 01 · <a href="https://github.com/geartprogrammer/HACKNATION">GitHub</a></p>
-</div>
-
 </body>
 </html>
