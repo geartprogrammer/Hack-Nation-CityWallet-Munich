@@ -5,28 +5,31 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#faf6ef">
 <title>Merchant · City Wallet</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{--bg:#faf6ef;--bg2:#f0ebe2;--card:#fff;--ink:#181510;--ink2:#504b42;--dim:#928b7f;--dim2:#c4bdb0;
-  --primary:#bf5a1b;--primary2:#d9722f;--primary-soft:rgba(191,90,27,.07);
-  --green:#2b7d42;--green-soft:rgba(43,125,66,.07);--red:#c0392b;--red-soft:rgba(192,57,43,.07);
-  --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px)}
-html,body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
+:root{--bg:#FAFAF7;--bg2:#F2F0EB;--bg3:#E8E5DE;--card:#FFFFFF;--ink:#111110;--ink2:#3D3D3A;--dim:#6B6B65;--dim2:#9C9C94;
+  --primary:#C4501C;--primary2:#D4632E;--primary-soft:rgba(196,80,28,.06);--primary-med:rgba(196,80,28,.12);
+  --green:#1A7A3D;--green-soft:rgba(26,122,61,.06);--red:#B91C1C;--red-soft:rgba(185,28,28,.06);
+  --shadow-sm:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.02);
+  --shadow-md:0 4px 16px rgba(0,0,0,.05),0 1px 3px rgba(0,0,0,.03);
+  --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);
+  --font-sans:'Inter',system-ui,sans-serif;--font-serif:'Fraunces',Georgia,serif}
+html,body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.5}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes spin{to{transform:rotate(360deg)}}
 .screen{display:none;min-height:100vh;flex-direction:column}.screen.active{display:flex}
 .btn{width:100%;padding:15px;border-radius:14px;font-size:15px;font-weight:700;border:none;cursor:pointer}
 .btn:active{transform:scale(.97)}.btn-dark{background:var(--ink);color:#fff}
-.btn-fill{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-size:18px;font-weight:900;
-  padding:20px;border-radius:18px;box-shadow:0 6px 24px rgba(191,90,27,.2)}
+.btn-fill{background:var(--primary);color:#fff;font-size:17px;font-weight:700;
+  padding:20px;border-radius:14px;box-shadow:0 4px 16px rgba(196,80,28,.2)}
 .btn-outline{background:var(--card);border:1px solid var(--bg2);color:var(--ink)}.btn-save{background:var(--green);color:#fff}
 .btn-sm{padding:10px;font-size:13px}
 input,select{width:100%;padding:13px;border:1px solid var(--bg2);border-radius:14px;font-size:14px;background:var(--card);font-family:inherit}
 input:focus,select:focus{border-color:var(--primary);outline:none}
 .hdr{padding:14px 20px;padding-top:calc(14px + var(--safe-t));display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bg2)}
-.hdr h1{font-size:15px;font-weight:700}.hdr h1 em{color:var(--primary);font-style:normal}
+.hdr h1{font-family:var(--font-serif);font-size:17px;font-weight:500}.hdr h1 em{color:var(--primary);font-style:italic}
 .tabs{display:flex;padding:8px 16px;gap:4px}
 .tab{flex:1;padding:10px 4px;text-align:center;font-size:11px;font-weight:700;border-radius:12px;cursor:pointer;background:var(--card);border:1px solid var(--bg2);color:var(--dim)}
 .tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -95,7 +98,7 @@ input:focus,select:focus{border-color:var(--primary);outline:none}
 <div id="s-login" class="screen active">
   <div class="ob-wrap">
     <div style="font-size:44px;margin-bottom:12px">🏪</div>
-    <h2 style="font-size:22px;font-weight:900;margin-bottom:4px">City Wallet Merchant</h2>
+    <h2 style="font-family:var(--font-serif);font-size:24px;font-weight:500;margin-bottom:4px">City <em style="font-style:italic;color:var(--primary)">Wallet</em> for Merchants</h2>
     <p style="font-size:13px;color:var(--dim);margin-bottom:20px;line-height:1.5">One button fills your quiet hours. The AI does the rest.</p>
     <div class="field"><label>Cafe name</label><input id="lN" placeholder="e.g. Café Riese"></div>
     <div class="field"><label>4-digit PIN</label><input id="lP" type="password" maxlength="6" placeholder="1234" inputmode="numeric"></div>
