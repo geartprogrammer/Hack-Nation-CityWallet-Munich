@@ -15,6 +15,7 @@ VAPID_PRIVATE = "S4CJhFVaTuaErh2yEYKy53QmJNMZARuV0eyxqLFxcvc"
 VAPID_EMAIL = "mailto:citywallet@hacknation.dev"
 SECRET = "cw-final-2026"
 GROQ_KEY = os.environ.get("GROQ_API_KEY", "")
+OPENAI_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 CAFES_PATH = Path(__file__).parent / "munich_cafes.json"
 RAW_CAFES = json.loads(CAFES_PATH.read_text(encoding="utf-8")) if CAFES_PATH.exists() else []
@@ -240,6 +241,46 @@ def set_budget():
     if "max_discount" in d: m["max_discount"] = int(d["max_discount"])
     return jsonify({"ok":True,"budget":m.get("budget",20),"quiet_start":m.get("quiet_start","14:00"),
         "quiet_end":m.get("quiet_end","17:00"),"max_discount":m.get("max_discount",30)})
+
+@app.route("/api/merchant/parse-menu", methods=["POST"])
+def parse_menu():
+    """Upload a menu photo → OpenAI Vision extracts items + prices."""
+    mid, m = _auth()
+    if not m: return jsonify({"error":"Unauthorized"}),401
+    if not OPENAI_KEY: return jsonify({"error":"OpenAI API key not configured"}),500
+    d = request.get_json(force=True)
+    image_b64 = d.get("image","")
+    if not image_b64: return jsonify({"error":"No image provided"}),400
+    try:
+        import requests as rq
+        resp = rq.post("https://api.openai.com/v1/chat/completions",
+            headers={"Authorization":f"Bearer {OPENAI_KEY}","Content-Type":"application/json"},
+            json={
+                "model":"gpt-4o",
+                "messages":[
+                    {"role":"system","content":"You extract menu items from cafe/restaurant menu photos. Return ONLY valid JSON array. Each item: {\"name\":\"Item name\",\"price\":3.50}. Extract every item with a visible price. No markdown, no explanation, just the JSON array."},
+                    {"role":"user","content":[
+                        {"type":"text","text":"Extract all menu items and prices from this menu photo. Return JSON array only."},
+                        {"type":"image_url","image_url":{"url":f"data:image/jpeg;base64,{image_b64}","detail":"high"}}
+                    ]}
+                ],
+                "max_tokens":1000,
+                "temperature":0.1
+            }, timeout=30)
+        result = resp.json()
+        text = result["choices"][0]["message"]["content"].strip()
+        # Clean up: remove markdown code fences if present
+        if text.startswith("```"): text = text.split("\n",1)[1] if "\n" in text else text[3:]
+        if text.endswith("```"): text = text[:-3]
+        if text.startswith("json"): text = text[4:]
+        items = json.loads(text.strip())
+        # Validate
+        clean = [{"name":str(i.get("name","")),"price":round(float(i.get("price",0)),2)} for i in items if i.get("name") and i.get("price")]
+        # Save to merchant
+        m["menu"] = clean
+        return jsonify({"items":clean,"count":len(clean)})
+    except Exception as e:
+        return jsonify({"error":str(e)}),500
 
 @app.route("/api/merchant/menu", methods=["POST"])
 def update_menu():
