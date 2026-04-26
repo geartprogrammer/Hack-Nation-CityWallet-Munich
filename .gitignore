@@ -3,11 +3,14 @@ __pycache__/
 .env
 node_modules/
 .vercel/
+.claude/
 *.pkpass
+
+# Old files (migrated to src/)
 server/
 public/
 REVIEW.md
 storyboard.md
 package.json
 ledger.html
-.claude/
+pitch.html

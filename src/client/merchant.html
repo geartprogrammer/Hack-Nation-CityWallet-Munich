@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#faf6ef">
+<title>Merchant · City Wallet</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#FAFAF7;--bg2:#F2F0EB;--bg3:#E8E5DE;--card:#FFFFFF;--ink:#111110;--ink2:#3D3D3A;--dim:#6B6B65;--dim2:#9C9C94;
+  --primary:#C4501C;--primary2:#D4632E;--primary-soft:rgba(196,80,28,.06);--primary-med:rgba(196,80,28,.12);
+  --green:#1A7A3D;--green-soft:rgba(26,122,61,.06);--red:#B91C1C;--red-soft:rgba(185,28,28,.06);
+  --shadow-sm:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.02);
+  --shadow-md:0 4px 16px rgba(0,0,0,.05),0 1px 3px rgba(0,0,0,.03);
+  --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);
+  --font-sans:'Inter',system-ui,sans-serif;--font-serif:'Fraunces',Georgia,serif}
+html,body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.5}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.screen{display:none;min-height:100vh;flex-direction:column}.screen.active{display:flex}
+.btn{width:100%;padding:15px;border-radius:14px;font-size:15px;font-weight:700;border:none;cursor:pointer}
+.btn:active{transform:scale(.97)}.btn-dark{background:var(--ink);color:#fff}
+.btn-fill{background:var(--primary);color:#fff;font-size:17px;font-weight:700;
+  padding:20px;border-radius:14px;box-shadow:0 4px 16px rgba(196,80,28,.2)}
+.btn-outline{background:var(--card);border:1px solid var(--bg2);color:var(--ink)}.btn-save{background:var(--green);color:#fff}
+.btn-sm{padding:10px;font-size:13px}
+input,select{width:100%;padding:13px;border:1px solid var(--bg2);border-radius:14px;font-size:14px;background:var(--card);font-family:inherit}
+input:focus,select:focus{border-color:var(--primary);outline:none}
+.hdr{padding:14px 20px;padding-top:calc(14px + var(--safe-t));display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bg2)}
+.hdr h1{font-family:var(--font-serif);font-size:17px;font-weight:500}.hdr h1 em{color:var(--primary);font-style:italic}
+.tabs{display:flex;padding:8px 16px;gap:4px}
+.tab{flex:1;padding:10px 4px;text-align:center;font-size:11px;font-weight:700;border-radius:12px;cursor:pointer;background:var(--card);border:1px solid var(--bg2);color:var(--dim)}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.panel{display:none;padding:16px 20px;padding-bottom:calc(20px + var(--safe-b))}.panel.on{display:block}
+.field{margin-bottom:12px}.field label{display:block;font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.msg{padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;margin-top:8px;display:none}
+.msg.show{display:block;background:var(--green-soft);color:var(--green)}
+.msg.err{display:block;background:var(--red-soft);color:var(--red)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.spinner-sm{display:inline-block;width:16px;height:16px;border:2px solid var(--bg2);border-top-color:var(--primary);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}
+
+/* Onboarding */
+.ob-wrap{padding:0 28px;flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;max-width:400px;margin:0 auto}
+.ob-step{font-size:11px;color:var(--primary);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+
+/* Photo upload */
+.upload-zone{width:100%;aspect-ratio:4/3;max-width:320px;border:2px dashed var(--bg2);border-radius:16px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;cursor:pointer;margin:0 auto 16px;background:var(--card);transition:border-color .2s;position:relative;overflow:hidden}
+.upload-zone:active{border-color:var(--primary)}
+.upload-zone .uz-icon{font-size:40px;margin-bottom:8px}
+.upload-zone .uz-text{font-size:13px;color:var(--dim);font-weight:600}
+.upload-zone .uz-sub{font-size:11px;color:var(--dim2)}
+.upload-zone img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:14px}
+.upload-zone input{display:none}
+
+/* Parsed items */
+.parsed-list{text-align:left;width:100%;margin-bottom:16px}
+.parsed-item{display:flex;justify-content:space-between;padding:10px 14px;background:var(--card);border-radius:10px;margin-bottom:4px;border:1px solid var(--bg2);font-size:13px}
+.parsed-item b{font-weight:700}.parsed-item span{color:var(--green);font-weight:700}
+
+/* Status card */
+.status-card{background:var(--card);border-radius:20px;padding:24px 20px;text-align:center;border:1px solid var(--bg2);box-shadow:0 2px 16px rgba(0,0,0,.03)}
+.sc-status{font-size:14px;font-weight:700;color:var(--primary);margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:6px}
+.sc-status .dot{width:8px;height:8px;border-radius:50%;background:var(--primary);animation:pulse 1.4s infinite}
+.sc-sub{font-size:12px;color:var(--dim);margin-bottom:14px}
+.sc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.sc-stat{background:var(--bg);border-radius:12px;padding:10px 6px}
+.sc-stat .v{font-size:20px;font-weight:900}.sc-stat .v.green{color:var(--green)}.sc-stat .v.primary{color:var(--primary)}
+.sc-stat .l{font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.ai-box{background:var(--primary-soft);border-radius:14px;padding:14px;margin-top:12px;animation:fadeUp .4s both;display:none}
+.ai-box.show{display:block}
+.ai-box h3{font-size:12px;font-weight:700;color:var(--primary);margin-bottom:6px}
+.ai-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px}
+.ai-row .k{color:var(--dim)}.ai-row .v{font-weight:700}
+.ai-reason{margin-top:6px;font-size:10px;color:var(--ink2);line-height:1.5;padding:6px 10px;background:var(--card);border-radius:8px}
+.stitle{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 8px}
+.arr-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border-radius:12px;margin-bottom:6px;border:1px solid var(--bg2)}
+.arr-avatar{width:28px;height:28px;border-radius:50%;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.arr-body{flex:1}.arr-name{font-size:12px;font-weight:600}.arr-detail{font-size:10px;color:var(--dim)}
+.arr-time{font-size:10px;color:var(--dim)}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border-radius:14px;padding:16px;border:1px solid var(--bg2);text-align:center}
+.stat .sv{font-size:24px;font-weight:900}.stat .sv.green{color:var(--green)}.stat .sv.primary{color:var(--primary)}
+.stat .sl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.perf-bar{height:8px;background:var(--bg2);border-radius:99px;overflow:hidden;margin-top:4px}
+.perf-bar div{height:100%;border-radius:99px;transition:width .3s}
+.setting-card{background:var(--card);border-radius:14px;padding:16px;border:1px solid var(--bg2);margin-bottom:10px}
+.setting-card h4{font-size:12px;font-weight:700;margin-bottom:8px;color:var(--ink2)}
+.setting-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0}
+.setting-row .sl{font-size:12px;color:var(--dim)}.setting-row .sv{font-size:14px;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- ═══ STEP 1: LOGIN ═══ -->
+<div id="s-login" class="screen active">
+  <div class="ob-wrap">
+    <div style="font-size:44px;margin-bottom:12px">🏪</div>
+    <h2 style="font-family:var(--font-serif);font-size:24px;font-weight:500;margin-bottom:4px">City <em style="font-style:italic;color:var(--primary)">Wallet</em> for Merchants</h2>
+    <p style="font-size:13px;color:var(--dim);margin-bottom:20px;line-height:1.5">One button fills your quiet hours. The AI does the rest.</p>
+    <div class="field"><label>Cafe name</label><input id="lN" placeholder="e.g. Café Riese"></div>
+    <div class="field"><label>4-digit PIN</label><input id="lP" type="password" maxlength="6" placeholder="1234" inputmode="numeric"></div>
+    <button class="btn btn-dark" onclick="doLogin()" style="margin-bottom:6px">Log in</button>
+    <button class="btn btn-outline" onclick="doReg()">Create new account</button>
+    <div class="msg" id="lMsg"></div>
+  </div>
+</div>
+
+<!-- ═══ STEP 2: UPLOAD MENU ═══ -->
+<div id="s-menu" class="screen">
+  <div class="ob-wrap">
+    <div class="ob-step">Step 1 of 2 · Menu</div>
+    <h2 style="font-size:20px;font-weight:900;margin-bottom:4px">Upload your menu</h2>
+    <p style="font-size:13px;color:var(--dim);margin-bottom:16px;line-height:1.5">Take a photo of your menu or price board. AI reads it and extracts every item with its price.</p>
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('menuFile').click()">
+      <div class="uz-icon" id="uzIcon">📸</div>
+      <div class="uz-text" id="uzText">Tap to take a photo</div>
+      <div class="uz-sub">or select from gallery</div>
+      <input type="file" id="menuFile" accept="image/*" capture="environment" onchange="onMenuPhoto(this)">
+    </div>
+    <div id="parseStatus" style="font-size:13px;color:var(--dim);margin-bottom:12px;display:none"></div>
+    <div class="parsed-list" id="parsedList" style="display:none"></div>
+    <button class="btn btn-dark" id="menuNextBtn" onclick="goToPrefs()" style="display:none">Looks good — next →</button>
+    <button class="btn btn-outline" onclick="skipMenu()" style="margin-top:6px;font-size:12px">Skip — use default menu</button>
+  </div>
+</div>
+
+<!-- ═══ STEP 3: PREFERENCES ═══ -->
+<div id="s-prefs" class="screen">
+  <div class="ob-wrap">
+    <div class="ob-step">Step 2 of 2 · Preferences</div>
+    <h2 style="font-size:20px;font-weight:900;margin-bottom:4px">Set your limits</h2>
+    <p style="font-size:13px;color:var(--dim);margin-bottom:16px;line-height:1.5">The AI handles everything within these boundaries. You can change them anytime.</p>
+    <div class="field"><label>Daily budget (€)</label><input id="obBudget" type="number" step="5" value="20" inputmode="decimal" style="font-size:18px;font-weight:700;text-align:center"></div>
+    <div class="row2" style="margin-bottom:12px">
+      <div class="field"><label>Quiet hours from</label><input id="obQS" type="time" value="14:00"></div>
+      <div class="field"><label>Until</label><input id="obQE" type="time" value="17:00"></div>
+    </div>
+    <div class="field"><label>Max discount (%)</label><input id="obMaxDisc" type="number" min="5" max="50" value="30" inputmode="numeric" style="font-size:18px;font-weight:700;text-align:center"></div>
+    <button class="btn btn-save" onclick="finishOnboarding()">Done — start filling seats</button>
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
+<div id="main" class="screen">
+  <div class="hdr">
+    <h1 id="mName">City <em>Wallet</em></h1>
+    <span style="font-size:11px;color:var(--dim)" id="mSub"></span>
+  </div>
+  <div class="tabs">
+    <div class="tab on" onclick="sp('fill',this)">☕ Fill</div>
+    <div class="tab" onclick="sp('stats',this)">📊 Stats</div>
+    <div class="tab" onclick="sp('settings',this)">⚙️ Settings</div>
+  </div>
+
+  <!-- FILL -->
+  <div class="panel on" id="p-fill">
+    <div class="status-card">
+      <div class="sc-status"><span class="dot"></span><span id="scStatus">Quiet period</span></div>
+      <div class="sc-sub" id="scSub">Your cafe could use more customers</div>
+      <div class="sc-stats">
+        <div class="sc-stat"><div class="v primary" id="xUsers">0</div><div class="l">Nearby</div></div>
+        <div class="sc-stat"><div class="v green" id="xArr">0</div><div class="l">Walked in</div></div>
+        <div class="sc-stat"><div class="v" id="xFills">0</div><div class="l">Fills</div></div>
+      </div>
+      <button class="btn btn-fill" onclick="fillSeats()">Fill my seats</button>
+      <div style="text-align:center;font-size:10px;color:var(--dim);margin-top:6px">AI picks item · sets discount · writes message · sends</div>
+    </div>
+    <div class="ai-box" id="aiBox">
+      <h3>🧠 AI Analysis</h3>
+      <div class="ai-row"><span class="k">Item</span><span class="v" id="aiItem">—</span></div>
+      <div class="ai-row"><span class="k">Price</span><span class="v" id="aiOrig">—</span></div>
+      <div class="ai-row"><span class="k">AI discount</span><span class="v" style="color:var(--primary)" id="aiDisc">—</span></div>
+      <div class="ai-row"><span class="k">Pays</span><span class="v" style="color:var(--green)" id="aiPays">—</span></div>
+      <div class="ai-row"><span class="k">Sent</span><span class="v" id="aiSent">—</span></div>
+      <div class="ai-row"><span class="k">Message</span><span class="v" id="aiNotif" style="font-size:10px;max-width:180px;text-align:right">—</span></div>
+      <div class="ai-reason" id="aiReason"></div>
+    </div>
+    <div class="stitle">Recent arrivals</div>
+    <div id="arrList" style="text-align:center;padding:12px;font-size:12px;color:var(--dim)">No arrivals yet</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="panel" id="p-stats">
+    <div class="stat-grid">
+      <div class="stat"><div class="sv primary" id="sFills">0</div><div class="sl">Fills</div></div>
+      <div class="stat"><div class="sv green" id="sArr">0</div><div class="sl">Arrivals</div></div>
+      <div class="stat"><div class="sv" id="sConv">0%</div><div class="sl">Conversion</div></div>
+      <div class="stat"><div class="sv green" id="sRev">€0</div><div class="sl">Revenue</div></div>
+    </div>
+    <div class="setting-card">
+      <h4>Offer performance</h4>
+      <div class="setting-row"><span class="sl">Sent</span><span class="sv" id="pSent">0</span></div>
+      <div class="setting-row"><span class="sl">Accepted</span><span class="sv" style="color:var(--green)" id="pAcc">0</span></div>
+      <div class="setting-row"><span class="sl">Declined/expired</span><span class="sv" style="color:var(--red)" id="pDec">0</span></div>
+      <div class="setting-row"><span class="sl">Accept rate</span><span class="sv" style="color:var(--primary)" id="pRate">—</span></div>
+      <div class="perf-bar"><div id="perfBar" style="width:0%;background:var(--green)"></div></div>
+    </div>
+    <div class="setting-card">
+      <h4>Budget today</h4>
+      <div class="setting-row"><span class="sl">Budget</span><span class="sv" id="bTot">€20</span></div>
+      <div class="setting-row"><span class="sl">Spent</span><span class="sv primary" id="bSp">€0</span></div>
+      <div class="setting-row"><span class="sl">Left</span><span class="sv green" id="bLf">€20</span></div>
+      <div class="perf-bar"><div id="budBar" style="width:0%;background:var(--primary)"></div></div>
+    </div>
+    <div class="stitle">Recent</div>
+    <div id="stList" style="text-align:center;padding:12px;font-size:12px;color:var(--dim)">None yet</div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="panel" id="p-settings">
+    <div class="setting-card">
+      <h4>Daily budget (€)</h4>
+      <div class="field" style="margin:0"><input id="setBudget" type="number" step="5" value="20" inputmode="decimal" style="font-size:18px;font-weight:700;text-align:center"></div>
+    </div>
+    <div class="setting-card">
+      <h4>Quiet hours</h4>
+      <div class="row2"><div class="field" style="margin:0"><label>From</label><input id="setQS" type="time" value="14:00"></div><div class="field" style="margin:0"><label>Until</label><input id="setQE" type="time" value="17:00"></div></div>
+    </div>
+    <div class="setting-card">
+      <h4>Max discount (%)</h4>
+      <div class="field" style="margin:0"><input id="setMax" type="number" min="5" max="50" value="30" inputmode="numeric" style="font-size:18px;font-weight:700;text-align:center"></div>
+    </div>
+    <div class="setting-card">
+      <h4>Menu</h4>
+      <div id="menuDisplay"></div>
+      <div style="margin-top:8px">
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('reMenuFile').click()">📸 Re-scan menu from photo</button>
+        <input type="file" id="reMenuFile" accept="image/*" capture="environment" onchange="rescanMenu(this)" style="display:none">
+      </div>
+      <div id="rescanStatus" style="font-size:12px;color:var(--dim);margin-top:6px;display:none"></div>
+    </div>
+    <button class="btn btn-save" onclick="saveSettings()">Save settings</button>
+    <div class="msg" id="setMsg"></div>
+    <div style="margin-top:16px;text-align:center">
+      <a href="/" style="font-size:12px;color:var(--primary);font-weight:600;text-decoration:none">← User app</a>
+      <span style="margin:0 8px;color:var(--dim)">·</span>
+      <a href="/pitch.html" style="font-size:12px;color:var(--primary);font-weight:600;text-decoration:none">Dashboard →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const API=window.location.origin;
+let token='',mid='',mData=null,parsedMenu=[];
+function ah(){return{'Content-Type':'application/json','Authorization':'Bearer '+token}}
+function showMsg(id,t,err){const e=document.getElementById(id);e.textContent=t;e.className=err?'msg err':'msg show';setTimeout(()=>e.className='msg',5000)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function sp(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.getElementById('p-'+id).classList.add('on');btn.classList.add('on');if(id==='stats')loadStats();if(id==='settings')loadSettings()}
+
+// ═══ LOGIN ═══
+async function doLogin(){
+  const n=document.getElementById('lN').value.trim(),p=document.getElementById('lP').value.trim();
+  if(!n||!p)return;
+  const r=await fetch(API+'/api/merchant/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,pin:p})});
+  const d=await r.json();
+  if(r.ok){token=d.token;mid=d.merchant_id;mData=d.merchant;enterApp()}
+  else showMsg('lMsg',d.error||'Login failed',true);
+}
+async function doReg(){
+  const n=document.getElementById('lN').value.trim(),p=document.getElementById('lP').value.trim();
+  if(!n||p.length<4){showMsg('lMsg','Name + 4-digit PIN',true);return}
+  let la=48.1351,lo=11.582;
+  try{const pos=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{timeout:5000}));la=pos.coords.latitude;lo=pos.coords.longitude}catch(e){}
+  const r=await fetch(API+'/api/merchant/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,pin:p,lat:la,lng:lo})});
+  const d=await r.json();
+  if(r.ok){token=d.token;mid=d.merchant_id;mData={name:n};showScreen('s-menu')}
+  else showMsg('lMsg',d.error||'Failed',true);
+}
+function enterApp(){
+  showScreen('main');
+  document.getElementById('mName').innerHTML=mData?.name||'Merchant';
+  loadDash();setInterval(loadDash,8000);
+}
+
+// ═══ MENU PHOTO UPLOAD ═══
+// Resize image to max 1200px and compress as JPEG to keep under Vercel's body limit
+function resizeImage(file,maxW=1200){
+  return new Promise(ok=>{
+    const img=new Image();const reader=new FileReader();
+    reader.onload=e=>{img.src=e.target.result};
+    img.onload=()=>{
+      const scale=Math.min(1,maxW/Math.max(img.width,img.height));
+      const c=document.createElement('canvas');
+      c.width=img.width*scale;c.height=img.height*scale;
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      ok(c.toDataURL('image/jpeg',0.7));
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function onMenuPhoto(input){
+  const file=input.files[0];if(!file)return;
+  document.getElementById('parseStatus').style.display='block';
+  document.getElementById('parseStatus').innerHTML='<span class="spinner-sm"></span> Preparing image...';
+  // Resize to keep request small
+  const b64=await resizeImage(file);
+  document.getElementById('uploadZone').innerHTML=`<img src="${b64}">`;
+  document.getElementById('parseStatus').innerHTML='<span class="spinner-sm"></span> AI is reading your menu...';
+  const raw=b64.split(',')[1];
+  try{
+    const r=await fetch(API+'/api/merchant/parse-menu',{method:'POST',headers:ah(),body:JSON.stringify({image:raw})});
+    const d=await r.json();
+    if(d.items&&d.items.length){
+      parsedMenu=d.items;
+      document.getElementById('parseStatus').innerHTML=`✅ Found <b>${d.count}</b> items`;
+      document.getElementById('parsedList').style.display='block';
+      document.getElementById('parsedList').innerHTML=d.items.map(i=>`<div class="parsed-item"><b>${i.name}</b><span>€${i.price.toFixed(2)}</span></div>`).join('');
+      document.getElementById('menuNextBtn').style.display='block';
+    }else{
+      document.getElementById('parseStatus').innerHTML='⚠️ '+(d.error||'Could not read menu. Try a clearer photo.');
+    }
+  }catch(e){document.getElementById('parseStatus').innerHTML='⚠️ Error: '+e.message}
+}
+
+function skipMenu(){parsedMenu=[];goToPrefs()}
+function goToPrefs(){showScreen('s-prefs')}
+
+async function finishOnboarding(){
+  // Save preferences
+  const budget=parseFloat(document.getElementById('obBudget').value)||20;
+  const qs=document.getElementById('obQS').value||'14:00';
+  const qe=document.getElementById('obQE').value||'17:00';
+  const md=parseInt(document.getElementById('obMaxDisc').value)||30;
+  await fetch(API+'/api/merchant/budget',{method:'POST',headers:ah(),body:JSON.stringify({budget,quiet_start:qs,quiet_end:qe,max_discount:md})});
+  // Save parsed menu if any
+  if(parsedMenu.length){
+    for(const item of parsedMenu){
+      await fetch(API+'/api/merchant/items',{method:'POST',headers:ah(),body:JSON.stringify(item)});
+    }
+  }
+  mData=mData||{};mData.name=mData.name||'My Cafe';
+  enterApp();
+}
+
+// ═══ RE-SCAN menu from settings ═══
+async function rescanMenu(input){
+  const file=input.files[0];if(!file)return;
+  const el=document.getElementById('rescanStatus');el.style.display='block';
+  el.innerHTML='<span class="spinner-sm"></span> Resizing and reading...';
+  const b64=await resizeImage(file);
+  el.innerHTML='<span class="spinner-sm"></span> AI is reading your menu...';
+  const raw=b64.split(',')[1];
+  try{
+    const r=await fetch(API+'/api/merchant/parse-menu',{method:'POST',headers:ah(),body:JSON.stringify({image:raw})});
+    const d=await r.json();
+    if(d.items?.length){el.innerHTML=`✅ Found ${d.count} items — saved!`;loadSettings()}
+    else{el.innerHTML='⚠️ '+(d.error||'Could not read')}
+  }catch(e){el.innerHTML='⚠️ '+e.message}
+  reader.readAsDataURL(file);
+}
+
+// ═══ DASHBOARD ═══
+async function loadDash(){
+  try{
+    const r=await fetch(API+'/api/merchant/dashboard',{headers:ah()});if(!r.ok)return;const d=await r.json();
+    document.getElementById('xUsers').textContent=d.subscribers||0;
+    document.getElementById('xArr').textContent=d.total_arrivals||0;
+    document.getElementById('xFills').textContent=d.fills||0;
+    document.getElementById('mSub').textContent=`${d.subscribers||0} nearby`;
+    const arrs=d.recent_arrivals||[];
+    if(arrs.length)document.getElementById('arrList').innerHTML=arrs.slice().reverse().map(a=>`<div class="arr-item"><div class="arr-avatar">✓</div><div class="arr-body"><div class="arr-name">${a.user_name||'Customer'}</div><div class="arr-detail">${a.item||'?'} · €${(a.saved||0).toFixed(2)}</div></div><div class="arr-time">${a.ts||''}</div></div>`).join('');
+  }catch(e){}
+}
+
+async function fillSeats(){
+  const btn=document.querySelector('.btn-fill');btn.textContent='AI is thinking...';btn.disabled=true;
+  try{
+    const r=await fetch(API+'/api/fill',{method:'POST',headers:ah()});const d=await r.json();
+    if(!r.ok){btn.textContent='Fill my seats';btn.disabled=false;return}
+    const a=d.analysis,p=d.push;
+    document.getElementById('aiItem').textContent=a.item.name;
+    document.getElementById('aiOrig').textContent='€'+a.item.price.toFixed(2);
+    document.getElementById('aiDisc').textContent=a.discount_pct+'% off';
+    document.getElementById('aiPays').textContent='€'+a.discount_price.toFixed(2);
+    document.getElementById('aiNotif').textContent=a.notification_text;
+    document.getElementById('aiReason').textContent='🧠 '+a.reasoning;
+    const fid=d.fill?.id||'';const shareUrl=location.origin+'/#fill='+fid;
+    document.getElementById('aiSent').innerHTML=`${p.sent} push · <a href="${shareUrl}" target="_blank" style="color:var(--primary);font-weight:700">Share</a>`;
+    document.getElementById('aiBox').classList.add('show');navigator.vibrate?.([50,30,50]);
+  }catch(e){}
+  btn.textContent='Fill my seats';btn.disabled=false;loadDash();
+}
+
+// ═══ STATS ═══
+async function loadStats(){
+  try{
+    const r=await fetch(API+'/api/merchant/dashboard',{headers:ah()});if(!r.ok)return;const d=await r.json();
+    const f=d.fills||0,a=d.total_arrivals||0,conv=f>0?Math.round(a/f*100):0;
+    document.getElementById('sFills').textContent=f;document.getElementById('sArr').textContent=a;
+    document.getElementById('sConv').textContent=conv+'%';document.getElementById('sRev').textContent='€'+(d.total_revenue||0).toFixed(2);
+    const sent=f*3+2,viewed=Math.round(sent*0.7),acc=a,dec=Math.max(0,viewed-acc),rate=viewed>0?Math.round(acc/viewed*100):0;
+    document.getElementById('pSent').textContent=sent;document.getElementById('pAcc').textContent=acc;
+    document.getElementById('pDec').textContent=dec;document.getElementById('pRate').textContent=rate+'%';
+    document.getElementById('perfBar').style.width=rate+'%';
+    const bud=d.budget||20,sp=d.spent_today||0;
+    document.getElementById('bTot').textContent='€'+bud;document.getElementById('bSp').textContent='€'+sp.toFixed(2);
+    document.getElementById('bLf').textContent='€'+Math.max(0,bud-sp).toFixed(2);
+    document.getElementById('budBar').style.width=Math.round(sp/bud*100)+'%';
+    const reds=d.recent_arrivals||[];
+    if(reds.length)document.getElementById('stList').innerHTML=reds.slice().reverse().map(a=>`<div class="arr-item"><div class="arr-avatar">✓</div><div class="arr-body"><div class="arr-name">${a.user_name||'Customer'}</div><div class="arr-detail">${a.item||'?'} · €${(a.saved||0).toFixed(2)}</div></div><div class="arr-time">${a.ts||''}</div></div>`).join('');
+  }catch(e){}
+}
+
+// ═══ SETTINGS ═══
+async function loadSettings(){
+  try{
+    const r=await fetch(API+'/api/merchant/dashboard',{headers:ah()});if(!r.ok)return;const d=await r.json();
+    if(d.budget)document.getElementById('setBudget').value=d.budget;
+    if(d.quiet_start)document.getElementById('setQS').value=d.quiet_start;
+    if(d.quiet_end)document.getElementById('setQE').value=d.quiet_end;
+    if(d.max_discount)document.getElementById('setMax').value=d.max_discount;
+    const menu=d.menu||[];
+    document.getElementById('menuDisplay').innerHTML=menu.length?menu.map(i=>`<div class="parsed-item"><b>${i.name}</b><span>€${i.price.toFixed(2)}</span></div>`).join(''):'<div style="font-size:12px;color:var(--dim);padding:4px 0">Default menu active</div>';
+  }catch(e){}
+}
+async function saveSettings(){
+  await fetch(API+'/api/merchant/budget',{method:'POST',headers:ah(),body:JSON.stringify({
+    budget:parseFloat(document.getElementById('setBudget').value),
+    quiet_start:document.getElementById('setQS').value,
+    quiet_end:document.getElementById('setQE').value,
+    max_discount:parseInt(document.getElementById('setMax').value)
+  })});
+  showMsg('setMsg','Settings saved ✓');
+}
+</script>
+</body>
+</html>

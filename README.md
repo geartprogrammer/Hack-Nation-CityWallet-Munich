@@ -8,148 +8,191 @@
 <h3 align="center"><em>Cafes sell their quiet hours. The AI fills their seats.</em></h3>
 
 <p align="center">
-  <strong>
-    <a href="https://hacknation-theta.vercel.app/">User App</a> ·
-    <a href="https://hacknation-theta.vercel.app/merchant.html">Merchant App</a> ·
-    <a href="https://hacknation-theta.vercel.app/pitch.html">Pitch Dashboard</a>
-  </strong>
+  <a href="https://hacknation-theta.vercel.app/"><strong>Live Demo</strong></a> ·
+  <a href="https://hacknation-theta.vercel.app/src/client/merchant.html"><strong>Merchant App</strong></a> ·
+  <a href="#demo-videos"><strong>Demo Videos</strong></a> ·
+  <a href="docs/ARCHITECTURE.md"><strong>Architecture</strong></a>
 </p>
 
 ---
 
 ## The Problem
 
-A cafe is empty at 3pm. A person is walking past in the cold. These two facts never connect.
-
-Traditional coupons are static ("10% off, valid 30 days"). They don't know the weather, the time, or that the cafe has empty seats *right now*. Small merchants can't compete with the algorithmic precision of Amazon or Uber — they don't have data scientists. They have a coffee machine and empty chairs.
+A cafe is empty at 3pm. A person walks past in the cold. These two facts never connect. Traditional coupons are static ("10% off, valid 30 days"). They don't know the weather, the time, or that the cafe has empty seats *right now*.
 
 ## The Solution
 
 **One button: "Fill my seats."**
 
-The merchant taps it. The AI does everything else:
+The merchant taps it. The AI handles the rest.
 
 ```
-Merchant taps button
-       ↓
-AI checks weather ← Open-Meteo (real data)
-AI checks demand  ← Payone transaction simulation
-AI checks who's near ← user GPS
-       ↓
-AI picks the best menu item (hot drinks when cold, iced when hot)
-AI sets the discount (bigger when it's raining + quiet)
-AI writes the notification text
-       ↓
-User gets a push notification
-       ↓
-User taps → sees the deal → countdown timer starts
-       ↓
-User walks in → swipes to confirm arrival
-       ↓
-Cashback credited. Cafe got a customer. Done.
+Merchant taps "Fill my seats"
+         │
+         ▼
+   ┌─────────────┐     ┌──────────────┐     ┌─────────────┐
+   │   Weather    │     │    Payone     │     │   Nearby    │
+   │  Open-Meteo  │     │  tx density   │     │   users     │
+   │   (live)     │     │  (simulated)  │     │   (GPS)     │
+   └──────┬───────┘     └──────┬────────┘     └──────┬──────┘
+          └────────────────────┼─────────────────────┘
+                               ▼
+                    ┌─────────────────────┐
+                    │     AI ENGINE       │
+                    │                     │
+                    │  Picks best item    │
+                    │  Sets discount      │
+                    │  Writes message     │
+                    └──────────┬──────────┘
+                               ▼
+                    Push notification sent
+                               │
+                               ▼
+                    User taps → countdown starts
+                               │
+                               ▼
+                    Walks in → swipes to verify
+                               │
+                               ▼
+                    Cashback credited ✓
 ```
+
+## Demo Videos
+
+<a name="demo-videos"></a>
+
+| Demo | Link |
+|------|------|
+| User flow | [VIDEO_LINK_USER] |
+| Merchant flow | [VIDEO_LINK_MERCHANT] |
+| Full end-to-end | [VIDEO_LINK_FULL] |
 
 ## How It Works
 
-### For the user
+### User (30 seconds)
 
-1. **Install** — add to homescreen from browser. No app store.
-2. **Wait** — the app is invisible until the moment matters.
-3. **Notification arrives** — "☕ Cappuccino €2.62 at Café Riese. 3 min walk."
-4. **Tap → see the deal** — price, savings, countdown timer, map directions.
-5. **Walk in → swipe to confirm** — cashback credited.
+1. **Install** — add to homescreen. No app store.
+2. **Notification arrives** — "☕ Cappuccino €2.62 at Café Riese. 3 min walk."
+3. **Tap → see the deal** — price, savings, countdown timer, map.
+4. **Walk in → swipe** — cashback credited.
 
-### For the merchant
+### Merchant (60 seconds)
 
-1. **Register** — name + PIN. That's the account.
-2. **Upload menu** — take a photo of the menu. GPT-4o Vision reads it and extracts every item + price.
-3. **Set limits** — daily budget (€20), quiet hours (2-5pm), max discount (30%).
-4. **Tap "Fill my seats"** — one button. The AI runs an auction: picks the item, sets the price, writes the message, sends it.
-5. **Watch arrivals** — see customers walk in on your dashboard.
-
-## The Three Modules
-
-### 1. Context Sensing
-
-| Signal | Source | How it's used |
-|--------|--------|--------------|
-| Weather | Open-Meteo (live) | Cold → hot drinks, rain → bigger discount |
-| Demand | Payone simulation | Quiet period → trigger offers |
-| Location | User GPS | Only nearby users get notified |
-| Time | System clock | Afternoon dead hours → more aggressive |
-| Events | City calendar | Weekend markets, live music → adjust |
-
-All signals are **configurable** — swap city, change parameters, no code change needed.
-
-### 2. Generative Offer Engine
-
-The AI doesn't retrieve offers from a database. It **creates** them:
-
-- **Item selection** — picks from the merchant's menu based on weather + time
-- **Discount calculation** — 12% base + rain (+6%) + cold (+4%) + quiet demand (+5%) + dead hours (+3%) = dynamic price
-- **Copy generation** — "It's 8°. Warm Cappuccino for €2.62 at Café Riese. 🔥"
-- **Notification delivery** — push via Web Push API (VAPID)
-
-The merchant sets **rules** (budget, max discount, quiet hours). The AI sets **everything else**.
-
-### 3. Seamless Checkout
-
-- User sees the offer → countdown timer starts (walk time + 2 min)
-- Walks to the cafe → swipe-to-verify confirms arrival
-- Cashback credited to their savings
-- Merchant sees the arrival on their dashboard
-- No QR scanning needed — just swipe
+1. **Register** — name + PIN.
+2. **Photo your menu** — GPT-4o Vision reads it. Every item + price extracted.
+3. **Set limits** — daily budget, quiet hours, max discount.
+4. **Tap "Fill my seats"** — AI picks item, sets discount, sends notification. Done.
 
 ## The Discount Formula
 
 ```
 base = 12%
-+ rain      → +6%
-+ cold      → +4%
-+ quiet     → +5%  (Payone tx < 6/hr)
-+ dead hour → +3%  (2pm-5pm)
++ rain      → +6%     (from Open-Meteo)
++ cold      → +4%     (temperature < 12°C)
++ quiet     → +5%     (Payone tx < 6/hr)
++ dead hour → +3%     (2pm–5pm)
+─────────────────────
 = capped at merchant's max (default 30%)
 ```
 
-Rainy Tuesday at 3pm with an empty cafe: **26% off**.
-Sunny Saturday morning, cafe is busy: **12% off**.
+**Rainy Tuesday, 3pm, empty cafe → 26% off.**
+**Sunny Saturday morning, busy → 12% off.**
 
-## Privacy (GDPR)
+## Three Modules
 
-- Location stays on the user's device
-- Push subscription is the only thing stored server-side (no name, no email)
-- Merchant never sees who the user is
-- No tracking, no profiles, no cookies
+### 1. Context Sensing
 
-## Tech Stack
+| Signal | Source | Effect |
+|--------|--------|--------|
+| Weather | Open-Meteo (live) | Cold → hot drinks. Rain → bigger discount. |
+| Demand | Payone simulation | Quiet → trigger offers |
+| Location | GPS | Only nearby users |
+| Time | Clock | Dead hours → more aggressive |
 
-| Layer | Tech |
-|-------|------|
-| Frontend | Vanilla HTML/CSS/JS — no framework, instant load |
-| Backend | Python/Flask on Vercel serverless |
-| Weather | Open-Meteo API (free, no key) |
-| Menu parsing | OpenAI GPT-4o Vision |
-| Notifications | Web Push API (VAPID) |
-| Data | 815 real Munich cafes from OpenStreetMap |
-| Hosting | Vercel (auto-deploy from GitHub) |
+Config-driven. Swap city in [`config/cities.json`](config/cities.json), no code change.
+
+### 2. Generative Offer Engine
+
+Offers don't exist in a database. They're **created** at runtime:
+- Item picked from weather × menu
+- Discount computed from context signals
+- Copy generated ("It's 8°. Warm Cappuccino for €2.62.")
+- Menu parsed from photo via GPT-4o Vision
+
+Scoring weights in [`config/scoring.json`](config/scoring.json).
+
+### 3. Seamless Checkout
+
+- Countdown timer (walk time + 2 min buffer)
+- Swipe-to-verify at the cafe
+- Cashback credited instantly
+- No QR scanning needed
+
+## Privacy
+
+- Location stays on device
+- No accounts, no emails, no tracking
+- Anonymous UUIDs only
+- GDPR compliant by architecture
+
+Full details: [`docs/PRIVACY.md`](docs/PRIVACY.md)
+
+## Project Structure
+
+```
+city-wallet/
+├── api/
+│   ├── index.py              # Flask API — all three modules
+│   └── munich_cafes.json     # 815 real cafes (OpenStreetMap)
+├── src/
+│   ├── client/
+│   │   ├── app.html          # User PWA
+│   │   └── merchant.html     # Merchant PWA
+│   ├── worker/
+│   │   └── sw.js             # Service worker (push + cache)
+│   └── assets/
+│       ├── manifest.json     # PWA manifest
+│       ├── icon-192.png      # App icon
+│       └── icon-512.png      # App icon
+├── config/
+│   ├── cities.json           # City configuration (Munich, Stuttgart, Berlin)
+│   └── scoring.json          # Discount formula + AI weights
+├── docs/
+│   ├── ARCHITECTURE.md       # System design + data flow
+│   └── PRIVACY.md            # GDPR compliance
+├── index.html                # Entry point (phone mockup on desktop)
+├── vercel.json               # Deployment config
+├── requirements.txt          # Python dependencies
+└── README.md
+```
 
 ## Run Locally
 
 ```bash
 git clone https://github.com/geartprogrammer/HACKNATION.git
 cd HACKNATION
-pip install flask qrcode[pil] requests pywebpush py-vapid cryptography
-export OPENAI_API_KEY=your-key  # optional, for menu photo parsing
+pip install -r requirements.txt
+export OPENAI_API_KEY=your-key  # optional — for menu photo parsing
 cd api && python -c "from index import app; app.run(host='0.0.0.0', port=4000, debug=True)"
 ```
 
-Open `http://localhost:4000` (user) and `http://localhost:4000/merchant.html` (merchant).
+Open `http://localhost:4000`
+
+## Tech Stack
+
+| | |
+|---|---|
+| **Frontend** | Vanilla HTML/JS — no framework, <50ms load |
+| **Backend** | Python Flask on Vercel serverless |
+| **Weather** | Open-Meteo (free, no API key) |
+| **Menu parsing** | OpenAI GPT-4o Vision |
+| **Notifications** | Web Push API (VAPID) |
+| **Data** | 815 Munich cafes from OpenStreetMap |
+| **Deploy** | Vercel (auto-deploy from GitHub) |
 
 ## Why DSV Gruppe
 
-DSV Gruppe owns **Payone** (payments), **S-Markt & Mehrwert** (merchant portals), and serves **Sparkassen** (savings banks embedded in local communities). They already have the merchant relationships and the payment rails. What they don't have is the **AI layer** that turns a quiet cafe into a filled cafe. That's City Wallet.
-
-No new payment infrastructure needed. No new merchant onboarding. Just an AI layer on top of what already exists.
+DSV owns **Payone** (payment processing), **S-Markt & Mehrwert** (merchant portals), and serves **Sparkassen** (savings banks in local communities). They have the merchant relationships and the payment rails. City Wallet is the **AI layer** that turns their quiet-hour data into filled seats. No new infrastructure — just intelligence on top of what exists.
 
 ---
 

@@ -1,0 +1,24 @@
+{
+  "munich": {
+    "name": "Munich",
+    "country": "DE",
+    "center": [48.1351, 11.5820],
+    "timezone": "Europe/Berlin",
+    "data_source": "api/munich_cafes.json",
+    "events": ["Oktoberfest", "Christkindlmarkt", "Viktualienmarkt"]
+  },
+  "stuttgart": {
+    "name": "Stuttgart",
+    "country": "DE",
+    "center": [48.7758, 9.1829],
+    "timezone": "Europe/Berlin",
+    "events": ["Cannstatter Volksfest", "Stuttgart Wine Village"]
+  },
+  "berlin": {
+    "name": "Berlin",
+    "country": "DE",
+    "center": [52.5200, 13.4050],
+    "timezone": "Europe/Berlin",
+    "events": ["Festival of Lights", "Berlinale"]
+  }
+}

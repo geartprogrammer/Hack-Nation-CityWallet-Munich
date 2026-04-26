@@ -2,13 +2,17 @@
   "version": 2,
   "builds": [
     { "src": "api/index.py", "use": "@vercel/python" },
-    { "src": "*.html", "use": "@vercel/static" },
-    { "src": "*.json", "use": "@vercel/static" },
-    { "src": "*.js", "use": "@vercel/static" },
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "src/**", "use": "@vercel/static" },
+    { "src": "manifest.json", "use": "@vercel/static" },
+    { "src": "sw.js", "use": "@vercel/static" },
     { "src": "*.png", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/index.py" },
+    { "src": "/manifest.json", "dest": "/manifest.json" },
+    { "src": "/sw.js", "dest": "/sw.js" },
+    { "src": "/merchant", "dest": "/src/client/merchant.html" },
     { "src": "/(.*)", "dest": "/$1" }
   ]
 }

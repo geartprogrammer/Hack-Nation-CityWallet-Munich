@@ -1,0 +1,31 @@
+{
+  "discount_formula": {
+    "base": 12,
+    "modifiers": {
+      "rain": 6,
+      "cold": 4,
+      "quiet_demand": 5,
+      "dead_hours": 3
+    },
+    "cap": 30,
+    "quiet_threshold_tx_per_hour": 6,
+    "dead_hours_range": [14, 17]
+  },
+  "expiry": {
+    "formula": "walk_time_minutes + 2",
+    "min": 3,
+    "max": 30
+  },
+  "weather_item_mapping": {
+    "cold_or_rainy": ["Cappuccino", "Hot Chocolate", "Latte"],
+    "hot": ["Iced Coffee", "Iced Latte", "Cold Brew"],
+    "default": ["Cappuccino", "Latte", "Espresso", "Croissant"]
+  },
+  "push_radius_meters": 2000,
+  "payone_simulation": {
+    "peak_hours": [8, 9, 10, 11, 12, 13, 14],
+    "quiet_hours": [15, 16, 17],
+    "base_tx": 3,
+    "peak_tx": 15
+  }
+}
