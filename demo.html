@@ -7,14 +7,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0A0A08;--surface:#151513;--surface2:#1E1E1B;--ink:#F5F4F0;--ink2:#B8B6AE;--ink3:#7A786F;
-  --brand:#C4501C;--brand2:#E06830;--brand-glow:rgba(196,80,28,.15);
-  --green:#2ECC71;--border:rgba(255,255,255,.06)}
+:root{--bg:#FAFAF7;--bg-dark:#111110;--surface:#FFFFFF;--surface-dark:#1A1918;--surface-dark2:#222220;
+  --ink:#111110;--ink2:#444440;--ink3:#888882;--ink-light:#F5F4F0;--ink-light2:#B8B6AE;--ink-light3:#7A786F;
+  --brand:#C4501C;--brand2:#E06830;--brand-soft:rgba(196,80,28,.06);--brand-glow:rgba(196,80,28,.12);
+  --green:#1A7A3D;--green-soft:rgba(26,122,61,.06);--border:#E8E5DE;--border-dark:rgba(255,255,255,.08)}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-
-/* Subtle bg glow */
-body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:600px;
-  background:radial-gradient(ellipse,var(--brand-glow),transparent 70%);pointer-events:none;z-index:0}
 
 .wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 40px}
 
@@ -24,80 +21,85 @@ body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(
 .nav-brand em{font-style:italic;color:var(--brand)}
 .nav-r{display:flex;gap:8px}
 .nav-r a{font-size:12px;font-weight:600;padding:8px 16px;border-radius:8px;text-decoration:none;
-  color:var(--ink2);border:1px solid var(--border);transition:all .15s}
+  color:var(--ink2);border:1px solid var(--border);background:var(--surface);transition:all .15s}
 .nav-r a:hover{border-color:var(--brand);color:var(--brand)}
-.nav-r a.fill{background:var(--brand);color:#fff;border-color:var(--brand)}
+.nav-r a.fill{background:var(--ink);color:#fff;border-color:var(--ink)}
 
-/* Hero */
+/* Hero — light */
 .hero{padding:80px 0 48px;text-align:center}
 .hero-eyebrow{font-size:11px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.16em;margin-bottom:16px}
-.hero h1{font-family:'Fraunces',serif;font-size:clamp(36px,5.5vw,60px);font-weight:500;letter-spacing:-.04em;line-height:1.05;margin-bottom:14px}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(36px,5.5vw,60px);font-weight:500;letter-spacing:-.04em;line-height:1.05;margin-bottom:14px;color:var(--ink)}
 .hero h1 em{font-style:italic;color:var(--brand)}
 .hero p{font-size:17px;color:var(--ink3);line-height:1.65;max-width:480px;margin:0 auto}
 
-/* The stage — both phones side by side */
-.stage{padding:56px 0;display:flex;justify-content:center;gap:32px;align-items:flex-start;position:relative}
-.stage::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:200px;height:200px;background:radial-gradient(circle,var(--brand-glow),transparent);pointer-events:none}
+/* The stage — dark band with both phones */
+.stage-band{background:var(--bg-dark);margin:0 -40px;padding:56px 40px;position:relative;overflow:hidden}
+.stage-band::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:600px;height:400px;background:radial-gradient(ellipse,rgba(196,80,28,.1),transparent 70%);pointer-events:none}
+.stage{display:flex;justify-content:center;gap:40px;align-items:flex-start;position:relative;max-width:1200px;margin:0 auto}
 
 .phone-wrap{text-align:center}
-.phone-label{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
-.phone{width:280px;height:580px;border-radius:36px;background:#111;padding:10px;
-  box-shadow:0 24px 80px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.06);position:relative;transition:transform .3s}
+.phone-label{font-size:11px;font-weight:700;color:var(--ink-light3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+.phone{width:320px;height:650px;border-radius:40px;background:#111;padding:11px;
+  box-shadow:0 32px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08);position:relative;transition:transform .3s}
 .phone:hover{transform:translateY(-4px)}
-.phone::before{content:'';position:absolute;top:10px;left:50%;transform:translateX(-50%);
-  width:72px;height:22px;background:#1a1a1a;border-radius:11px;z-index:10}
-.phone iframe{width:100%;height:100%;border:none;border-radius:28px;background:#FAFAF7}
+.phone::before{content:'';position:absolute;top:11px;left:50%;transform:translateX(-50%);
+  width:80px;height:24px;background:#1a1a1a;border-radius:12px;z-index:10}
+.phone iframe{width:100%;height:100%;border:none;border-radius:31px;background:#FAFAF7}
 
 /* Flow connector */
-.connector{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:0 16px;align-self:center}
-.connector .arrow{font-size:28px;color:var(--brand);animation:pulse 2s infinite}
-.connector .label{font-size:10px;color:var(--ink3);font-weight:600;text-transform:uppercase;letter-spacing:.08em;writing-mode:vertical-rl;text-orientation:mixed}
+.connector{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:0 8px;align-self:center}
+.connector .arrow{font-size:32px;color:var(--brand);animation:pulse 2s infinite}
+.connector .label{font-size:10px;color:var(--ink-light3);font-weight:600;text-transform:uppercase;letter-spacing:.08em;writing-mode:vertical-rl;text-orientation:mixed}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* Story sections */
+/* Story sections — light */
 .story{padding:48px 0;border-top:1px solid var(--border)}
 .story-label{font-size:11px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.14em;margin-bottom:20px}
 .story-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.story-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px 20px;transition:border-color .2s}
-.story-card:hover{border-color:rgba(196,80,28,.3)}
-.sc-num{font-family:'Fraunces',serif;font-size:40px;font-style:italic;font-weight:400;color:var(--brand);opacity:.25;line-height:1;margin-bottom:8px}
-.sc-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.story-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px 20px;
+  transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.03)}
+.story-card:hover{border-color:rgba(196,80,28,.25);box-shadow:0 4px 16px rgba(196,80,28,.06)}
+.sc-num{font-family:'Fraunces',serif;font-size:40px;font-style:italic;font-weight:400;color:var(--brand);opacity:.2;line-height:1;margin-bottom:8px}
+.sc-title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px}
 .sc-desc{font-size:13px;color:var(--ink3);line-height:1.55}
 .sc-tag{display:inline-block;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;margin-top:8px;
-  background:var(--brand-glow);color:var(--brand);text-transform:uppercase;letter-spacing:.04em}
+  background:var(--brand-soft);color:var(--brand);text-transform:uppercase;letter-spacing:.04em}
 
-/* Formula */
-.formula{margin-top:48px;padding:32px 0;border-top:1px solid var(--border)}
-.formula-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:600px;margin:0 auto}
-.formula-box h3{font-family:'Fraunces',serif;font-size:20px;font-weight:500;margin-bottom:16px;text-align:center}
-.formula-code{font-family:'SF Mono','Fira Code',monospace;font-size:13px;line-height:2;color:var(--ink2);background:var(--surface2);
-  border-radius:10px;padding:20px 24px;border:1px solid var(--border)}
-.formula-code .op{color:var(--brand);font-weight:700}
-.formula-code .comment{color:var(--ink3);font-style:italic}
+/* Formula — dark band */
+.formula-band{background:var(--bg-dark);margin:0 -40px;padding:48px 40px}
+.formula-box{max-width:600px;margin:0 auto}
+.formula-box h3{font-family:'Fraunces',serif;font-size:20px;font-weight:500;margin-bottom:16px;text-align:center;color:var(--ink-light)}
+.formula-code{font-family:'SF Mono','Fira Code',monospace;font-size:13px;line-height:2;color:var(--ink-light2);background:var(--surface-dark);
+  border-radius:10px;padding:20px 24px;border:1px solid var(--border-dark)}
+.formula-code .op{color:var(--brand2);font-weight:700}
+.formula-code .comment{color:var(--ink-light3);font-style:italic}
 .formula-examples{display:flex;gap:12px;margin-top:16px;justify-content:center}
-.formula-ex{background:var(--surface2);border-radius:8px;padding:12px 16px;text-align:center;flex:1}
-.formula-ex .val{font-size:22px;font-weight:800;color:var(--brand)}
-.formula-ex .ctx{font-size:11px;color:var(--ink3);margin-top:2px}
+.formula-ex{background:var(--surface-dark);border:1px solid var(--border-dark);border-radius:8px;padding:12px 16px;text-align:center;flex:1}
+.formula-ex .val{font-size:22px;font-weight:800;color:var(--brand2)}
+.formula-ex .ctx{font-size:11px;color:var(--ink-light3);margin-top:2px}
 
-/* Videos */
+/* Videos — light */
 .vids{padding:48px 0;border-top:1px solid var(--border);display:flex;gap:16px;justify-content:center}
-.vid{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 24px;text-align:center;flex:1;max-width:220px;transition:border-color .2s}
-.vid:hover{border-color:rgba(196,80,28,.3)}
+.vid{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 24px;text-align:center;flex:1;max-width:220px;
+  transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.03)}
+.vid:hover{border-color:rgba(196,80,28,.25);box-shadow:0 4px 16px rgba(196,80,28,.06)}
 .vid .vi{font-size:28px;margin-bottom:6px}
-.vid .vt{font-size:13px;font-weight:700;margin-bottom:4px}
+.vid .vt{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px}
 .vid a{font-size:12px;color:var(--brand);font-weight:600;text-decoration:none}
 
-/* Footer */
+/* Footer — light */
 .foot{padding:40px 0;text-align:center;border-top:1px solid var(--border);font-size:12px;color:var(--ink3)}
 .foot a{color:var(--brand);text-decoration:none;font-weight:600}
 
-@media(max-width:900px){
+@media(max-width:960px){
   .wrap{padding:0 20px}
-  .stage{flex-direction:column;align-items:center;gap:24px}
+  .stage-band{margin:0 -20px;padding:40px 20px}
+  .formula-band{margin:0 -20px;padding:40px 20px}
+  .stage{flex-direction:column;align-items:center;gap:20px}
   .connector{flex-direction:row;writing-mode:horizontal-tb;padding:8px 0}
   .connector .label{writing-mode:horizontal-tb}
-  .phone{width:260px;height:530px}
+  .phone{width:280px;height:570px}
   .story-grid{grid-template-columns:1fr}
   .formula-examples{flex-direction:column}
   .vids{flex-direction:column;align-items:center}
@@ -123,8 +125,8 @@ body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(
   <p>One button for the merchant. One notification for the customer. Everything in between is AI.</p>
 </div>
 
-<!-- THE STAGE: both phones live -->
-<div class="stage">
+<!-- THE STAGE: dark band with both phones -->
+<div class="stage-band"><div class="stage">
   <div class="phone-wrap">
     <div class="phone-label">Merchant taps one button</div>
     <div class="phone"><iframe src="/src/client/merchant.html"></iframe></div>
@@ -139,6 +141,8 @@ body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(
     <div class="phone"><iframe src="/src/client/app.html"></iframe></div>
   </div>
 </div>
+
+</div><!-- /stage-band -->
 
 <!-- MERCHANT STORY -->
 <div class="story">
@@ -190,8 +194,8 @@ body::before{content:'';position:fixed;top:-200px;left:50%;transform:translateX(
   </div>
 </div>
 
-<!-- FORMULA -->
-<div class="formula">
+<!-- FORMULA — dark band -->
+<div class="formula-band">
   <div class="formula-box">
     <h3>The AI decides the discount</h3>
     <div class="formula-code">
