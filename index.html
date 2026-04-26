@@ -8,93 +8,16 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="/manifest.json">
 <title>City Wallet</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,system-ui,sans-serif;background:#F2F0EB;min-height:100vh;display:flex;align-items:center;justify-content:center}
-
-/* Mobile: just load the app directly */
-@media(max-width:768px){
-  body{background:#FAFAF7}
-  .desktop-wrap{display:none!important}
-  .mobile-direct{display:block!important;width:100%;height:100vh;height:100dvh}
-  .mobile-direct iframe{width:100%;height:100%;border:none}
+<script>
+// Mobile → load the app directly. Desktop → load the demo page.
+if(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)){
+  window.location.replace('/src/client/app.html' + window.location.hash);
+} else {
+  window.location.replace('/demo.html');
 }
-
-/* Desktop: phone mockup */
-.mobile-direct{display:none}
-.desktop-wrap{text-align:center;padding:40px 20px}
-.d-title{font-size:28px;font-weight:800;letter-spacing:-.03em;margin-bottom:4px;color:#111}
-.d-title em{font-style:italic;color:#C4501C}
-.d-sub{font-size:15px;color:#6B6B65;margin-bottom:32px}
-.d-links{display:flex;gap:12px;justify-content:center;margin-bottom:32px;flex-wrap:wrap}
-.d-links a{font-size:13px;font-weight:600;padding:10px 20px;border-radius:10px;text-decoration:none;transition:all .15s}
-.d-links a:hover{transform:translateY(-1px)}
-.d-link-primary{background:#111;color:#fff}
-.d-link-outline{background:#fff;color:#111;border:1.5px solid #E8E5DE}
-
-.phones{display:flex;gap:40px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
-.phone-col{text-align:center}
-.phone-label{font-size:12px;font-weight:700;color:#6B6B65;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
-
-.phone{width:375px;height:740px;border-radius:44px;background:#111;padding:14px;
-  box-shadow:0 24px 80px rgba(0,0,0,.12),0 8px 24px rgba(0,0,0,.08),inset 0 0 0 2px #333;position:relative}
-.phone::before{content:'';position:absolute;top:14px;left:50%;transform:translateX(-50%);
-  width:100px;height:28px;background:#222;border-radius:14px;z-index:10}
-.phone iframe{width:100%;height:100%;border:none;border-radius:32px;background:#FAFAF7}
-
-.d-footer{margin-top:40px;font-size:12px;color:#9C9C94}
-.d-footer a{color:#C4501C;text-decoration:none;font-weight:600}
-
-.d-demo{margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.d-demo a{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;
-  padding:10px 18px;border-radius:10px;background:#fff;border:1.5px solid #E8E5DE;
-  color:#111;text-decoration:none;transition:all .15s}
-.d-demo a:hover{border-color:#C4501C;color:#C4501C}
-</style>
+</script>
 </head>
-<body>
-
-<!-- MOBILE: load app directly in full screen -->
-<div class="mobile-direct">
-  <iframe src="/src/client/app.html"></iframe>
-</div>
-
-<!-- DESKTOP: phone mockup -->
-<div class="desktop-wrap">
-  <div class="d-title">City <em>Wallet</em></div>
-  <div class="d-sub">Cafes sell their quiet hours. The AI fills their seats.</div>
-
-  <div class="d-links">
-    <a href="/src/client/app.html" target="_blank" class="d-link-primary">Open user app ↗</a>
-    <a href="/src/client/merchant.html" target="_blank" class="d-link-outline">Open merchant app ↗</a>
-    <a href="https://github.com/geartprogrammer/HACKNATION" target="_blank" class="d-link-outline">GitHub ↗</a>
-  </div>
-
-  <div class="phones">
-    <div class="phone-col">
-      <div class="phone-label">User experience</div>
-      <div class="phone">
-        <iframe src="/src/client/app.html"></iframe>
-      </div>
-    </div>
-    <div class="phone-col">
-      <div class="phone-label">Merchant experience</div>
-      <div class="phone">
-        <iframe src="/src/client/merchant.html"></iframe>
-      </div>
-    </div>
-  </div>
-
-  <div class="d-demo">
-    <a href="#" id="demoLink1">▶ User demo video</a>
-    <a href="#" id="demoLink2">▶ Merchant demo video</a>
-    <a href="#" id="demoLink3">▶ Full flow demo</a>
-  </div>
-
-  <div class="d-footer">
-    HackNation 2026 · DSV Gruppe Challenge 01 · <a href="https://github.com/geartprogrammer/HACKNATION">View on GitHub</a>
-  </div>
-</div>
-
+<body style="background:#FAFAF7;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;color:#666">
+Redirecting...
 </body>
 </html>
