@@ -229,6 +229,18 @@ def login():
     if not m or m["pin_hash"] != _pin(pin): return jsonify({"error":"Wrong name or PIN"}),401
     return jsonify({"merchant_id":mid,"token":_tok(mid),"name":m["name"],"merchant":m})
 
+@app.route("/api/merchant/budget", methods=["POST"])
+def set_budget():
+    mid,m = _auth()
+    if not m: return jsonify({"error":"Unauthorized"}),401
+    d = request.get_json(force=True)
+    if "budget" in d: m["budget"] = float(d["budget"])
+    if "quiet_start" in d: m["quiet_start"] = d["quiet_start"]
+    if "quiet_end" in d: m["quiet_end"] = d["quiet_end"]
+    if "max_discount" in d: m["max_discount"] = int(d["max_discount"])
+    return jsonify({"ok":True,"budget":m.get("budget",20),"quiet_start":m.get("quiet_start","14:00"),
+        "quiet_end":m.get("quiet_end","17:00"),"max_discount":m.get("max_discount",30)})
+
 @app.route("/api/merchant/menu", methods=["POST"])
 def update_menu():
     mid,m = _auth()
@@ -443,6 +455,9 @@ def dashboard():
     return jsonify({"name":m["name"],"fills":len(my_fills),"total_arrivals":m.get("total_arrivals",0),
         "total_revenue":round(m.get("total_revenue",0),2),"total_cashback":round(m.get("total_cashback",0),2),
         "subscribers":len(PUSH_SUBS),"menu":m.get("menu",[]),
+        "budget":m.get("budget",20),"spent_today":m.get("spent_today",0),
+        "quiet_start":m.get("quiet_start","14:00"),"quiet_end":m.get("quiet_end","17:00"),
+        "max_discount":m.get("max_discount",30),
         "recent_fills":my_fills[-5:],"recent_arrivals":ARRIVALS[-10:]})
 
 @app.route("/api/activity", methods=["GET"])
